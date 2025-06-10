@@ -1,0 +1,133 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@layer base {
+  :root {
+    --radius: 0.5rem
+  ;
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%}
+  .dark {
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%
+  }
+}
+
+
+/* Otimizações específicas para iOS */
+
+/* Melhorar a experiência de toque em dispositivos iOS */
+@supports (-webkit-touch-callout: none) {
+  /* Seletores específicos para iOS */
+  button, 
+  a,
+  .category-card,
+  .cursor-pointer {
+    /* Remover highlight de toque */
+    -webkit-tap-highlight-color: transparent;
+    /* Melhorar feedback de toque */
+    touch-action: manipulation;
+  }
+  
+  /* Melhorar scrolling suave */
+  html, body {
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  /* Corrigir problemas de viewport em iOS */
+  @media screen and (orientation: landscape) {
+    .vh-fix {
+      height: calc(100vh - 70px);
+    }
+  }
+  
+  /* Otimizar animações para melhor performance em iOS */
+  .animate-fadeIn,
+  .transition-all,
+  .transition-colors,
+  .transition-opacity {
+    -webkit-backface-visibility: hidden;
+    -webkit-perspective: 1000;
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+  }
+  
+  /* Melhorar renderização de texto */
+  h1, h2, h3, p {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  /* Corrigir problemas de input em iOS */
+  input, textarea, select {
+    font-size: 16px; /* Evita zoom automático em inputs */
+  }
+}
+
+/* Animações globais otimizadas */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+/* Otimizações para Safari */
+@supports (font: -apple-system-body) {
+  /* Melhorar renderização de bordas */
+  .border {
+    border-width: 0.5px;
+  }
+  
+  /* Corrigir problemas de flexbox no Safari */
+  .flex {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: flex;
+  }
+}
+
+/* Melhorias de responsividade */
+@media (max-width: 640px) {
+  .container {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+  
+  h1 {
+    font-size: 1.75rem;
+  }
+  
+  h2 {
+    font-size: 1.5rem;
+  }
+  
+  .grid {
+    gap: 16px;
+  }
+}
+
+/* Otimizações para telas menores */
+@media (max-width: 375px) {
+  .text-xs {
+    font-size: 0.7rem;
+  }
+  
+  .p-6 {
+    padding: 1rem;
+  }
+}
