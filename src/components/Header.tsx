@@ -36,6 +36,9 @@ const Header: React.FC = () => {
             <Link to="/acessorios" className="px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-800 rounded-md transition-colors">
               Acessórios
             </Link>
+            <Link to="/teste-infalivel" className="px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-800 rounded-md transition-colors">
+              Teste Infalivel
+            </Link>
           </nav>
           
           {/* Botão de Contato */}
