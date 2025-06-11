@@ -20,29 +20,56 @@ const Header: React.FC = () => {
           </div>
 
           {/* Menu de Navegação */}
-          {/* <nav className="flex flex-wrap justify-center gap-2 md:gap-4"> 
-            <Link to="/iphones-seminovos" className="px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-800 rounded-md transition-colors">
-              iPhones Seminovos
+          <nav className="flex flex-wrap justify-center gap-2 md:gap-4">
+            {/* <Link
+    to="/iphones-seminovos"
+    className="px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-800 rounded-md transition-colors"
+  >
+    iPhones Seminovos
+  </Link>
+  <Link
+    to="/iphones-novos"
+    className="px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-800 rounded-md transition-colors"
+  >
+    iPhones Novos
+  </Link>
+  <Link
+    to="/macbooks"
+    className="px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-800 rounded-md transition-colors"
+  >
+    MacBooks
+  </Link>
+  <Link
+    to="/ipads"
+    className="px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-800 rounded-md transition-colors"
+  >
+    iPads
+  </Link>
+  <Link
+    to="/apple-watch"
+    className="px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-800 rounded-md transition-colors"
+  >
+    Apple Watch
+  </Link>
+  <Link
+    to="/acessorios"
+    className="px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-800 rounded-md transition-colors"
+  >
+    Acessórios
+  </Link> */}
+            <Link
+              to="/economia"
+              className="px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-800 rounded-md transition-colors"
+            >
+              Economia
             </Link>
-            <Link to="/iphones-novos" className="px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-800 rounded-md transition-colors">
-              iPhones Novos
-            </Link>
-            <Link to="/macbooks" className="px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-800 rounded-md transition-colors">
-              MacBooks
-            </Link>
-            <Link to="/ipads" className="px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-800 rounded-md transition-colors">
-              iPads
-            </Link>
-            <Link to="/apple-watch" className="px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-800 rounded-md transition-colors">
-              Apple Watch
-            </Link>
-            <Link to="/acessorios" className="px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-800 rounded-md transition-colors">
-              Acessórios
-            </Link>
-            <Link to="/teste-infalivel" className="px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-800 rounded-md transition-colors">
+            <Link
+              to="/teste-infalivel"
+              className="px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-800 rounded-md transition-colors"
+            >
               Teste Infalivel
             </Link>
-          </nav> */}
+          </nav>
 
           {/* Botão de Contato */}
           <div className="mt-4 md:mt-0">
