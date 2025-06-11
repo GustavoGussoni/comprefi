@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import ImageLoader from "../components/ImageLoader";
+// import ImageLoader from "../components/ImageLoader";
 import FAQ from "../components/FAQ";
 
 // Imagem da tabela de preços
-import watchPriceTable from "../assets/images/Watch.png";
+// import watchPriceTable from "../assets/images/Watch.png";
 
 const AppleWatch: React.FC = () => {
   // Número de WhatsApp

@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import ImageLoader from "../components/ImageLoader";
+// import ImageLoader from "../components/ImageLoader";
 import FAQ from "../components/FAQ";
 
 // Imagem da tabela de preços
-import macbooksPriceTable from "../assets/images/MacBook.png";
-import macM4PriceTable from "../assets/images/Mac M4.png";
+// import macbooksPriceTable from "../assets/images/MacBook.png";
+// import macM4PriceTable from "../assets/images/Mac M4.png";
 import { Link } from "react-router-dom";
 
 const Macbooks: React.FC = () => {

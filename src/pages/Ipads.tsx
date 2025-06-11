@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import ImageLoader from "../components/ImageLoader";
+// import ImageLoader from "../components/ImageLoader";
 import FAQ from "../components/FAQ";
 
 // Imagem da tabela de preços
-import ipadsPriceTable from "../assets/images/iPad.png";
+// import ipadsPriceTable from "../assets/images/iPad.png";
 
 const Ipads: React.FC = () => {
   // Número de WhatsApp
