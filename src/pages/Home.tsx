@@ -14,15 +14,6 @@ interface HomeProps {
 const Home: React.FC<HomeProps> = ({ isMobile }) => {
   return (
     <div className="home-container">
-      {/* Banner Principal */}
-      <section className="banner-section w-full">
-        <img
-          src={isMobile ? mobileBanner : desktopBanner}
-          alt="CompreFi - Produtos Apple Premium"
-          className="w-full h-auto object-cover"
-        />
-      </section>
-
       {/* Parábola - Padrão de Interrupção (Russell Brunson) */}
       <section className="parable-section max-w-4xl mx-auto py-16 px-4 border-b border-gray-800">
         <div className="bg-gradient-to-r from-gray-900 to-black p-8 rounded-xl shadow-xl">
@@ -84,6 +75,15 @@ const Home: React.FC<HomeProps> = ({ isMobile }) => {
         </div>
       </section>
 
+      {/* Banner Principal */}
+      <section className="banner-section w-full">
+        <img
+          src={isMobile ? mobileBanner : desktopBanner}
+          alt="CompreFi - Produtos Apple Premium"
+          className="w-full h-auto object-cover"
+        />
+      </section>
+
       {/* História Pessoal - Dividida em seções para melhor engajamento */}
       <section className="story-section max-w-4xl mx-auto py-16 px-4">
         <h2 className="text-3xl md:text-4xl font-bold mb-8 text-center text-white">
@@ -140,46 +140,6 @@ const Home: React.FC<HomeProps> = ({ isMobile }) => {
             tranquilidade, muitas vezes economizando de R$300 a quase R$20.000 —
             tudo isso sem abrir mão da experiência premium que eles merecem.
           </p>
-        </div>
-      </section>
-
-      {/* Módulo de Categorias */}
-      <section className="categories-section py-16 px-4 bg-gray-900">
-        <h2 className="text-3xl md:text-4xl font-bold mb-12 text-center text-white">
-          Nossos Produtos
-        </h2>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
-          <CategoryCard
-            title="iPhones Seminovos"
-            link="/iphones-seminovos"
-            description="Aparelhos em excelente estado com garantia de 120 dias"
-          />
-          <CategoryCard
-            title="iPhones Novos"
-            link="/iphones-novos"
-            description="Lacrados com 1 ano de garantia Apple"
-          />
-          <CategoryCard
-            title="MacBooks"
-            link="/macbooks"
-            description="Notebooks Apple com desempenho excepcional"
-          />
-          <CategoryCard
-            title="iPads"
-            link="/ipads"
-            description="Tablets versáteis para trabalho e entretenimento"
-          />
-          <CategoryCard
-            title="Apple Watch"
-            link="/apple-watch"
-            description="Smartwatches para monitorar sua saúde e atividades"
-          />
-          <CategoryCard
-            title="Acessórios"
-            link="/acessorios"
-            description="Complementos originais para seus dispositivos Apple"
-          />
         </div>
       </section>
 
@@ -256,14 +216,54 @@ const Home: React.FC<HomeProps> = ({ isMobile }) => {
         </div>
       </section>
 
-      {/* Por que escolher a CompreFi */}
-      <section className="why-choose-section py-16 px-4">
-        <WhyChooseCompreFi />
+      {/* Módulo de Categorias */}
+      <section className="categories-section py-16 px-4 bg-gray-900">
+        <h2 className="text-3xl md:text-4xl font-bold mb-12 text-center text-white">
+          Nossos Produtos
+        </h2>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+          <CategoryCard
+            title="iPhones Seminovos"
+            link="/iphones-seminovos"
+            description="Aparelhos em excelente estado com garantia de 120 dias"
+          />
+          <CategoryCard
+            title="iPhones Novos"
+            link="/iphones-novos"
+            description="Lacrados com 1 ano de garantia Apple"
+          />
+          <CategoryCard
+            title="MacBooks"
+            link="/macbooks"
+            description="Notebooks Apple com desempenho excepcional"
+          />
+          <CategoryCard
+            title="iPads"
+            link="/ipads"
+            description="Tablets versáteis para trabalho e entretenimento"
+          />
+          <CategoryCard
+            title="Apple Watch"
+            link="/apple-watch"
+            description="Smartwatches para monitorar sua saúde e atividades"
+          />
+          <CategoryCard
+            title="Acessórios"
+            link="/acessorios"
+            description="Complementos originais para seus dispositivos Apple"
+          />
+        </div>
       </section>
 
       {/* FAQ */}
       <section className="faq-section py-16 px-4">
         <FAQ />
+      </section>
+
+      {/* Por que escolher a CompreFi */}
+      <section className="why-choose-section py-16 px-4">
+        <WhyChooseCompreFi />
       </section>
     </div>
   );
