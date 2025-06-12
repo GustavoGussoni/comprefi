@@ -54,7 +54,7 @@ const Home: React.FC<HomeProps> = ({ isMobile }) => {
 
           <div className="mt-8 flex justify-center">
             <Link
-              to="/iphones-seminovos"
+              to="/economia"
               className="bg-[#ff6100] hover:bg-[#e55a00] text-white py-3 px-8 rounded-md transition-all duration-300 transform hover:scale-105 flex items-center"
             >
               Descubra Como
