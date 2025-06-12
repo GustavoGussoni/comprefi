@@ -4,6 +4,20 @@ import PageTransition from "../components/PageTransition";
 
 const Economia: React.FC = () => {
   // const navigate = useNavigate();
+
+  const formatarDataHoraBrasileira = () => {
+    const agora = new Date();
+
+    const dia = String(agora.getDate()).padStart(2, "0");
+    const mes = String(agora.getMonth() + 1).padStart(2, "0"); // Mês começa em 0
+    const ano = agora.getFullYear();
+
+    const hora = String(agora.getHours()).padStart(2, "0");
+    const minuto = String(agora.getMinutes()).padStart(2, "0");
+    const segundo = String(agora.getSeconds()).padStart(2, "0");
+
+    return `${dia}/${mes}/${ano} ${hora}:${minuto}:${segundo}`;
+  };
   const [formData, setFormData] = useState({
     nome: "",
     whatsapp: "",
@@ -21,6 +35,13 @@ const Economia: React.FC = () => {
     }));
   };
 
+  const dataHoraFormatada = formatarDataHoraBrasileira();
+
+  const dadosCompletos = {
+    ...formData,
+    dataHora: dataHoraFormatada,
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -28,14 +49,15 @@ const Economia: React.FC = () => {
 
     try {
       // Substitua a URL abaixo pela URL do seu webhook
-      const webhookUrl = "https://seu-webhook-url.com/endpoint";
+      const webhookUrl =
+        "https://api.datacrazy.io/v1/crm/api/crm/integrations/webhook/business/77af256e-7701-4254-8be1-77e266f3dc6d";
 
       const response = await fetch(webhookUrl, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(dadosCompletos),
       });
 
       if (!response.ok) {

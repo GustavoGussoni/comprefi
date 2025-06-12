@@ -4,6 +4,25 @@ import PageTransition from "../components/PageTransition";
 
 const Captura: React.FC = () => {
   // const navigate = useNavigate();
+
+  // Função para formatar a data no padrão brasileiro
+  const formatarDataHoraBrasileira = () => {
+    const agora = new Date();
+
+    // Formatar dia, mês e ano
+    const dia = String(agora.getDate()).padStart(2, "0");
+    const mes = String(agora.getMonth() + 1).padStart(2, "0"); // Mês começa em 0
+    const ano = agora.getFullYear();
+
+    // Formatar hora, minuto e segundo
+    const hora = String(agora.getHours()).padStart(2, "0");
+    const minuto = String(agora.getMinutes()).padStart(2, "0");
+    const segundo = String(agora.getSeconds()).padStart(2, "0");
+
+    // Retornar no formato "dd/MM/yyyy HH:mm:ss"
+    return `${dia}/${mes}/${ano} ${hora}:${minuto}:${segundo}`;
+  };
+
   const [formData, setFormData] = useState({
     nome: "",
     whatsapp: "",
@@ -20,6 +39,12 @@ const Captura: React.FC = () => {
       [name]: value,
     }));
   };
+  const dataHoraFormatada = formatarDataHoraBrasileira();
+
+  const dadosCompletos = {
+    ...formData,
+    dataHora: dataHoraFormatada,
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,14 +53,15 @@ const Captura: React.FC = () => {
 
     try {
       // Substitua a URL abaixo pela URL do seu webhook
-      const webhookUrl = "https://seu-webhook-url.com/endpoint";
+      const webhookUrl =
+        "https://api.datacrazy.io/v1/crm/api/crm/integrations/webhook/business/ddfbe711-a3c9-4730-827b-9218dd473b34";
 
       const response = await fetch(webhookUrl, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(dadosCompletos),
       });
 
       if (!response.ok) {
