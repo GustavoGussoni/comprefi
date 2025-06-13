@@ -30,101 +30,110 @@ const ScrollToTop = () => {
   return null;
 };
 
+const Layout = ({ children }: { children: React.ReactNode }) => {
+  const location = useLocation();
+  const hideHeaderRoutes = ["/economia", "/teste-infalivel"];
+  const shouldHideHeader = hideHeaderRoutes.includes(location.pathname);
+
+  return (
+    <div className="app bg-black text-white min-h-screen flex flex-col">
+      {!shouldHideHeader && <Header />}
+      <main className="flex-grow">{children}</main>
+      <Footer />
+    </div>
+  );
+};
+
 function App() {
-  // Detectar se é dispositivo móvel
   const isMobile = window.innerWidth <= 768;
 
   return (
     <Router>
       <ScrollToTop />
-      <div className="app bg-black text-white min-h-screen flex flex-col">
-        <Header />
-        <main className="flex-grow">
-          <Routes>
-            <Route
-              path="/"
-              element={
-                <PageTransition>
-                  <Home isMobile={isMobile} />
-                </PageTransition>
-              }
-            />
-            <Route
-              path="/iphones-novos"
-              element={
-                <PageTransition>
-                  <IphonesNovos />
-                </PageTransition>
-              }
-            />
-            <Route
-              path="/iphones-seminovos"
-              element={
-                <PageTransition>
-                  <IphonesSeminovos />
-                </PageTransition>
-              }
-            />
-            <Route
-              path="/macbooks"
-              element={
-                <PageTransition>
-                  <Macbooks />
-                </PageTransition>
-              }
-            />
-            <Route
-              path="/ipads"
-              element={
-                <PageTransition>
-                  <Ipads />
-                </PageTransition>
-              }
-            />
-            <Route
-              path="/apple-watch"
-              element={
-                <PageTransition>
-                  <AppleWatch />
-                </PageTransition>
-              }
-            />
-            <Route
-              path="/acessorios"
-              element={
-                <PageTransition>
-                  <Acessorios />
-                </PageTransition>
-              }
-            />
-            <Route
-              path="/produto/:category/:id"
-              element={
-                <PageTransition>
-                  <ProductPage />
-                </PageTransition>
-              }
-            />
-            <Route
-              path="/teste-infalivel"
-              element={
-                <PageTransition>
-                  <Captura />
-                </PageTransition>
-              }
-            />
-            <Route
-              path="/economia"
-              element={
-                <PageTransition>
-                  <Economia />
-                </PageTransition>
-              }
-            />
-          </Routes>
-        </main>
-        <Footer />
-      </div>
+      <Layout>
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <PageTransition>
+                <Home isMobile={isMobile} />
+              </PageTransition>
+            }
+          />
+          <Route
+            path="/iphones-novos"
+            element={
+              <PageTransition>
+                <IphonesNovos />
+              </PageTransition>
+            }
+          />
+          <Route
+            path="/iphones-seminovos"
+            element={
+              <PageTransition>
+                <IphonesSeminovos />
+              </PageTransition>
+            }
+          />
+          <Route
+            path="/macbooks"
+            element={
+              <PageTransition>
+                <Macbooks />
+              </PageTransition>
+            }
+          />
+          <Route
+            path="/ipads"
+            element={
+              <PageTransition>
+                <Ipads />
+              </PageTransition>
+            }
+          />
+          <Route
+            path="/apple-watch"
+            element={
+              <PageTransition>
+                <AppleWatch />
+              </PageTransition>
+            }
+          />
+          <Route
+            path="/acessorios"
+            element={
+              <PageTransition>
+                <Acessorios />
+              </PageTransition>
+            }
+          />
+          <Route
+            path="/produto/:category/:id"
+            element={
+              <PageTransition>
+                <ProductPage />
+              </PageTransition>
+            }
+          />
+          <Route
+            path="/teste-infalivel"
+            element={
+              <PageTransition>
+                <Captura />
+              </PageTransition>
+            }
+          />
+          <Route
+            path="/economia"
+            element={
+              <PageTransition>
+                <Economia />
+              </PageTransition>
+            }
+          />
+        </Routes>
+      </Layout>
     </Router>
   );
 }
