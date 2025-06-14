@@ -18,6 +18,7 @@ import Acessorios from "./pages/Acessorios";
 import ProductPage from "./pages/ProductPage";
 import Captura from "./pages/Captura";
 import Economia from "./pages/Economia";
+import Agradecimento from "./pages/Agradecimento";
 
 // Componente para detectar mudanças de rota e rolar para o topo
 const ScrollToTop = () => {
@@ -129,6 +130,15 @@ function App() {
             element={
               <PageTransition>
                 <Economia />
+              </PageTransition>
+            }
+          />
+
+          <Route
+            path="/agradecimento"
+            element={
+              <PageTransition>
+                <Agradecimento />
               </PageTransition>
             }
           />

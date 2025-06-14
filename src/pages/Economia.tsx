@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-// import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 import PageTransition from "../components/PageTransition";
 
 const Economia: React.FC = () => {
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
 
   const formatarDataHoraBrasileira = () => {
     const agora = new Date();
@@ -68,7 +68,7 @@ const Economia: React.FC = () => {
 
       setSubmitSuccess(true);
       // Opcional: redirecionar para uma página de agradecimento após alguns segundos
-      // setTimeout(() => navigate('/agradecimento'), 3000);
+      setTimeout(() => navigate("/agradecimento?source=economia"), 2000);
     } catch (error) {
       console.error("Erro ao enviar formulário:", error);
       setSubmitError(

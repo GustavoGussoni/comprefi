@@ -1,25 +1,21 @@
 import React, { useState } from "react";
-// import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 import PageTransition from "../components/PageTransition";
 
 const Captura: React.FC = () => {
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
 
-  // Função para formatar a data no padrão brasileiro
   const formatarDataHoraBrasileira = () => {
     const agora = new Date();
 
-    // Formatar dia, mês e ano
     const dia = String(agora.getDate()).padStart(2, "0");
     const mes = String(agora.getMonth() + 1).padStart(2, "0"); // Mês começa em 0
     const ano = agora.getFullYear();
 
-    // Formatar hora, minuto e segundo
     const hora = String(agora.getHours()).padStart(2, "0");
     const minuto = String(agora.getMinutes()).padStart(2, "0");
     const segundo = String(agora.getSeconds()).padStart(2, "0");
 
-    // Retornar no formato "dd/MM/yyyy HH:mm:ss"
     return `${dia}/${mes}/${ano} ${hora}:${minuto}:${segundo}`;
   };
 
@@ -72,7 +68,7 @@ const Captura: React.FC = () => {
 
       setSubmitSuccess(true);
       // Opcional: redirecionar para uma página de agradecimento após alguns segundos
-      // setTimeout(() => navigate('/agradecimento'), 3000);
+      setTimeout(() => navigate("/agradecimento?source=teste-infalivel"), 2000);
     } catch (error) {
       console.error("Erro ao enviar formulário:", error);
       setSubmitError(
