@@ -55,11 +55,11 @@ const Agradecimento: React.FC = () => {
             {/* Passo 1 - Igual para todos */}
             <div className="bg-gray-900 rounded-xl p-8 border border-gray-800 shadow-lg mb-8">
               <div className="flex items-start">
-                <div className="bg-[#ff6100] rounded-full w-10 h-10 flex items-center justify-center flex-shrink-0 mr-4">
-                  <span className="text-white font-bold">1</span>
+                <div className="bg-[#ff6100] absolute rounded-full w-10 h-10 flex items-center justify-center flex-shrink-0 mr-4">
+                  <span className="text-white font-bold ">1</span>
                 </div>
                 <div>
-                  <h2 className="text-2xl font-bold text-white mb-4">
+                  <h2 className="text-2xl ml-14 font-bold text-white mb-4">
                     Siga a CompreFi no Instagram
                   </h2>
                   <p className="text-gray-300 mb-6">
@@ -89,14 +89,14 @@ const Agradecimento: React.FC = () => {
             {/* Passo 2 - Condicional baseado na origem */}
             <div className="bg-gray-900 rounded-xl p-8 border border-gray-800 shadow-lg mb-8">
               <div className="flex items-start">
-                <div className="bg-[#ff6100] rounded-full w-10 h-10 flex items-center justify-center flex-shrink-0 mr-4">
-                  <span className="text-white font-bold">2</span>
+                <div className="absolute bg-[#ff6100] rounded-full w-10 h-10 flex items-center justify-center flex-shrink-0 mr-4">
+                  <span className=" text-white font-bold">2</span>
                 </div>
                 <div>
                   {sourcePage === "teste-infalivel" ? (
                     <>
-                      <h2 className="text-2xl font-bold text-white mb-4">
-                        Faça download do seu brinde
+                      <h2 className="ml-14 text-2xl font-bold text-white mb-4">
+                        Faça download do seu guia
                       </h2>
                       <p className="text-gray-300 mb-6">
                         Seu guia exclusivo "Como identificar golpes em produtos
@@ -126,7 +126,7 @@ const Agradecimento: React.FC = () => {
                     </>
                   ) : sourcePage === "economia" ? (
                     <>
-                      <h2 className="text-2xl font-bold text-white mb-4">
+                      <h2 className="text-2xl ml-14 font-bold text-white mb-4">
                         Assista o vídeo exclusivo
                       </h2>
                       <p className="text-gray-300 mb-6">
@@ -258,11 +258,11 @@ const Agradecimento: React.FC = () => {
             {/* Passo 3 - Igual para todos */}
             <div className="bg-gray-900 rounded-xl p-8 border border-gray-800 shadow-lg mb-8">
               <div className="flex items-start">
-                <div className="bg-[#ff6100] rounded-full w-10 h-10 flex items-center justify-center flex-shrink-0 mr-4">
+                <div className="absolute bg-[#ff6100] rounded-full w-10 h-10 flex items-center justify-center flex-shrink-0 mr-4">
                   <span className="text-white font-bold">3</span>
                 </div>
                 <div>
-                  <h2 className="text-2xl font-bold text-white mb-4">
+                  <h2 className="ml-14 text-2xl font-bold text-white mb-4">
                     Junte-se à família dos Refinados
                   </h2>
                   {/* <p className="text-gray-300 mb-6">
