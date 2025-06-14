@@ -21,6 +21,20 @@ const Agradecimento: React.FC = () => {
     }
   }, [location]);
 
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCountdown((prevCount) => {
+        if (prevCount <= 1) {
+          clearInterval(timer);
+          return 0;
+        }
+        return prevCount - 1;
+      });
+    }, 3600000); // Atualiza a cada hora (3600000 ms)
+
+    return () => clearInterval(timer);
+  }, []);
+
   return (
     <PageTransition>
       <div className="agradecimento-container bg-black min-h-screen">
