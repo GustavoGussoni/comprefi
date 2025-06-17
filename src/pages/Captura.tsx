@@ -5,18 +5,21 @@ import PageTransition from "../components/PageTransition";
 const Captura: React.FC = () => {
   const navigate = useNavigate();
 
-  const formatarDataHoraBrasileira = () => {
-    const agora = new Date();
+  // const formatarDataHoraBrasileira = () => {
+  //   const agora = new Date();
 
-    const dia = String(agora.getDate()).padStart(2, "0");
-    const mes = String(agora.getMonth() + 1).padStart(2, "0"); // Mês começa em 0
-    const ano = agora.getFullYear();
+  //   const dia = String(agora.getDate()).padStart(2, "0");
+  //   const mes = String(agora.getMonth() + 1).padStart(2, "0"); // Mês começa em 0
+  //   const ano = agora.getFullYear();
 
-    const hora = String(agora.getHours()).padStart(2, "0");
-    const minuto = String(agora.getMinutes()).padStart(2, "0");
-    const segundo = String(agora.getSeconds()).padStart(2, "0");
+  //   const hora = String(agora.getHours()).padStart(2, "0");
+  //   const minuto = String(agora.getMinutes()).padStart(2, "0");
+  //   const segundo = String(agora.getSeconds()).padStart(2, "0");
 
-    return `${dia}/${mes}/${ano} ${hora}:${minuto}:${segundo}`;
+  //   return `${dia}/${mes}/${ano} ${hora}:${minuto}:${segundo}`;
+  // };
+  const formatarDataHoraISO = () => {
+    return new Date().toISOString(); // Exemplo: 2025-06-17T18:25:43.511Z
   };
 
   const [formData, setFormData] = useState({
@@ -35,7 +38,7 @@ const Captura: React.FC = () => {
       [name]: value,
     }));
   };
-  const dataHoraFormatada = formatarDataHoraBrasileira();
+  const dataHoraFormatada = formatarDataHoraISO();
 
   const dadosCompletos = {
     ...formData,
