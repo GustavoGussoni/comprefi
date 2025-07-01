@@ -9,7 +9,7 @@ import { Link } from "react-router-dom";
 
 const Macbooks: React.FC = () => {
   // Número de WhatsApp
-  const whatsappNumber = "5534999252590";
+  const whatsappNumber = "+5534999252590";
 
   // Dados dos produtos extraídos da tabela de preços - Linha M4
   const m4Products = [
@@ -662,8 +662,8 @@ const Macbooks: React.FC = () => {
                         {product.model.includes("M3")
                           ? "M3"
                           : product.model.includes("M2")
-                          ? "M2"
-                          : "M1"}
+                            ? "M2"
+                            : "M1"}
                       </div>
                     </div>
                   </Link>

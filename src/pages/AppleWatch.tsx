@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 // import ImageLoader from "../components/ImageLoader";
 import FAQ from "../components/FAQ";
+import { Link } from "react-router-dom";
 
 // Imagem da tabela de preços
 // import watchPriceTable from "../assets/images/Watch.png";
@@ -12,67 +13,148 @@ const AppleWatch: React.FC = () => {
   // Dados dos produtos extraídos da tabela de preços
   const products = [
     {
-      id: 1,
+      id: 71,
       model: "Apple Watch Ultra 2 (M.)",
-      specs: "49mm",
+      storage: "(49mm)",
+      color: "Titânio Natural (com pulseiras variadas)",
+      battery: "100%",
+      originalPrice: "R$ 8.676,92",
       installmentPrice: "R$ 738",
       pixPrice: "R$ 7.664",
+      details: "aparelho novo",
+      image: "",
+      realImages: [],
+      category: "Apple Watch",
+      specs:
+        "Chip S9 SiP, Tela Retina Sempre Ativa LTPO OLED (até 3000 nits), GPS de precisão e dupla frequência, Botão de Ação, Sirene, Profundímetro, Sensor de temperatura da água, Oxigênio no Sangue, ECG, Sensor cardíaco óptico, Detecção de Queda/Acidente, Resistência à água 100m, Certificação MIL-STD 810H, Mergulho recreativo até 40m, Wi-Fi 4, Bluetooth 5.3",
     },
     {
-      id: 2,
+      id: 72,
       model: "Apple Watch Ultra 2 (24)",
-      specs: "49mm",
+      storage: "(49mm)",
+      color: "Titânio Natural (com pulseiras variadas)",
+      battery: "100%",
+      originalPrice: "R$ 6.833,39",
       installmentPrice: "R$ 574",
       pixPrice: "R$ 5.960",
+      details: "aparelho novo",
+      image: "",
+      realImages: [],
+      category: "Apple Watch",
+      specs:
+        "Chip S9 SiP, Tela Retina Sempre Ativa LTPO OLED (até 3000 nits), GPS de precisão e dupla frequência, Botão de Ação, Sirene, Profundímetro, Sensor de temperatura da água, Oxigênio no Sangue, ECG, Sensor cardíaco óptico, Detecção de Queda/Acidente, Resistência à água 100m, Certificação MIL-STD 810H, Mergulho recreativo até 40m, Wi-Fi 4, Bluetooth 5.3",
     },
     {
-      id: 3,
+      id: 73,
       model: "Apple Watch Ultra 2 (23)",
-      specs: "49mm",
+      storage: "(49mm)",
+      color: "Titânio Natural (com pulseiras variadas)",
+      battery: "100%",
+      originalPrice: "R$ 6.687,37",
       installmentPrice: "R$ 541",
       pixPrice: "R$ 5.619",
+      details: "aparelho novo",
+      image: "",
+      realImages: [],
+      category: "Apple Watch",
+      specs:
+        "Chip S9 SiP, Tela Retina Sempre Ativa LTPO OLED (até 3000 nits), GPS de precisão e dupla frequência, Botão de Ação, Sirene, Profundímetro, Sensor de temperatura da água, Oxigênio no Sangue, ECG, Sensor cardíaco óptico, Detecção de Queda/Acidente, Resistência à água 100m, Certificação MIL-STD 810H, Mergulho recreativo até 40m, Wi-Fi 4, Bluetooth 5.3",
     },
     {
-      id: 4,
+      id: 74,
       model: "Apple Watch Series 10",
-      specs: "46mm",
+      storage: "(46mm)",
+      color: "Meia-noite, Estelar, Prateado, Rosa, (PRODUCT)RED",
+      battery: "100%",
+      originalPrice: "R$ 3.597,05",
       installmentPrice: "R$ 289",
       pixPrice: "R$ 3.005",
+      details: "aparelho novo",
+      image: "",
+      realImages: [],
+      category: "Apple Watch",
+      specs:
+        "Chip S9 SiP, Tela Retina Sempre Ativa LTPO OLED (até 2000 nits), Oxigênio no Sangue, ECG, Sensor cardíaco óptico, Detecção de Queda/Acidente, Sensor de temperatura, Resistência à água 50m, GPS, Wi-Fi 4, Bluetooth 5.3",
     },
     {
-      id: 5,
+      id: 75,
       model: "Apple Watch Series 10",
-      specs: "42mm",
+      storage: "(42mm)",
+      color: "Meia-noite, Estelar, Prateado, Rosa, (PRODUCT)RED",
+      battery: "100%",
+      originalPrice: "R$ 3.468,37",
       installmentPrice: "R$ 279",
       pixPrice: "R$ 2.892",
+      details: "aparelho novo",
+      image: "",
+      realImages: [],
+      category: "Apple Watch",
+      specs:
+        "Chip S9 SiP, Tela Retina Sempre Ativa LTPO OLED (até 2000 nits), Oxigênio no Sangue, ECG, Sensor cardíaco óptico, Detecção de Queda/Acidente, Sensor de temperatura, Resistência à água 50m, GPS, Wi-Fi 4, Bluetooth 5.3",
     },
     {
-      id: 6,
+      id: 76,
       model: "Apple Watch Series 9",
-      specs: "45mm",
+      storage: "(45mm)",
+      color: "Meia-noite, Estelar, Prateado, Rosa, (PRODUCT)RED",
+      battery: "100%",
+      originalPrice: "R$ 3.242,03",
       installmentPrice: "R$ 261",
       pixPrice: "R$ 2.710",
+      details: "aparelho novo",
+      image: "",
+      realImages: [],
+      category: "Apple Watch",
+      specs:
+        "Chip S9 SiP, Tela Retina Sempre Ativa LTPO OLED (até 2000 nits), Oxigênio no Sangue, ECG, Sensor cardíaco óptico, Detecção de Queda/Acidente, Sensor de temperatura, Resistência à água 50m, GPS, Wi-Fi 4, Bluetooth 5.3",
     },
     {
-      id: 7,
+      id: 77,
       model: "Apple Watch Series 9",
-      specs: "41mm",
+      storage: "(41mm)",
+      color: "Meia-noite, Estelar, Prateado, Rosa, (PRODUCT)RED",
+      battery: "100%",
+      originalPrice: "R$ 3.175,22",
       installmentPrice: "R$ 257",
       pixPrice: "R$ 2.664",
+      details: "aparelho novo",
+      image: "",
+      realImages: [],
+      category: "Apple Watch",
+      specs:
+        "Chip S9 SiP, Tela Retina Sempre Ativa LTPO OLED (até 2000 nits), Oxigênio no Sangue, ECG, Sensor cardíaco óptico, Detecção de Queda/Acidente, Sensor de temperatura, Resistência à água 50m, GPS, Wi-Fi 4, Bluetooth 5.3",
     },
     {
-      id: 8,
+      id: 78,
       model: "Apple Watch SE 2ª Ger",
-      specs: "44mm",
+      storage: "(44mm)",
+      color: "Meia-noite, Estelar, Prateado",
+      battery: "100%",
+      originalPrice: "R$ 2.393,53",
       installmentPrice: "R$ 195",
       pixPrice: "R$ 2.028",
+      details: "aparelho novo",
+      image: "",
+      realImages: [],
+      category: "Apple Watch",
+      specs:
+        "Chip S8 SiP, Tela Retina LTPO OLED (até 1000 nits), Sensor cardíaco óptico, Detecção de Queda/Acidente, Resistência à água 50m, GPS, Wi-Fi 4, Bluetooth 5.3",
     },
     {
-      id: 9,
+      id: 79,
       model: "Apple Watch SE 2ª Ger",
-      specs: "40mm",
-      installmentPrice: "R$ 169",
-      pixPrice: "R$ 1.755",
+      storage: "(40mm)",
+      color: "Meia-noite, Estelar, Prateado",
+      battery: "100%",
+      originalPrice: "R$ 2.156,39",
+      installmentPrice: "R$ 175",
+      pixPrice: "R$ 1.812",
+      details: "aparelho novo",
+      image: "",
+      realImages: [],
+      category: "Apple Watch",
+      specs:
+        "Chip S8 SiP, Tela Retina LTPO OLED (até 1000 nits), Sensor cardíaco óptico, Detecção de Queda/Acidente, Resistência à água 50m, GPS, Wi-Fi 4, Bluetooth 5.3",
     },
   ];
 
@@ -131,34 +213,41 @@ const AppleWatch: React.FC = () => {
               className="bg-gray-900 rounded-lg overflow-hidden border border-gray-800 hover:border-[#ff6100] transition-all duration-300 hover:shadow-lg hover:shadow-[#ff6100]/10 cursor-pointer"
             >
               <div className="p-6">
-                <h3 className="text-xl font-bold mb-1 text-white">
-                  {product.model}
-                </h3>
-                <p className="text-gray-400 mb-4">{product.specs}</p>
+                <Link
+                  to={`/produto/${product.category
+                    .toLowerCase()
+                    .replace(/\s+/g, "-")}/${product.id}`}
+                  className="block mb-3"
+                >
+                  <h3 className="text-xl font-bold mb-1 text-white">
+                    {product.model}
+                  </h3>
+                  <p className="text-gray-400 mb-4">{product.specs}</p>
 
-                <div className="flex flex-col">
-                  <div className="text-lg font-bold text-white mb-1">
-                    12x {product.installmentPrice}
+                  <div className="flex flex-col">
+                    <div className="text-lg font-bold text-white mb-1">
+                      12x {product.installmentPrice}
+                    </div>
+                    <div className="text-[#ff6100] font-medium">
+                      ou {product.pixPrice} no PIX
+                    </div>
                   </div>
-                  <div className="text-[#ff6100] font-medium">
-                    ou {product.pixPrice} no PIX
-                  </div>
-                </div>
 
-                <div className="mt-6 flex justify-between items-center">
-                  <span className="text-gray-300 text-sm">
-                    Lacrado | 1 ano de garantia
-                  </span>
-                  <div className="bg-gray-800 px-2 py-1 rounded text-xs text-white">
-                    {product.model.includes("Ultra")
-                      ? "Ultra"
-                      : product.model.includes("Series 10")
-                      ? "S10"
-                      : product.model.includes("Series 9")
-                      ? "S9"
-                      : "SE"}
+                  <div className="mt-6 flex justify-between items-center">
+                    <span className="text-gray-300 text-sm">
+                      Lacrado | 1 ano de garantia
+                    </span>
+                    <div className="bg-gray-800 px-2 py-1 rounded text-xs text-white">
+                      {product.model.includes("Ultra")
+                        ? "Ultra"
+                        : product.model.includes("Series 10")
+                          ? "S10"
+                          : product.model.includes("Series 9")
+                            ? "S9"
+                            : "SE"}
+                    </div>
                   </div>
-                </div>
+                </Link>
 
                 {/* Seleção de forma de pagamento */}
                 <div className="mt-4 flex space-x-2">

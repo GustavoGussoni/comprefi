@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 // import ImageLoader from "../components/ImageLoader";
 import FAQ from "../components/FAQ";
+import { Link } from "react-router-dom";
 
 // Imagem da tabela de preços
 // import ipadsPriceTable from "../assets/images/iPad.png";
@@ -12,116 +13,261 @@ const Ipads: React.FC = () => {
   // Dados dos produtos extraídos da tabela de preços
   const products = [
     {
-      id: 1,
+      id: 55,
       model: 'iPad Pro 7 13" M4',
-      specs: "1TB / Wi-Fi",
+      storage: "(1TB / Wi-Fi)",
+      color: "Prateado, Preto-espacial",
+      battery: "100%",
+      originalPrice: "R$ 16.167,20",
       installmentPrice: "R$ 1.399",
       pixPrice: "R$ 14.523",
+      details: "aparelho novo",
+      image: "",
+      realImages: [],
+      category: "iPads",
+      specs:
+        'Chip M4, Tela Ultra Retina XDR 13", Câmeras Pro 12MP (frontal e traseira), Face ID, USB-C (Thunderbolt/USB 4), Wi-Fi 6E, Bluetooth 5.3',
     },
     {
-      id: 2,
+      id: 56,
       model: 'iPad Pro 7 13" M4',
-      specs: "512GB / Wi-Fi",
+      storage: "512GB",
+      color: "Prateado, Preto-espacial",
+      battery: "100%",
+      originalPrice: "R$ 14.440,62",
       installmentPrice: "R$ 1.201",
       pixPrice: "R$ 12.464",
+      details: "aparelho novo",
+      image: "",
+      realImages: [],
+      category: "iPads",
+      specs:
+        'Chip M4, Tela Ultra Retina XDR 13", Câmeras Pro 12MP (frontal e traseira), Face ID, USB-C (Thunderbolt/USB 4), Wi-Fi 6E, Bluetooth 5.3',
     },
     {
-      id: 3,
+      id: 57,
       model: 'iPad Pro 7 13" M4',
-      specs: "256GB / Wi-Fi",
+      storage: "256GB",
+      color: "Prateado, Preto-espacial",
+      battery: "100%",
+      originalPrice: "R$ 13.026,70",
       installmentPrice: "R$ 1.138",
       pixPrice: "R$ 11.817",
+      details: "aparelho novo",
+      image: "",
+      realImages: [],
+      category: "iPads",
+      specs:
+        'Chip M4, Tela Ultra Retina XDR 13", Câmeras Pro 12MP (frontal e traseira), Face ID, USB-C (Thunderbolt/USB 4), Wi-Fi 6E, Bluetooth 5.3',
     },
     {
-      id: 4,
+      id: 58,
       model: 'iPad Pro 5 11" M4',
-      specs: "256GB / Wi-Fi",
+      storage: "256GB",
+      color: "Prateado, Preto-espacial",
+      battery: "100%",
+      originalPrice: "R$ 10.148,43",
       installmentPrice: "R$ 844",
       pixPrice: "R$ 8.758",
+      details: "aparelho novo",
+      image: "",
+      realImages: [],
+      category: "iPads",
+      specs:
+        'Chip M4, Tela Ultra Retina XDR 11", Câmeras Pro 12MP (frontal e traseira), Face ID, USB-C (Thunderbolt/USB 4), Wi-Fi 6E, Bluetooth 5.3',
     },
     {
-      id: 5,
+      id: 59,
       model: 'iPad Air 6 13" M2',
-      specs: "128GB / Wi-Fi",
+      storage: "128GB",
+      color: "Azul, Roxo, Estelar, Cinza-espacial",
+      battery: "100%",
+      originalPrice: "R$ 7.433,11",
       installmentPrice: "R$ 640",
       pixPrice: "R$ 6.641",
+      details: "aparelho novo",
+      image: "",
+      realImages: [],
+      category: "iPads",
+      specs:
+        'Chip M2, Tela Liquid Retina 13", Câmera frontal 12MP na horizontal (Palco Central), Câmera traseira 12MP, Touch ID, USB-C, Wi-Fi 6E, Bluetooth 5.3',
     },
     {
-      id: 6,
+      id: 60,
       model: 'iPad Air 6 11" M2',
-      specs: "256GB / Wi-Fi",
+      storage: "256GB",
+      color: "Azul, Roxo, Estelar, Cinza-espacial",
+      battery: "100%",
+      originalPrice: "R$ 6.410,22",
       installmentPrice: "R$ 560",
       pixPrice: "R$ 5.817",
+      details: "aparelho novo",
+      image: "",
+      realImages: [],
+      category: "iPads",
+      specs:
+        'Chip M2, Tela Liquid Retina 11", Câmera frontal 12MP na horizontal (Palco Central), Câmera traseira 12MP, Touch ID, USB-C, Wi-Fi 6E, Bluetooth 5.3',
     },
     {
-      id: 7,
+      id: 61,
       model: 'iPad Air 6 11" M2',
-      specs: "128GB / Wi-Fi",
+      storage: "128GB",
+      color: "Azul, Roxo, Estelar, Cinza-espacial",
+      battery: "100%",
+      originalPrice: "R$ 5.800,81",
       installmentPrice: "R$ 498",
       pixPrice: "R$ 5.170",
+      details: "aparelho novo",
+      image: "",
+      realImages: [],
+      category: "iPads",
+      specs:
+        'Chip M2, Tela Liquid Retina 11", Câmera frontal 12MP na horizontal (Palco Central), Câmera traseira 12MP, Touch ID, USB-C, Wi-Fi 6E, Bluetooth 5.3',
     },
     {
-      id: 8,
+      id: 62,
       model: "iPad Mini 7",
-      specs: "256GB / Wi-Fi",
+      storage: "256GB",
+      color: "Azul, Roxo, Estelar, Cinza-espacial",
+      battery: "100%",
+      originalPrice: "R$ 5.774,43",
       installmentPrice: "R$ 492",
       pixPrice: "R$ 5.111",
+      details: "aparelho novo",
+      image: "",
+      realImages: [],
+      category: "iPads",
+      specs:
+        'Chip A17 Pro, Tela Liquid Retina 8.3", Câmera frontal 12MP na horizontal (Palco Central), Câmera traseira 12MP, Touch ID, USB-C, Wi-Fi 6E, Bluetooth 5.3',
     },
     {
-      id: 9,
+      id: 63,
       model: 'iPad Air 5 10,9" M1',
-      specs: "64GB / Wi-Fi",
+      storage: "64GB",
+      color: "Cinza-espacial, Estelar, Rosa, Roxo, Azul",
+      battery: "100%",
+      originalPrice: "R$ 5.307,50",
       installmentPrice: "R$ 436",
       pixPrice: "R$ 4.523",
+      details: "aparelho novo",
+      image: "",
+      realImages: [],
+      category: "iPads",
+      specs:
+        'Chip M1, Tela Liquid Retina 10.9", Câmera frontal 12MP (Palco Central), Câmera traseira 12MP, Touch ID, USB-C, Wi-Fi 6, Bluetooth 5.0',
     },
+
     {
-      id: 10,
+      id: 64,
       model: "iPad Mini 7",
-      specs: "128GB / Wi-Fi",
+      storage: "128GB",
+      color: "Azul, Roxo, Estelar, Cinza-espacial",
+      battery: "100%",
+      originalPrice: "R$ 5.163,54",
       installmentPrice: "R$ 424",
       pixPrice: "R$ 4.405",
+      details: "aparelho novo",
+      image: "",
+      realImages: [],
+      category: "iPads",
+      specs:
+        'Chip A17 Pro, Tela Liquid Retina 8.3", Câmera frontal 12MP na horizontal (Palco Central), Câmera traseira 12MP, Touch ID, USB-C, Wi-Fi 6E, Bluetooth 5.3',
     },
     {
-      id: 11,
+      id: 65,
       model: "iPad 10",
-      specs: "256GB / Wi-Fi",
+      storage: "256GB",
+      color: "Prateado, Azul, Rosa, Amarelo",
+      battery: "100%",
+      originalPrice: "R$ 4.755,76",
       installmentPrice: "R$ 390",
       pixPrice: "R$ 4.052",
+      details: "aparelho novo",
+      image: "",
+      realImages: [],
+      category: "iPads",
+      specs:
+        'Chip A14 Bionic, Tela Liquid Retina 10.9", Câmera frontal 12MP na horizontal (Palco Central), Câmera traseira 12MP, Touch ID, USB-C, Wi-Fi 6, Bluetooth 5.2',
     },
     {
-      id: 12,
+      id: 66,
       model: "iPad 9",
-      specs: "256GB / Wi-Fi",
+      storage: "256GB",
+      color: "Prateado, Cinza-espacial",
+      battery: "100%",
+      originalPrice: "R$ 4.427,00",
       installmentPrice: "R$ 356",
       pixPrice: "R$ 3.699",
+      details: "aparelho novo",
+      image: "",
+      realImages: [],
+      category: "iPads",
+      specs:
+        'Chip A13 Bionic, Tela Retina 10.2", Câmera frontal 12MP (Palco Central), Câmera traseira 8MP, Touch ID, Conector Lightning, Wi-Fi 5, Bluetooth 4.2',
     },
     {
-      id: 13,
+      id: 67,
       model: "iPad Mini 6",
-      specs: "64GB / Wi-Fi",
+      storage: "64GB",
+      color: "Cinza-espacial, Rosa, Roxo, Estelar",
+      battery: "100%",
+      originalPrice: "R$ 4.128,35",
       installmentPrice: "R$ 334",
       pixPrice: "R$ 3.464",
+      details: "aparelho novo",
+      image: "",
+      realImages: [],
+      category: "iPads",
+      specs:
+        'Chip A15 Bionic, Tela Liquid Retina 8.3", Câmera frontal 12MP (Palco Central), Câmera traseira 12MP, Touch ID, USB-C, Wi-Fi 6, Bluetooth 5.0',
     },
     {
-      id: 14,
+      id: 68,
       model: "iPad 9",
-      specs: "64GB / Wi-Fi + 5G",
+      storage: "64GB",
+      color: "Prateado, Cinza-espacial",
+      battery: "100%",
+      originalPrice: "R$ 3.739,48",
       installmentPrice: "R$ 322",
       pixPrice: "R$ 3.347",
+      details: "aparelho novo",
+      image: "",
+      realImages: [],
+      category: "iPads",
+      specs:
+        'Chip A13 Bionic, Tela Retina 10.2", Câmera frontal 12MP (Palco Central), Câmera traseira 8MP, Touch ID, Conector Lightning, Wi-Fi 5, Bluetooth 4.2',
     },
     {
-      id: 15,
+      id: 69,
       model: "iPad 10",
-      specs: "64GB / Wi-Fi",
+      storage: "64GB",
+      color: "Prateado, Azul, Rosa, Amarelo",
+      battery: "100%",
+      originalPrice: "R$ 3.308,83",
       installmentPrice: "R$ 271",
       pixPrice: "R$ 2.817",
+      details: "aparelho novo",
+      image: "",
+      realImages: [],
+      category: "iPads",
+      specs:
+        'Chip A14 Bionic, Tela Liquid Retina 10.9", Câmera frontal 12MP na horizontal (Palco Central), Câmera traseira 12MP, Touch ID, USB-C, Wi-Fi 6, Bluetooth 5.2',
     },
     {
-      id: 16,
+      id: 70,
       model: "iPad 9",
-      specs: "64GB / Wi-Fi",
+      storage: "64GB",
+      color: "Prateado, Cinza-espacial",
+      battery: "100%",
+      originalPrice: "R$ 3.100,66",
       installmentPrice: "R$ 254",
       pixPrice: "R$ 2.641",
+      details: "aparelho novo",
+      image: "",
+      realImages: [],
+      category: "iPads",
+      specs:
+        'Chip A13 Bionic, Tela Retina 10.2", Câmera frontal 12MP (Palco Central), Câmera traseira 8MP, Touch ID, Conector Lightning, Wi-Fi 5, Bluetooth 4.2',
     },
   ];
 
@@ -180,34 +326,41 @@ const Ipads: React.FC = () => {
               className="bg-gray-900 rounded-lg overflow-hidden border border-gray-800 hover:border-[#ff6100] transition-all duration-300 hover:shadow-lg hover:shadow-[#ff6100]/10 cursor-pointer"
             >
               <div className="p-6">
-                <h3 className="text-xl font-bold mb-1 text-white">
-                  {product.model}
-                </h3>
-                <p className="text-gray-400 mb-4">{product.specs}</p>
+                <Link
+                  to={`/produto/${product.category
+                    .toLowerCase()
+                    .replace(/\s+/g, "-")}/${product.id}`}
+                  className="block mb-3"
+                >
+                  <h3 className="text-xl font-bold mb-1 text-white">
+                    {product.model}
+                  </h3>
+                  <p className="text-gray-400 mb-4">{product.specs}</p>
 
-                <div className="flex flex-col">
-                  <div className="text-lg font-bold text-white mb-1">
-                    12x {product.installmentPrice}
+                  <div className="flex flex-col">
+                    <div className="text-lg font-bold text-white mb-1">
+                      12x {product.installmentPrice}
+                    </div>
+                    <div className="text-[#ff6100] font-medium">
+                      ou {product.pixPrice} no PIX
+                    </div>
                   </div>
-                  <div className="text-[#ff6100] font-medium">
-                    ou {product.pixPrice} no PIX
-                  </div>
-                </div>
 
-                <div className="mt-6 flex justify-between items-center">
-                  <span className="text-gray-300 text-sm">
-                    Lacrado | 1 ano de garantia
-                  </span>
-                  <div className="bg-gray-800 px-2 py-1 rounded text-xs text-white">
-                    {product.model.includes("M4")
-                      ? "M4"
-                      : product.model.includes("M2")
-                      ? "M2"
-                      : product.model.includes("M1")
-                      ? "M1"
-                      : "A-Series"}
+                  <div className="mt-6 flex justify-between items-center">
+                    <span className="text-gray-300 text-sm">
+                      Lacrado | 1 ano de garantia
+                    </span>
+                    <div className="bg-gray-800 px-2 py-1 rounded text-xs text-white">
+                      {product.model.includes("M4")
+                        ? "M4"
+                        : product.model.includes("M2")
+                          ? "M2"
+                          : product.model.includes("M1")
+                            ? "M1"
+                            : "A-Series"}
+                    </div>
                   </div>
-                </div>
+                </Link>
 
                 {/* Seleção de forma de pagamento */}
                 <div className="mt-4 flex space-x-2">

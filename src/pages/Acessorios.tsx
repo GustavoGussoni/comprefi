@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 // import ImageLoader from "../components/ImageLoader";
 import FAQ from "../components/FAQ";
+import { Link } from "react-router-dom";
 
 // Imagem da tabela de preços
 // import acessoriosPriceTable from "../assets/images/Acessorios Originais.png";
@@ -12,88 +13,220 @@ const Acessorios: React.FC = () => {
   // Dados dos produtos extraídos da tabela de preços
   const products = [
     {
-      id: 1,
+      id: 80,
       model: "AirPods Max",
-      specs: "",
-      price: "R$ 4.054",
+      storage: "",
+      color: "Cinza-espacial, Prateado, Verde, Azul-celeste, Rosa",
+      battery: "100%",
+      originalPrice: "R$ 5.207,42",
+      installmentPrice: "R$ 424",
+      pixPrice: "R$ 4.400",
+      details: "aparelho novo",
+      image: "",
+      realImages: [],
+      category: "Acessorios",
+      specs:
+        "Chip H1 (em cada fone), Cancelamento Ativo de Ruído, Modo Ambiente, Áudio Espacial com rastreamento dinâmico da cabeça, Equalização Adaptativa, Até 20h de áudio com ANC/Modo Ambiente",
     },
     {
-      id: 2,
-      model: "AirPods Pro 2ª Geração",
-      specs: "Tipo C Magsafe",
-      price: "R$ 1.821",
+      id: 81,
+      model: "AirPods Pro 2ª Geração (Tipo C Magsafe)",
+      storage: "Tipo C Magsafe",
+      color: "Branco",
+      battery: "100%",
+      originalPrice: "R$ 2.189,21",
+      installmentPrice: "R$ 182",
+      pixPrice: "R$ 1.891",
+      details: "aparelho novo",
+      image: "",
+      realImages: [],
+      category: "Acessorios",
+      specs:
+        "Chip H2, Cancelamento Ativo de Ruído (até 2x melhor), Modo Ambiente Adaptável, Áudio Espacial Personalizado, Controle por Toque, Resistência a poeira, suor e água (IP54), Estojo de carregamento MagSafe (USB-C) com alto-falante e entrada para cordão",
     },
     {
-      id: 3,
-      model: "AirPods 4",
-      specs: "C/ Noise Cancelation",
-      price: "R$ 1.821",
+      id: 82,
+      model: "AirPods 4 (C/ Noise Cancelation)",
+      storage: "C/ Noise Cancelation",
+      color: "Branco",
+      battery: "100%",
+      originalPrice: "R$ 2.232,87",
+      installmentPrice: "R$ 182",
+      pixPrice: "R$ 1.891",
+      details: "aparelho novo",
+      image: "",
+      realImages: [],
+      category: "Acessorios",
+      specs:
+        "Chip H2 (provável), Cancelamento Ativo de Ruído, Áudio Espacial, Design atualizado (provável), Estojo de carregamento USB-C (provável)",
     },
     {
-      id: 4,
-      model: "AirPods 4",
-      specs: "S/ Noise Cancelation",
-      price: "R$ 1.486",
+      id: 83,
+      model: "AirPods 4 (S/ Noise Cancelation)",
+      storage: "S/ Noise Cancelation",
+      color: "Branco",
+      battery: "100%",
+      originalPrice: "R$ 1.853,88",
+      installmentPrice: "R$ 151",
+      pixPrice: "R$ 1.572",
+      details: "aparelho novo",
+      image: "",
+      realImages: [],
+      category: "Acessorios",
+      specs:
+        "Chip H2 (provável), Áudio Espacial, Design atualizado (provável), Estojo de carregamento USB-C (provável)",
     },
     {
-      id: 5,
+      id: 84,
       model: "AirPods 3",
-      specs: "",
-      price: "R$ 1.218",
+      storage: "",
+      color: "Branco",
+      battery: "100%",
+      originalPrice: "R$ 1.449,37",
+      installmentPrice: "R$ 123",
+      pixPrice: "R$ 1.279",
+      details: "aparelho novo",
+      image: "",
+      realImages: [],
+      category: "Acessorios",
+      specs:
+        "Chip H1, Áudio Espacial com rastreamento dinâmico da cabeça, Equalização Adaptativa, Sensor de força, Resistência a suor e água (IPX4), Estojo de carregamento MagSafe ou Lightning",
     },
     {
-      id: 6,
+      id: 85,
       model: "AirPods 2",
-      specs: "",
-      price: "R$ 1.039",
+      storage: "",
+      color: "Branco",
+      battery: "100%",
+      originalPrice: "R$ 1.204,73",
+      installmentPrice: "R$ 104",
+      pixPrice: "R$ 1.083",
+      details: "aparelho novo",
+      image: "",
+      realImages: [],
+      category: "Acessorios",
+      specs:
+        "Chip H1, Acesso à Siri por voz, Conexão rápida, Até 5h de áudio, Estojo de carregamento Lightning",
     },
     {
-      id: 7,
+      id: 86,
       model: "Apple Pencil Pro",
-      specs: "",
-      price: "R$ 1.024",
+      storage: "",
+      color: "Branco",
+      originalPrice: "R$ 1.394,09",
+      installmentPrice: "R$ 116",
+      pixPrice: "R$ 1.205",
+      details: "aparelho novo",
+      image: "",
+      realImages: [],
+      category: "Acessorios",
+      specs:
+        "Pareamento e carga sem fio, Precisão absoluta, Sensibilidade à inclinação e pressão, Baixa latência, Gesto de apertar, Rotação do sensor giroscópico, Resposta tátil, Buscar Apple Pencil, Ponta substituível",
     },
     {
-      id: 8,
+      id: 87,
       model: "Apple Pencil 1ª Geração",
-      specs: "",
-      price: "R$ 924",
+      storage: "",
+      color: "Branco",
+      originalPrice: "R$ 1.226,77",
+      installmentPrice: "R$ 105",
+      pixPrice: "R$ 1.095",
+      details: "aparelho novo",
+      image: "",
+      realImages: [],
+      category: "Acessorios",
+      specs:
+        "Pareamento e carga via Lightning, Precisão absoluta, Sensibilidade à inclinação e pressão, Baixa latência, Ponta substituível",
     },
     {
-      id: 9,
-      model: "AirTag",
-      specs: "4 unidades",
-      price: "R$ 813",
+      id: 88,
+      model: "AirTag (4 unidades)",
+      storage: "4 unidades",
+      color: "Branco/Prateado",
+      originalPrice: "R$ 1.109,71",
+      installmentPrice: "R$ 94",
+      pixPrice: "R$ 973",
+      details: "aparelho novo",
+      image: "",
+      realImages: [],
+      category: "Acessorios",
+      specs:
+        "Chip U1 (Banda Ultralarga e Busca Precisa), Bluetooth LE, Alto-falante integrado, Resistência a água e poeira (IP67), Bateria CR2032 substituível (dura mais de um ano), Integração com app Buscar",
     },
     {
-      id: 10,
+      id: 89,
       model: "Apple Pencil 2ª Geração",
-      specs: "",
-      price: "R$ 802",
+      storage: "",
+      color: "Branco",
+      originalPrice: "R$ 1.076,06",
+      installmentPrice: "R$ 93",
+      pixPrice: "R$ 960",
+      details: "aparelho novo",
+      image: "",
+      realImages: [],
+      category: "Acessorios",
+      specs:
+        "Pareamento e carga magnética, Precisão absoluta, Sensibilidade à inclinação e pressão, Baixa latência, Dois toques para trocar de ferramenta, Ponta substituível",
     },
     {
-      id: 11,
-      model: "AirTag",
-      specs: "1 unidade",
-      price: "R$ 423",
+      id: 90,
+      model: "AirTag (1 unidades)",
+      storage: "1 unidades",
+      color: "Branco/Prateado",
+      originalPrice: "R$ 642,93",
+      installmentPrice: "R$ 52",
+      pixPrice: "R$ 544",
+      details: "aparelho novo",
+      image: "",
+      realImages: [],
+      category: "Acessorios",
+      specs:
+        "Chip U1 (Banda Ultralarga e Busca Precisa), Bluetooth LE, Alto-falante integrado, Resistência a água e poeira (IP67), Bateria CR2032 substituível (dura mais de um ano), Integração com app Buscar",
     },
     {
-      id: 12,
+      id: 91,
       model: "Fonte Turbo USB-C 20w",
-      specs: "1m / USB-C",
-      price: "R$ 250",
+      storage: "",
+      color: "Branco",
+      originalPrice: "R$ 293,13",
+      installmentPrice: "R$ 24",
+      pixPrice: "R$ 250",
+      details: "aparelho novo",
+      image: "",
+      realImages: [],
+      category: "Acessorios",
+      specs:
+        "Adaptador de energia USB-C de 20W, Carregamento rápido para iPhones e iPads compatíveis",
     },
     {
-      id: 13,
+      id: 92,
       model: "Cabo USB-C",
-      specs: "",
-      price: "R$ 250",
+      storage: "",
+      color: "Branco",
+      originalPrice: "R$ 298,63",
+      installmentPrice: "R$ 24",
+      pixPrice: "R$ 250",
+      details: "aparelho novo",
+      image: "",
+      realImages: [],
+      category: "Acessorios",
+      specs:
+        "Cabo de carregamento USB-C para USB-C (1m ou 2m), Suporta carregamento e transferência de dados",
     },
     {
-      id: 14,
+      id: 93,
       model: "Cabo Lightning",
-      specs: "1m / USB-C",
-      price: "R$ 220",
+      storage: "",
+      color: "Branco",
+      originalPrice: "R$ 296,22",
+      installmentPrice: "R$ 24",
+      pixPrice: "R$ 250",
+      details: "aparelho novo",
+      image: "",
+      realImages: [],
+      category: "Acessorios",
+      specs:
+        "Cabo de USB-C para Lightning ou USB-A para Lightning (1m ou 2m), Suporta carregamento e transferência de dados",
     },
   ];
 
@@ -135,12 +268,12 @@ const Acessorios: React.FC = () => {
 
         {/* Tabela de preços original como referência */}
         {/* <div className="mb-12 flex justify-center">
-          <ImageLoader
-            src={acessoriosPriceTable}
-            alt="Tabela de preços Acessórios Apple"
-            className="max-w-full h-auto rounded-lg shadow-lg"
-          />
-        </div> */}
+        <ImageLoader
+          src={acessoriosPriceTable}
+          alt="Tabela de preços Acessórios Apple"
+          className="max-w-full h-auto rounded-lg shadow-lg"
+        />
+      </div> */}
 
         {/* Lista de produtos */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -150,27 +283,34 @@ const Acessorios: React.FC = () => {
               className="bg-gray-900 rounded-lg overflow-hidden border border-gray-800 hover:border-[#ff6100] transition-all duration-300 hover:shadow-lg hover:shadow-[#ff6100]/10 cursor-pointer"
             >
               <div className="p-6">
-                <h3 className="text-xl font-bold mb-1 text-white">
-                  {product.model}
-                </h3>
-                {product.specs && (
-                  <p className="text-gray-400 mb-4">{product.specs}</p>
-                )}
+                <Link
+                  to={`/produto/${product.category
+                    .toLowerCase()
+                    .replace(/\s+/g, "-")}/${product.id}`}
+                  className="block mb-3"
+                >
+                  <h3 className="text-xl font-bold mb-1 text-white">
+                    {product.model}
+                  </h3>
+                  {product.specs && (
+                    <p className="text-gray-400 mb-4">{product.specs}</p>
+                  )}
 
-                <div className="flex flex-col mt-4">
-                  <div className="text-[#ff6100] text-xl font-medium">
-                    {product.price}
+                  <div className="flex flex-col mt-4">
+                    <div className="text-[#ff6100] text-xl font-medium">
+                      {product.price}
+                    </div>
                   </div>
-                </div>
 
-                <div className="mt-6 flex justify-between items-center">
-                  <span className="text-gray-300 text-sm">
-                    Lacrado | 1 ano de garantia
-                  </span>
-                  <div className="bg-gray-800 px-2 py-1 rounded text-xs text-white">
-                    Original
+                  <div className="mt-6 flex justify-between items-center">
+                    <span className="text-gray-300 text-sm">
+                      Lacrado | 1 ano de garantia
+                    </span>
+                    <div className="bg-gray-800 px-2 py-1 rounded text-xs text-white">
+                      Original
+                    </div>
                   </div>
-                </div>
+                </Link>
 
                 {/* Seleção de forma de pagamento */}
                 <div className="mt-4 flex space-x-2">
