@@ -298,7 +298,7 @@ const Acessorios: React.FC = () => {
 
                   <div className="flex flex-col mt-4">
                     <div className="text-[#ff6100] text-xl font-medium">
-                      {product.price}
+                      {product.pixPrice}
                     </div>
                   </div>
 
