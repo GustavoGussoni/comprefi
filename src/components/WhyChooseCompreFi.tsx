@@ -39,7 +39,7 @@ const WhyChooseCompreFi: React.FC<WhyChooseCompreFiProps> = ({ category }) => {
   }
 
   return (
-    <div className="bg-gray-900 rounded-lg p-6 border border-gray-800">
+    <div className="max-w-4xl mx-auto bg-gray-900 rounded-lg p-6 border border-gray-800">
       <h2 className="text-2xl font-bold mb-4 text-white">{title}</h2>
       <ul className="space-y-3 text-gray-300">
         {points.map((point, index) => (
