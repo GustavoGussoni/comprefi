@@ -14,7 +14,7 @@ interface ProductDetailProps {
     installmentPrice?: string;
     pixPrice: string;
     details?: string;
-    image: string;
+    image?: string;
     realImages: string[];
     specs?: string;
     category: string;
@@ -113,7 +113,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ product }) => {
           {/* Imagem do Produto */}
           <div className="product-image">
             <ImageLoader
-              src={product.image}
+              src={product.image || ""}
               alt={`${product.model} ${product.storage || ""} ${
                 product.color || ""
               }`}
@@ -140,8 +140,8 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ product }) => {
                     parseInt(product.battery) > 85
                       ? "text-green-500"
                       : parseInt(product.battery) > 80
-                      ? "text-yellow-500"
-                      : "text-orange-500"
+                        ? "text-yellow-500"
+                        : "text-orange-500"
                   }`}
                 >
                   {product.battery}

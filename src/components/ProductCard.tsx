@@ -20,7 +20,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
           className="block mb-3"
         >
           <ImageLoader
-            src={product.image}
+            src={product.image || ""}
             alt={`${product.model} ${product.storage || ""} ${
               product.color || ""
             }`}
@@ -52,8 +52,8 @@ const ProductCard: React.FC<ProductCardProps> = ({
                 parseInt(product.battery) > 85
                   ? "text-green-500"
                   : parseInt(product.battery) > 80
-                  ? "text-yellow-500"
-                  : "text-orange-500"
+                    ? "text-yellow-500"
+                    : "text-orange-500"
               }`}
             >
               {product.battery}

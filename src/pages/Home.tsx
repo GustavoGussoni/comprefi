@@ -236,17 +236,17 @@ const Home: React.FC<HomeProps> = ({ isMobile }) => {
           <CategoryCard
             title="MacBooks"
             link="/macbooks"
-            description="Notebooks Apple com desempenho excepcional"
+            description="MacBook Apple. Desempenho excepcional"
           />
           <CategoryCard
             title="iPads"
             link="/ipads"
-            description="Tablets versáteis para trabalho e entretenimento"
+            description="iPad. Versátil e potente para trabalho, estudo e entretenimento"
           />
           <CategoryCard
             title="Apple Watch"
             link="/apple-watch"
-            description="Smartwatches para monitorar sua saúde e atividades"
+            description="Nada melhor que um Apple Watch para monitorar sua saúde e atividades"
           />
           <CategoryCard
             title="Acessórios"

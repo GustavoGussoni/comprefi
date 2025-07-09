@@ -10,8 +10,8 @@ const WhyChooseCompreFi: React.FC<WhyChooseCompreFiProps> = ({ category }) => {
   let points = [
     "Produtos originais com garantia oficial",
     "Suporte vitalício para todos os produtos adquiridos",
-    "Programa de indicações com desconto acumulativo",
-    "Economia significativa em comparação com lojas oficiais",
+    "Indique amigos e acumule desconto",
+    "Economia real em comparação a lojas oficiais",
     "Atendimento personalizado por especialistas Apple",
   ];
 
@@ -23,7 +23,7 @@ const WhyChooseCompreFi: React.FC<WhyChooseCompreFiProps> = ({ category }) => {
         "Todos os aparelhos passam por rigorosa inspeção de qualidade",
         "Garantia de 120 dias para sua tranquilidade",
         "Suporte vitalício para todos os produtos adquiridos",
-        "Programa de indicações com desconto acumulativo",
+        "Indique amigos e acumule desconto",
         "Economia de até 40% em comparação com aparelhos novos",
       ];
     } else if (category.includes("Novo")) {
@@ -31,8 +31,8 @@ const WhyChooseCompreFi: React.FC<WhyChooseCompreFiProps> = ({ category }) => {
       points = [
         "Produtos originais com 1 ano de garantia oficial Apple",
         "Suporte vitalício para todos os produtos adquiridos",
-        "Programa de indicações com desconto acumulativo",
-        "Economia significativa em comparação com lojas oficiais",
+        "Indique amigos e acumule desconto",
+        "Economia real em comparação a lojas oficiais",
         "Atendimento personalizado por especialistas Apple",
       ];
     }
