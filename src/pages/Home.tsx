@@ -93,8 +93,8 @@ const Home: React.FC<HomeProps> = ({ isMobile }) => {
 
         <div className="story-block mb-10">
           {/* <h3 className="text-xl md:text-2xl font-semibold mb-4 text-[#ff6100]">
-          Início
-        </h3> */}
+    Início
+  </h3> */}
           <p className="text-lg text-gray-200 leading-relaxed">
             Um dia, me vi sentado numa sala, trabalhando duro… mas para realizar
             o sonho de outra pessoa. Eu vendia para uma grande empresa do setor
@@ -105,8 +105,8 @@ const Home: React.FC<HomeProps> = ({ isMobile }) => {
 
         <div className="story-block mb-10">
           {/* <h3 className="text-xl md:text-2xl font-semibold mb-4 text-[#ff6100]">
-          Mudança
-        </h3> */}
+    Mudança
+  </h3> */}
           <p className="text-lg text-gray-200 leading-relaxed">
             Buscando propósito, entrei no mercado financeiro. Achei que seria
             uma jornada de aprendizado e liberdade, mas acabei perdendo tudo.
@@ -116,8 +116,8 @@ const Home: React.FC<HomeProps> = ({ isMobile }) => {
 
         <div className="story-block mb-10">
           {/* <h3 className="text-xl md:text-2xl font-semibold mb-4 text-[#ff6100]">
-          Reflexão
-        </h3> */}
+    Reflexão
+  </h3> */}
           <p className="text-lg text-gray-200 leading-relaxed">
             Depois de muita reflexão, percebi: eu nunca deveria ter parado de
             servir pessoas. Sempre fui movido por oferecer uma experiência de
@@ -128,8 +128,8 @@ const Home: React.FC<HomeProps> = ({ isMobile }) => {
 
         <div className="story-block">
           {/* <h3 className="text-xl md:text-2xl font-semibold mb-4 text-[#ff6100]">
-          Renascimento
-        </h3> */}
+    Renascimento
+  </h3> */}
           <p className="text-lg text-gray-200 leading-relaxed">
             Foi então que decidi voltar às minhas raízes. Escolhi trabalhar com
             algo que eu realmente amava: Apple. Me aprofundei, estudei, vivi o
@@ -159,8 +159,8 @@ const Home: React.FC<HomeProps> = ({ isMobile }) => {
           O Que Nossos Clientes Dizem
         </h2>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <div className="bg-gray-900 rounded-lg p-6 border border-gray-800">
+        <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="bg-gray-900 flex flex-col justify-between rounded-lg p-6 border border-gray-800">
             <div className="flex mb-4">
               {[...Array(5)].map((_, i) => (
                 <svg
@@ -174,14 +174,16 @@ const Home: React.FC<HomeProps> = ({ isMobile }) => {
                 </svg>
               ))}
             </div>
-            <p className="text-gray-300 mb-4 italic">
-              "Comprei meu iPhone na CompreFi e fiquei impressionado com a
-              qualidade do atendimento. Recomendo!"
-            </p>
-            <p className="text-white font-medium">Carlos Silva</p>
+            <div className="flex flex-col justify-between h-full max-h-full">
+              <p className="text-gray-300 mb-4 italic">
+                "Comprei meu iPhone na CompreFi e fiquei impressionado com a
+                qualidade do atendimento. Recomendo!"
+              </p>
+              <p className="text-white font-medium">Carlos Silva</p>
+            </div>
           </div>
 
-          <div className="bg-gray-900 rounded-lg p-6 border border-gray-800">
+          <div className="bg-gray-900 flex flex-col justify-between rounded-lg p-6 border border-gray-800">
             <div className="flex mb-4">
               {[...Array(5)].map((_, i) => (
                 <svg
@@ -195,14 +197,16 @@ const Home: React.FC<HomeProps> = ({ isMobile }) => {
                 </svg>
               ))}
             </div>
-            <p className="text-gray-300 mb-4 italic">
-              "Com certeza vou recomendar você pra quem perguntar algo, um dos
-              únicos que se preocupou em achar oq eu queria."
-            </p>
-            <p className="text-white font-medium">Madu</p>
+            <div className="flex flex-col justify-between h-full max-h-full">
+              <p className="text-gray-300 mb-4 italic">
+                "Com certeza vou recomendar você pra quem perguntar algo, um dos
+                únicos que se preocupou em achar oq eu queria."
+              </p>
+              <p className="text-white font-medium">Madu</p>
+            </div>
           </div>
 
-          <div className="bg-gray-900 rounded-lg p-6 border border-gray-800">
+          <div className="bg-gray-900 flex flex-col justify-between rounded-lg p-6 border border-gray-800">
             <div className="flex mb-4">
               {[...Array(5)].map((_, i) => (
                 <svg
@@ -216,14 +220,20 @@ const Home: React.FC<HomeProps> = ({ isMobile }) => {
                 </svg>
               ))}
             </div>
-            <p className="text-gray-300 mb-4 italic">
-              "Muuuuito obrigada Gustavo. Pelo atendimento e agilidade. To muito
-              feliz com meu novo celular. Você ganhou uma cliente e vai ganhar
-              mais alguns hahaha pq vou super indicar "
-            </p>
-            <p className="text-white font-medium">Luana Bernardes</p>
+            <div className="flex flex-col justify-between h-full max-h-full">
+              <p className="text-gray-300 mb-4 italic">
+                "Muuuuito obrigada Gustavo. Pelo atendimento e agilidade. To
+                muito feliz com meu novo celular. Você ganhou uma cliente e vai
+                ganhar mais alguns hahaha pq vou super indicar "
+              </p>
+              <p className="text-white font-medium">Luana Bernardes</p>
+            </div>
           </div>
         </div>
+      </section>
+      {/* Por que escolher a CompreFi */}
+      <section className="why-choose-section py-16 px-4">
+        <WhyChooseCompreFi />
       </section>
 
       {/* Módulo de Categorias */}
@@ -269,11 +279,6 @@ const Home: React.FC<HomeProps> = ({ isMobile }) => {
       {/* FAQ */}
       <section className="faq-section pt-16 px-4">
         <FAQ />
-      </section>
-
-      {/* Por que escolher a CompreFi */}
-      <section className="why-choose-section py-16 px-4">
-        <WhyChooseCompreFi />
       </section>
     </div>
   );
