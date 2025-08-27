@@ -6,6 +6,7 @@ import WhyChooseCompreFi from "../components/WhyChooseCompreFi";
 // Imagens
 import desktopBanner from "../assets/images/IMG_2816_desktop.png";
 import mobileBanner from "../assets/images/IMG_2791.png";
+import locsBanner from "../assets/images/MAPA-BRASIL-LOCAIS-DE-ENTREGA.gif";
 
 interface HomeProps {
   isMobile: boolean;
@@ -15,7 +16,7 @@ const Home: React.FC<HomeProps> = ({ isMobile }) => {
   return (
     <div className="home-container">
       {/* Parábola - Padrão de Interrupção (Russell Brunson) */}
-      <section className="parable-section max-w-4xl mx-auto py-16 px-4 border-b border-gray-800">
+      <section className="parable-section max-w-4xl mx-auto py-16 px-4 border-gray-800">
         <div className="bg-gradient-to-r from-gray-900 to-black p-8 rounded-xl shadow-xl">
           <h2 className="text-3xl md:text-4xl font-bold mb-8 text-center text-white">
             A Verdade Sobre{" "}
@@ -73,6 +74,15 @@ const Home: React.FC<HomeProps> = ({ isMobile }) => {
             </Link>
           </div>
         </div>
+      </section>
+
+      {/* Banner Locais */}
+      <section className="banner-locs w-full">
+        <img
+          src={locsBanner}
+          alt="CompreFi - Produtos Apple Premium"
+          className="w-full h-auto object-cover"
+        />
       </section>
 
       {/* Banner Principal */}
