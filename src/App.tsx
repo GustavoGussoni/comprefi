@@ -19,7 +19,7 @@ import ProductPage from "./pages/ProductPage";
 import Captura from "./pages/Captura";
 import Economia from "./pages/Economia";
 import Agradecimento from "./pages/Agradecimento";
-import { SpeedInsights } from "@vercel/speed-insights/next";
+
 // Componente para detectar mudanças de rota e rolar para o topo
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -41,7 +41,6 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
       {!shouldHideHeader && <Header />}
       <main className="flex-grow">{children}</main>
       <Footer />
-      <SpeedInsights />
     </div>
   );
 };
