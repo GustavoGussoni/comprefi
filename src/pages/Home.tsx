@@ -76,15 +76,6 @@ const Home: React.FC<HomeProps> = ({ isMobile }) => {
         </div>
       </section>
 
-      {/* Banner Locais */}
-      <section className="banner-locs w-full">
-        <img
-          src={locsBanner}
-          alt="CompreFi - Produtos Apple Premium"
-          className="w-full h-auto object-cover"
-        />
-      </section>
-
       {/* Banner Principal */}
       <section className="banner-section w-full">
         <img
@@ -102,8 +93,8 @@ const Home: React.FC<HomeProps> = ({ isMobile }) => {
 
         <div className="story-block mb-10">
           {/* <h3 className="text-xl md:text-2xl font-semibold mb-4 text-[#ff6100]">
-            Início
-          </h3> */}
+          Início
+        </h3> */}
           <p className="text-lg text-gray-200 leading-relaxed">
             Um dia, me vi sentado numa sala, trabalhando duro… mas para realizar
             o sonho de outra pessoa. Eu vendia para uma grande empresa do setor
@@ -114,8 +105,8 @@ const Home: React.FC<HomeProps> = ({ isMobile }) => {
 
         <div className="story-block mb-10">
           {/* <h3 className="text-xl md:text-2xl font-semibold mb-4 text-[#ff6100]">
-            Mudança
-          </h3> */}
+          Mudança
+        </h3> */}
           <p className="text-lg text-gray-200 leading-relaxed">
             Buscando propósito, entrei no mercado financeiro. Achei que seria
             uma jornada de aprendizado e liberdade, mas acabei perdendo tudo.
@@ -125,8 +116,8 @@ const Home: React.FC<HomeProps> = ({ isMobile }) => {
 
         <div className="story-block mb-10">
           {/* <h3 className="text-xl md:text-2xl font-semibold mb-4 text-[#ff6100]">
-            Reflexão
-          </h3> */}
+          Reflexão
+        </h3> */}
           <p className="text-lg text-gray-200 leading-relaxed">
             Depois de muita reflexão, percebi: eu nunca deveria ter parado de
             servir pessoas. Sempre fui movido por oferecer uma experiência de
@@ -137,8 +128,8 @@ const Home: React.FC<HomeProps> = ({ isMobile }) => {
 
         <div className="story-block">
           {/* <h3 className="text-xl md:text-2xl font-semibold mb-4 text-[#ff6100]">
-            Renascimento
-          </h3> */}
+          Renascimento
+        </h3> */}
           <p className="text-lg text-gray-200 leading-relaxed">
             Foi então que decidi voltar às minhas raízes. Escolhi trabalhar com
             algo que eu realmente amava: Apple. Me aprofundei, estudei, vivi o
@@ -151,6 +142,15 @@ const Home: React.FC<HomeProps> = ({ isMobile }) => {
             tudo isso sem abrir mão da experiência premium que eles merecem.
           </p>
         </div>
+      </section>
+
+      {/* Banner Locais */}
+      <section className="banner-locs max-w-4xl w-full mx-auto py-16 px-4">
+        <img
+          src={locsBanner}
+          alt="CompreFi - Produtos Apple Premium"
+          className="w-full h-auto object-cover max-w-4xl"
+        />
       </section>
 
       {/* Espaço para Depoimentos - Será implementado quando o usuário enviar os depoimentos */}
@@ -267,7 +267,7 @@ const Home: React.FC<HomeProps> = ({ isMobile }) => {
       </section>
 
       {/* FAQ */}
-      <section className="faq-section py-16 px-4">
+      <section className="faq-section pt-16 px-4">
         <FAQ />
       </section>
 
