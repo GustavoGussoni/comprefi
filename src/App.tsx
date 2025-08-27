@@ -19,7 +19,8 @@ import ProductPage from "./pages/ProductPage";
 import Captura from "./pages/Captura";
 import Economia from "./pages/Economia";
 import Agradecimento from "./pages/Agradecimento";
-
+import Admin from "./pages/Admin";
+import ProtectedRoute from "./components/ProtectedRoute";
 // Componente para detectar mudanças de rota e rolar para o topo
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -33,7 +34,12 @@ const ScrollToTop = () => {
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
   const location = useLocation();
-  const hideHeaderRoutes = ["/economia", "/teste-infalivel", "/agradecimento"];
+  const hideHeaderRoutes = [
+    "/economia",
+    "/teste-infalivel",
+    "/agradecimento",
+    "/admin",
+  ];
   const shouldHideHeader = hideHeaderRoutes.includes(location.pathname);
 
   return (
@@ -58,6 +64,16 @@ function App() {
             element={
               <PageTransition>
                 <Home isMobile={isMobile} />
+              </PageTransition>
+            }
+          />
+          <Route
+            path="/admin"
+            element={
+              <PageTransition>
+                <ProtectedRoute>
+                  <Admin />
+                </ProtectedRoute>
               </PageTransition>
             }
           />

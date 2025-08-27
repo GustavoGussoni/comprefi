@@ -1,11 +1,12 @@
 // src/services/api.ts
 // Serviço para conectar o frontend à API NestJS com tipagem TypeScript
+// Versão atualizada com métodos para admin
 
 const API_BASE_URL = "http://localhost:3000"; // URL da sua API NestJS
 
-// Interfaces para tipagem
-interface Product {
-  id: number;
+// Interface para o produto da API (como vem do backend)
+interface ApiProduct {
+  id: string;
   model: string;
   storage: string;
   color: string;
@@ -20,6 +21,31 @@ interface Product {
   specs: string;
   isNew?: boolean;
   isActive?: boolean;
+  cost?: number;
+  freight?: number;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+// Interface para o produto usado nos componentes (compatível com ProductDetail)
+export interface Product {
+  id: string;
+  model: string;
+  storage: string;
+  color: string;
+  battery: string;
+  originalPrice: string;
+  installmentPrice: string;
+  pixPrice: string;
+  details: string;
+  image: string; // ← Sempre string, nunca undefined
+  realImages: string[];
+  category: string;
+  specs: string;
+  isNew?: boolean;
+  isActive?: boolean;
+  cost?: number;
+  freight?: number;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -28,7 +54,24 @@ interface ApiFilters {
   category?: string;
   isNew?: boolean;
   isActive?: boolean;
-  [key: string]: unknown;
+  [key: string]: any;
+}
+
+interface CalculatePricesRequest {
+  cost: number;
+  freight?: number;
+  category?: string;
+}
+
+interface CalculatedPricesResponse {
+  pixPrice: string;
+  installmentPrice: string;
+  originalPrice: string;
+  rawValues: {
+    pixPrice: number;
+    installmentPrice: number;
+    originalPrice: number;
+  };
 }
 
 interface RequestOptions {
@@ -38,18 +81,51 @@ interface RequestOptions {
 }
 
 class ApiService {
+  private authToken: string | null = null;
+
+  // Função para normalizar produto da API para o formato usado nos componentes
+  private normalizeProduct(apiProduct: ApiProduct): Product {
+    return {
+      ...apiProduct,
+      image: apiProduct.image || "", // ← Garantir que nunca seja undefined
+      realImages: apiProduct.realImages || [], // ← Garantir que seja array
+    };
+  }
+
+  // Função para normalizar array de produtos
+  private normalizeProducts(apiProducts: ApiProduct[]): Product[] {
+    return apiProducts.map((product) => this.normalizeProduct(product));
+  }
+
+  // Método para definir token de autenticação
+  setAuthToken(token: string) {
+    this.authToken = token;
+  }
+
+  // Método para remover token de autenticação
+  clearAuthToken() {
+    this.authToken = null;
+  }
+
   // Método genérico para fazer requisições
-  async request<T = unknown>(
+  async request<T = any>(
     endpoint: string,
     options: RequestOptions = {}
   ): Promise<T> {
     const url = `${API_BASE_URL}${endpoint}`;
 
+    const headers: Record<string, string> = {
+      "Content-Type": "application/json",
+      ...options.headers,
+    };
+
+    // Adicionar token de autenticação se disponível
+    if (this.authToken) {
+      headers["Authorization"] = `Bearer ${this.authToken}`;
+    }
+
     const config: RequestInit = {
-      headers: {
-        "Content-Type": "application/json",
-        ...options.headers,
-      },
+      headers,
       ...options,
     };
 
@@ -57,7 +133,16 @@ class ApiService {
       const response = await fetch(url, config);
 
       if (!response.ok) {
+        if (response.status === 401) {
+          this.clearAuthToken();
+          throw new Error("Token expirado. Faça login novamente.");
+        }
         throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      // Para DELETE que retorna 204, não tentar fazer parse do JSON
+      if (response.status === 204) {
+        return {} as T;
       }
 
       return await response.json();
@@ -67,36 +152,55 @@ class ApiService {
     }
   }
 
+  // ========================================
+  // MÉTODOS DE AUTENTICAÇÃO
+  // ========================================
+
+  async login(
+    email: string,
+    password: string
+  ): Promise<{ access_token: string; user: any }> {
+    const result = await this.request<{ access_token: string; user: any }>(
+      "/auth/login",
+      {
+        method: "POST",
+        body: JSON.stringify({ email, password }),
+      }
+    );
+
+    this.setAuthToken(result.access_token);
+    return result;
+  }
+
+  async register(name: string, email: string, password: string): Promise<any> {
+    return this.request("/auth/register", {
+      method: "POST",
+      body: JSON.stringify({ name, email, password }),
+    });
+  }
+
+  // ========================================
+  // MÉTODOS DE PRODUTOS (PÚBLICOS)
+  // ========================================
+
   // Buscar todos os produtos
   async getAllProducts(): Promise<Product[]> {
-    return this.request<Product[]>("/products");
+    const apiProducts = await this.request<ApiProduct[]>("/products");
+    return this.normalizeProducts(apiProducts);
   }
 
   // Buscar produtos por categoria
   async getProductsByCategory(category: string): Promise<Product[]> {
-    return this.request<Product[]>(
+    const apiProducts = await this.request<ApiProduct[]>(
       `/products/category/${encodeURIComponent(category)}`
     );
+    return this.normalizeProducts(apiProducts);
   }
 
   // Buscar produto por ID
   async getProductById(id: string | number): Promise<Product> {
-    return this.request<Product>(`/products/${id}`);
-  }
-
-  // Buscar produtos novos
-  async getNewProducts(): Promise<Product[]> {
-    return this.request<Product[]>("/products?isNew=true");
-  }
-
-  // Buscar produtos seminovos
-  async getUsedProducts(): Promise<Product[]> {
-    return this.request<Product[]>("/products?isNew=false");
-  }
-
-  // Buscar produtos ativos
-  async getActiveProducts(): Promise<Product[]> {
-    return this.request<Product[]>("/products?isActive=true");
+    const apiProduct = await this.request<ApiProduct>(`/products/${id}`);
+    return this.normalizeProduct(apiProduct);
   }
 
   // Buscar produtos com filtros
@@ -116,7 +220,108 @@ class ApiService {
     const queryString = queryParams.toString();
     const endpoint = queryString ? `/products?${queryString}` : "/products";
 
-    return this.request<Product[]>(endpoint);
+    const apiProducts = await this.request<ApiProduct[]>(endpoint);
+    return this.normalizeProducts(apiProducts);
+  }
+
+  // Buscar categorias disponíveis
+  async getCategories(): Promise<string[]> {
+    return this.request<string[]>("/products/categories");
+  }
+
+  // ========================================
+  // MÉTODOS DE ADMIN (REQUEREM AUTENTICAÇÃO)
+  // ========================================
+
+  // Calcular preços
+  async calculatePrices(
+    data: CalculatePricesRequest
+  ): Promise<CalculatedPricesResponse> {
+    return this.request<CalculatedPricesResponse>(
+      "/products/calculate-prices",
+      {
+        method: "POST",
+        body: JSON.stringify(data),
+      }
+    );
+  }
+
+  // Criar produto
+  async createProduct(productData: Partial<Product>): Promise<Product> {
+    const apiProduct = await this.request<ApiProduct>("/products", {
+      method: "POST",
+      body: JSON.stringify(productData),
+    });
+    return this.normalizeProduct(apiProduct);
+  }
+
+  // Atualizar produto
+  async updateProduct(
+    id: string,
+    productData: Partial<Product>
+  ): Promise<Product> {
+    const apiProduct = await this.request<ApiProduct>(`/products/${id}`, {
+      method: "PATCH",
+      body: JSON.stringify(productData),
+    });
+    return this.normalizeProduct(apiProduct);
+  }
+
+  // Deletar produto
+  async deleteProduct(id: string): Promise<void> {
+    await this.request(`/products/${id}`, {
+      method: "DELETE",
+    });
+  }
+
+  // Criar múltiplos produtos
+  async bulkCreateProducts(
+    productsData: Partial<Product>[]
+  ): Promise<Product[]> {
+    const apiProducts = await this.request<ApiProduct[]>(
+      "/products/bulk-create",
+      {
+        method: "POST",
+        body: JSON.stringify(productsData),
+      }
+    );
+    return this.normalizeProducts(apiProducts);
+  }
+
+  // Sincronizar com Google Sheets
+  async syncFromGoogleSheets(): Promise<any> {
+    return this.request("/products/sync-from-sheet", {
+      method: "POST",
+    });
+  }
+
+  // ========================================
+  // MÉTODOS DE USUÁRIOS (ADMIN)
+  // ========================================
+
+  // Buscar todos os usuários
+  async getAllUsers(): Promise<any[]> {
+    return this.request<any[]>("/users");
+  }
+
+  // Buscar usuário por ID
+  async getUserById(id: string): Promise<any> {
+    return this.request<any>(`/users/${id}`);
+  }
+
+  // Atualizar usuário
+  async updateUser(id: string, userData: any): Promise<any> {
+    return this.request<any>(`/users/${id}`, {
+      method: "PATCH",
+      body: JSON.stringify(userData),
+    });
+  }
+
+  // Deletar usuário
+  async deleteUser(id: string): Promise<void> {
+    await this.request(`/users/${id}`, {
+      method: "DELETE",
+    });
   }
 }
 
@@ -128,7 +333,7 @@ export const categoryMapping: Record<string, string> = {
   iPads: "ipads",
   "Apple Watch": "apple-watch",
   Acessórios: "acessorios",
-  Acessorios: "acessorios", // Fallback para categoria sem acento
+  //Acessorios: "acessorios", // Fallback para categoria sem acento
 };
 
 // Mapeamento reverso (URL para categoria)
@@ -142,7 +347,7 @@ export const urlToCategoryMapping: Record<string, string> = {
 };
 
 // Exportar tipos para uso em outros arquivos
-export type { Product, ApiFilters };
+export type { ApiFilters, CalculatePricesRequest, CalculatedPricesResponse };
 
 // Exportar instância única do serviço
 export const apiService = new ApiService();
