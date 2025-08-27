@@ -41,6 +41,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
       {!shouldHideHeader && <Header />}
       <main className="flex-grow">{children}</main>
       <Footer />
+      <SpeedInsights />
     </div>
   );
 };
@@ -144,7 +145,6 @@ function App() {
           />
         </Routes>
       </Layout>
-      <SpeedInsights />
     </Router>
   );
 }
