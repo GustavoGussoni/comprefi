@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { apiService } from '../../services/api';
+import React, { useState } from "react";
+import { apiService } from "../../services/api";
 
 interface CalculatedPrices {
   pixPrice: string;
@@ -13,25 +13,26 @@ interface CalculatedPrices {
 }
 
 const PriceCalculator: React.FC = () => {
-  const [cost, setCost] = useState<string>('');
-  const [freight, setFreight] = useState<string>('100');
-  const [category, setCategory] = useState<string>('');
-  const [calculatedPrices, setCalculatedPrices] = useState<CalculatedPrices | null>(null);
+  const [cost, setCost] = useState<string>("");
+  const [freight, setFreight] = useState<string>("100");
+  const [category, setCategory] = useState<string>("");
+  const [calculatedPrices, setCalculatedPrices] =
+    useState<CalculatedPrices | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
   const categories = [
-    'iPhones Novos',
-    'iPhones Seminovos',
-    'Macbooks',
-    'iPads',
-    'Apple Watch',
-    'Acessórios',
+    "iPhones Novos",
+    "iPhones Seminovos",
+    "Macbooks",
+    "iPads",
+    "Apple Watch",
+    "Acessórios",
   ];
 
   const handleCalculate = async () => {
     if (!cost || isNaN(Number(cost))) {
-      setError('Por favor, insira um custo válido');
+      setError("Por favor, insira um custo válido");
       return;
     }
 
@@ -47,32 +48,34 @@ const PriceCalculator: React.FC = () => {
 
       setCalculatedPrices(result);
     } catch (err) {
-      console.error('Erro ao calcular preços:', err);
-      setError('Erro ao calcular preços. Verifique se a API está rodando.');
+      console.error("Erro ao calcular preços:", err);
+      setError("Erro ao calcular preços. Verifique se a API está rodando.");
     } finally {
       setLoading(false);
     }
   };
 
   const handleClear = () => {
-    setCost('');
-    setFreight('100');
-    setCategory('');
+    setCost("");
+    setFreight("100");
+    setCategory("");
     setCalculatedPrices(null);
     setError(null);
   };
 
   const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL',
+    return new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
     }).format(value);
   };
 
   return (
     <div className="bg-gray-900 rounded-lg p-8">
       <div className="text-center mb-8">
-        <h2 className="text-3xl font-bold text-white mb-2">🧮 Calculadora de Preços</h2>
+        <h2 className="text-3xl font-bold text-white mb-2">
+          🧮 Calculadora de Preços
+        </h2>
         <p className="text-gray-400">
           Calcule automaticamente os preços de venda baseado no custo do produto
         </p>
@@ -137,9 +140,7 @@ const PriceCalculator: React.FC = () => {
               </option>
             ))}
           </select>
-          <p className="text-xs text-gray-500 mt-1">
-            Afeta o cálculo do frete
-          </p>
+          <p className="text-xs text-gray-500 mt-1">Afeta o cálculo do frete</p>
         </div>
       </div>
 
@@ -156,9 +157,7 @@ const PriceCalculator: React.FC = () => {
               Calculando...
             </>
           ) : (
-            <>
-              🧮 Calcular Preços
-            </>
+            <>🧮 Calcular Preços</>
           )}
         </button>
         <button
@@ -182,69 +181,94 @@ const PriceCalculator: React.FC = () => {
           <h3 className="text-xl font-semibold text-white mb-6 text-center">
             💰 Preços Calculados
           </h3>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {/* Preço PIX */}
-            <div className="bg-green-900 border border-green-700 rounded-lg p-6 text-center">
-              <div className="text-3xl mb-2">💳</div>
-              <h4 className="text-lg font-semibold text-green-300 mb-2">Preço PIX</h4>
+            {/* Preço Original */}
+            <div className="bg-purple-900 border border-purple-700 rounded-lg p-6 text-center">
+              <div className="text-3xl mb-2">🏷️</div>
+              <h4 className="text-lg font-semibold text-purple-300 mb-2">
+                Preço Original
+              </h4>
               <div className="text-3xl font-bold text-white mb-2">
-                {calculatedPrices.pixPrice}
+                {calculatedPrices.originalPrice}
               </div>
-              <p className="text-sm text-green-400">
-                À vista no PIX
-              </p>
+              <p className="text-sm text-purple-400">Para alavancagem</p>
             </div>
 
             {/* Preço Parcelado */}
             <div className="bg-blue-900 border border-blue-700 rounded-lg p-6 text-center">
               <div className="text-3xl mb-2">💳</div>
-              <h4 className="text-lg font-semibold text-blue-300 mb-2">Parcela 12x</h4>
+              <h4 className="text-lg font-semibold text-blue-300 mb-2">
+                Parcela 12x
+              </h4>
               <div className="text-3xl font-bold text-white mb-2">
                 {calculatedPrices.installmentPrice}
               </div>
-              <p className="text-sm text-blue-400">
-                12x sem juros
-              </p>
+              <p className="text-sm text-blue-400">12x sem juros</p>
             </div>
 
-            {/* Preço Original */}
-            <div className="bg-purple-900 border border-purple-700 rounded-lg p-6 text-center">
-              <div className="text-3xl mb-2">🏷️</div>
-              <h4 className="text-lg font-semibold text-purple-300 mb-2">Preço Original</h4>
+            {/* Preço PIX */}
+            <div className="bg-green-900 border border-green-700 rounded-lg p-6 text-center">
+              <div className="text-3xl mb-2">💳</div>
+              <h4 className="text-lg font-semibold text-green-300 mb-2">
+                Preço PIX
+              </h4>
               <div className="text-3xl font-bold text-white mb-2">
-                {calculatedPrices.originalPrice}
+                {calculatedPrices.pixPrice}
               </div>
-              <p className="text-sm text-purple-400">
-                Para alavancagem
-              </p>
+              <p className="text-sm text-green-400">À vista no PIX</p>
             </div>
           </div>
 
           {/* Fórmulas */}
-          <div className="mt-8 p-4 bg-gray-700 rounded-lg">
-            <h4 className="text-sm font-semibold text-gray-300 mb-3">📊 Fórmulas Utilizadas:</h4>
+          {/* <div className="mt-8 p-4 bg-gray-700 rounded-lg">
+            <h4 className="text-sm font-semibold text-gray-300 mb-3">
+              📊 Fórmulas Utilizadas:
+            </h4>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs text-gray-400">
               <div>
-                <strong className="text-green-400">PIX:</strong> (Custo + Frete) ÷ 0,9
+                <strong className="text-green-400">PIX:</strong> (Custo + Frete)
+                ÷ 0,9
               </div>
               <div>
-                <strong className="text-blue-400">Parcela:</strong> (PIX ÷ 0,8651) ÷ 12
+                <strong className="text-blue-400">Parcela:</strong> (PIX ÷
+                0,8651) ÷ 12
               </div>
               <div>
-                <strong className="text-purple-400">Original:</strong> (Custo + Frete) ÷ 0,84
+                <strong className="text-purple-400">Original:</strong> (Custo +
+                Frete) ÷ 0,84
               </div>
             </div>
-          </div>
+          </div> */}
 
           {/* Texto para Proposta */}
           <div className="mt-6 p-4 bg-gray-700 rounded-lg">
-            <h4 className="text-sm font-semibold text-gray-300 mb-3">📝 Texto para Proposta:</h4>
+            <h4 className="text-sm font-semibold text-gray-300 mb-3">
+              📝 Texto para Proposta:
+            </h4>
             <div className="bg-gray-800 p-3 rounded text-sm text-gray-300 font-mono">
               <p>
-                <strong>Produto:</strong> [Nome do produto] - de {calculatedPrices.originalPrice} por{' '}
-                <strong className="text-blue-400">12x {calculatedPrices.installmentPrice}</strong> sem juros, ou{' '}
-                <strong className="text-green-400">{calculatedPrices.pixPrice}</strong> no PIX
+                <strong>Produto:</strong> [Nome do produto] - de{" "}
+                {calculatedPrices.originalPrice} por{" "}
+                <strong className="text-blue-400">
+                  12x {calculatedPrices.installmentPrice}
+                </strong>{" "}
+                sem juros, ou{" "}
+                <strong className="text-green-400">
+                  {calculatedPrices.pixPrice}
+                </strong>{" "}
+                no PIX <br />
+                <br />
+                incluso:
+                <br />
+                - Capinha;
+                <br />
+                - Suporte Eterno;
+                <br />
+                - Até 20% OFF em Acessórios Originais Apple;
+                <br />
+                - Troca Garantida nos Próximos Lançamentos da Apple; <br />-
+                Participação no programa de indicações com desconto progressivo.
               </p>
             </div>
           </div>
@@ -255,4 +279,3 @@ const PriceCalculator: React.FC = () => {
 };
 
 export default PriceCalculator;
-

@@ -3,6 +3,7 @@ import {
   Routes,
   Route,
   useLocation,
+  useNavigate,
 } from "react-router-dom";
 import { useEffect } from "react";
 import PageTransition from "./components/PageTransition";
@@ -21,6 +22,10 @@ import Economia from "./pages/Economia";
 import Agradecimento from "./pages/Agradecimento";
 import Admin from "./pages/Admin";
 import ProtectedRoute from "./components/ProtectedRoute";
+import TradeFunnel from "./components/TradeFunnel";
+import CalculationPage from "./pages/CalculationPage";
+import ResultPage from "./pages/ResultPage";
+
 // Componente para detectar mudanças de rota e rolar para o topo
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -39,6 +44,9 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
     "/teste-infalivel",
     "/agradecimento",
     "/admin",
+    "/trocar-de-iphone",
+    "/calculo-troca",
+    "/resultado-troca",
   ];
   const shouldHideHeader = hideHeaderRoutes.includes(location.pathname);
 
@@ -53,6 +61,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
 
 function App() {
   const isMobile = window.innerWidth <= 768;
+  // const navigate = useNavigate();
 
   return (
     <Router>
@@ -77,6 +86,52 @@ function App() {
               </PageTransition>
             }
           />
+          <Route
+            path="/trocar-de-iphone"
+            element={
+              <PageTransition>
+                <TradeFunnel />
+              </PageTransition>
+            }
+          />
+          <Route
+            path="/calculo-troca"
+            element={
+              <PageTransition>
+                <CalculationPage
+                  formData={JSON.parse(
+                    localStorage.getItem("funnelData") || "{}"
+                  )}
+                  onComplete={function (result: any): void {
+                    console.log("Resultado final:", result);
+                  }}
+                  onError={function (error: string): void {
+                    console.log("Erro final:", error);
+                    throw new Error("Function not implemented.");
+                  }}
+                />
+              </PageTransition>
+            }
+          />
+          <Route
+            path="/resultado-troca"
+            element={
+              <PageTransition>
+                <ResultPage
+                  result={undefined}
+                  formData={undefined}
+                  onSubmitContact={function (contactData: {
+                    nome: string;
+                    email: string;
+                    whatsapp: string;
+                  }): void {
+                    throw new Error("Function not implemented.");
+                  }}
+                />
+              </PageTransition>
+            }
+          />{" "}
+          {/* ← ADICIONAR */}
           <Route
             path="/iphones-novos"
             element={
@@ -149,7 +204,6 @@ function App() {
               </PageTransition>
             }
           />
-
           <Route
             path="/agradecimento"
             element={
