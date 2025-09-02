@@ -1,99 +1,121 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { Funnel } from "recharts";
 
-interface ResultData {
-  valorAparelho: number;
-  valorFinal: number;
-  temDefeito: boolean;
-  precisaCotacao: boolean;
-  cupomDesconto?: string;
-  descontoExtra?: number;
-  tempoExpiracao?: Date;
-}
-
-interface FormData {
+interface FunnelData {
   modeloAtual: string;
   capacidadeAtual: string;
-  modeloDesejado: string;
-  bateriaAtual: number;
   corAtual: string;
+  bateriaAtual: number;
   defeitos: string[];
   pecasTrocadas: boolean;
+  quaisPecas: string;
+  modeloDesejado: string;
+  ondeOuviu: string;
+  tempoPensando: string;
+  urgenciaTroca: string;
 }
 
-interface ResultPageProps {
-  result: ResultData;
-  formData: FormData;
-  onSubmitContact: (contactData: {
-    nome: string;
-    email: string;
-    whatsapp: string;
-  }) => void;
+interface TradeResult {
+  valorAparelho: number;
+  valorBase: number; // ← JÁ TEM
+  valorFinal: number;
+  depreciacao: number; // ← JÁ TEM
+  depreciacaoBateria: number; // ← ADICIONAR
+  depreciacaoDefeitos: number; // ← ADICIONAR
+  precoProduto: number; // ← ADICIONAR
+  valorComDesconto: number; // ← ADICIONAR
+  precisaCotacao: boolean;
+  motivoCotacao?: string;
+  produtoDesejado: any;
 }
 
-const ResultPage: React.FC<ResultPageProps> = ({
-  result,
-  formData,
-  onSubmitContact,
-}) => {
-  const [showContactForm, setShowContactForm] = useState<boolean>(false);
-  const [contactData, setContactData] = useState({
+interface ContactForm {
+  nome: string;
+  email: string;
+  whatsapp: string;
+  observacoes: string;
+}
+
+const ResultPage: React.FC = () => {
+  const navigate = useNavigate();
+  const [funnelData, setFunnelData] = useState<FunnelData | null>(null);
+  const [result, setResult] = useState<TradeResult | null>(null);
+  const [contactForm, setContactForm] = useState<ContactForm>({
     nome: "",
     email: "",
     whatsapp: "",
+    observacoes: "",
   });
-  const [timeLeft, setTimeLeft] = useState<string>("");
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [timeLeft, setTimeLeft] = useState<number>(7200); // 2 horas em segundos
+  const [showFAQ, setShowFAQ] = useState<boolean>(false);
 
-  // Countdown timer para o desconto
   useEffect(() => {
-    if (result.tempoExpiracao) {
-      const timer = setInterval(() => {
-        const now = new Date().getTime();
-        const expiration = new Date(result.tempoExpiracao!).getTime();
-        const distance = expiration - now;
+    loadData();
+    startTimer();
+  }, []);
 
-        if (distance > 0) {
-          const hours = Math.floor(
-            (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
-          );
-          const minutes = Math.floor(
-            (distance % (1000 * 60 * 60)) / (1000 * 60)
-          );
-          const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-          setTimeLeft(
-            `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`
-          );
-        } else {
-          setTimeLeft("EXPIRADO");
-          clearInterval(timer);
-        }
-      }, 1000);
-
-      return () => clearInterval(timer);
-    }
-  }, [result.tempoExpiracao]);
-
-  const handleSubmitContact = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-
+  const loadData = () => {
     try {
-      await onSubmitContact(contactData);
-      // Sucesso será tratado pelo componente pai
-    } catch (error) {
-      console.error("Erro ao enviar dados:", error);
-      alert("Erro ao enviar dados. Tente novamente.");
-    } finally {
-      setIsSubmitting(false);
+      // Carregar dados do funil
+      const funnelDataStr = localStorage.getItem("funnelData");
+      console.log(funnelDataStr);
+
+      if (funnelDataStr) {
+        setFunnelData(JSON.parse(funnelDataStr));
+      }
+      console.log(funnelData);
+
+      // Verificar se dados são válidos
+
+      // Carregar resultado do cálculo
+      const resultStr = localStorage.getItem("tradeResult");
+      if (resultStr) {
+        setResult(JSON.parse(resultStr));
+      } else {
+        // Fallback se não tiver resultado
+        setResult({
+          valorBase: 3500,
+          valorAparelho: 1450, // ← ADICIONAR
+          valorFinal: 6216.67, // ← ALTERAR
+          depreciacao: 1350, // ← ALTERAR
+          depreciacaoBateria: 1000, // ← ADICIONAR
+          depreciacaoDefeitos: 350, // ← ADICIONAR
+          precoProduto: 7666.67, // ← ADICIONAR
+          valorComDesconto: 6030.17, // ← ADICIONAR
+          precisaCotacao: false,
+          produtoDesejado: {
+            model: "iPhone 15 Pro",
+            pixPrice: "R$ 7.666,67", // ← ALTERAR
+          },
+        });
+      }
+    } catch (err) {
+      console.error("Erro ao carregar dados:", err);
+      navigate("/trocar-de-iphone");
     }
   };
 
-  const formatCurrency = (value: number): string => {
-    return new Intl.NumberFormat("pt-BR", {
-      style: "currency",
-      currency: "BRL",
-    }).format(value);
+  const startTimer = () => {
+    const interval = setInterval(() => {
+      setTimeLeft((prev) => {
+        if (prev <= 1) {
+          clearInterval(interval);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(interval);
+  };
+
+  const formatTime = (seconds: number): string => {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
+    return `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
   };
 
   const formatPhone = (value: string): string => {
@@ -103,358 +125,413 @@ const ResultPage: React.FC<ResultPageProps> = ({
     }
     return value;
   };
+  const formatCurrency = (value: number | undefined | null): string => {
+    if (!value || isNaN(value) || value === undefined || value === null) {
+      return "R$ 0,00";
+    }
+    return new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+    }).format(value);
+  };
 
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const formatted = formatPhone(e.target.value);
-    setContactData({ ...contactData, whatsapp: formatted });
+    setContactForm((prev) => ({ ...prev, whatsapp: formatted }));
   };
 
-  if (result.precisaCotacao) {
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      // Simular envio
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+
+      // Preparar dados para WhatsApp
+      const message = `
+🔥 *NOVA SOLICITAÇÃO DE TROCA - CompreFi*
+
+👤 *Cliente:* ${contactForm.nome}
+📧 *Email:* ${contactForm.email}
+📱 *WhatsApp:* ${contactForm.whatsapp}
+
+📱 *TROCA DESEJADA:*
+• De: ${funnelData?.modeloAtual} ${funnelData?.capacidadeAtual} ${funnelData?.bateriaAtual}%
+• Para: ${result?.produtoDesejado?.model}
+
+💰 *VALORES:*
+• Valor base: R$ ${result?.produtoDesejado.pixPrice}
+• Valor final: R$ ${formatCurrency(result?.valorFinal)} 
+• Depreciação: R$ ${result?.depreciacao}
+
+🔋 *ESTADO DO APARELHO:*
+• Bateria: ${funnelData?.bateriaAtual}%
+• Defeitos: ${funnelData?.defeitos?.join(", ") || "Nenhum"}
+• Peças trocadas: ${funnelData?.pecasTrocadas ? "Sim" : "Não"}
+
+📝 *Observações:* ${contactForm.observacoes || "Nenhuma"}
+
+⏰ *Gerado em:* ${new Date().toLocaleString("pt-BR")}
+    `.trim();
+
+      // Redirecionar para WhatsApp
+      const whatsappUrl = `https://wa.me/5534999252590?text=${encodeURIComponent(message)}`;
+      window.open(whatsappUrl, "_blank");
+
+      // Mostrar sucesso
+      alert(
+        "Dados enviados com sucesso! Você será redirecionado para o WhatsApp."
+      );
+    } catch (err) {
+      console.error("Erro ao enviar:", err);
+      alert("Erro ao enviar dados. Tente novamente.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (!result) {
     return (
-      <div className="min-h-screen bg-black flex items-center justify-center p-4">
-        <div className="max-w-2xl w-full text-center">
-          <div className="mb-8">
-            <div className="w-20 h-20 mx-auto bg-orange-600 rounded-full flex items-center justify-center mb-6">
-              <svg
-                className="w-10 h-10 text-white"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
-                  clipRule="evenodd"
-                />
-              </svg>
-            </div>
-
-            <h1 className="text-3xl font-bold text-white mb-4">
-              Cotação Personalizada Necessária
-            </h1>
-            <p className="text-gray-400 text-lg">
-              Devido às condições específicas do seu iPhone, nossa equipe fará
-              uma avaliação personalizada.
-            </p>
-          </div>
-
-          <div className="bg-orange-900 bg-opacity-30 border border-orange-700 rounded-lg p-6 mb-8">
-            <h3 className="text-orange-300 font-semibold text-lg mb-3">
-              ⏰ Você receberá sua cotação em até 3 horas
-            </h3>
-            <p className="text-orange-200 text-sm">
-              Nossa equipe especializada analisará as condições específicas do
-              seu {formData.modeloAtual}e enviará uma proposta personalizada via
-              WhatsApp.
-            </p>
-          </div>
-
-          <button
-            onClick={() => setShowContactForm(true)}
-            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 px-8 rounded-lg transition-colors text-lg"
-          >
-            Receber Cotação no WhatsApp
-          </button>
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
+          <p className="text-white">Carregando resultado...</p>
         </div>
       </div>
     );
   }
 
+  const valorTroca = result.valorFinal;
+  const precoDesejado = parseFloat(
+    result.produtoDesejado?.pixPrice
+      ?.replace(/[^\d,]/g, "")
+      .replace(",", ".") || "4800"
+  );
+  const valorPagar = Math.max(0, precoDesejado - valorTroca);
+
   return (
-    <div className="min-h-screen bg-black p-4">
-      <div className="max-w-4xl mx-auto">
-        {!showContactForm ? (
-          <>
-            {/* Header */}
-            <div className="text-center mb-8">
-              <div className="w-20 h-20 mx-auto bg-green-600 rounded-full flex items-center justify-center mb-6">
-                <svg
-                  className="w-10 h-10 text-white"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-              </div>
+    <div className="min-h-screen bg-black text-white">
+      <div className="container mx-auto px-4 py-8">
+        <div className="max-w-4xl mx-auto">
+          {/* Header */}
+          <div className="text-center mb-8">
+            <h1 className="text-4xl font-bold text-white mb-4">
+              🎉 Sua Troca Está Pronta!
+            </h1>
+            <p className="text-gray-400 text-lg">
+              Calculamos o melhor valor para sua troca. Confira os detalhes
+              abaixo.
+            </p>
+          </div>
 
-              <h1 className="text-3xl font-bold text-white mb-4">
-                🎉 Sua Proposta Está Pronta!
-              </h1>
-              <p className="text-gray-400 text-lg">
-                Calculamos o valor exato para trocar seu {formData.modeloAtual}{" "}
-                por um {formData.modeloDesejado}
-              </p>
-            </div>
-
-            {/* Main Result Card */}
-            <div className="bg-gradient-to-br from-blue-900 to-green-900 rounded-2xl p-8 mb-8 border border-blue-500">
-              <div className="text-center mb-6">
-                <h2 className="text-2xl font-bold text-white mb-2">
-                  Valor para completar sua troca:
-                </h2>
-                <div className="text-5xl font-bold text-green-400 mb-2">
-                  {formatCurrency(result.valorFinal)}
-                </div>
-                <p className="text-blue-200">
-                  Seu {formData.modeloAtual} vale{" "}
-                  {formatCurrency(result.valorAparelho)}
-                </p>
-              </div>
-
-              {/* Payment Options */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                <div className="bg-black bg-opacity-30 rounded-lg p-4 text-center">
-                  <div className="text-green-400 font-semibold text-lg mb-1">
-                    💰 PIX com desconto
-                  </div>
-                  <div className="text-2xl font-bold text-white">
-                    {formatCurrency(result.valorFinal * 0.97)}{" "}
-                    {/* 3% desconto */}
-                  </div>
-                  <div className="text-sm text-gray-300">
-                    Economia de {formatCurrency(result.valorFinal * 0.03)}
-                  </div>
-                </div>
-
-                <div className="bg-black bg-opacity-30 rounded-lg p-4 text-center">
-                  <div className="text-blue-400 font-semibold text-lg mb-1">
-                    💳 12x sem juros
-                  </div>
-                  <div className="text-2xl font-bold text-white">
-                    {formatCurrency(result.valorFinal / 12)}
-                  </div>
-                  <div className="text-sm text-gray-300">
-                    Total: {formatCurrency(result.valorFinal)}
-                  </div>
-                </div>
-              </div>
-
-              {/* Bonus Section */}
-              <div className="bg-yellow-900 bg-opacity-30 border border-yellow-600 rounded-lg p-4">
-                <h3 className="text-yellow-300 font-semibold text-lg mb-3 text-center">
-                  🎁 Bônus Inclusos na Sua Troca:
-                </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
-                  <div className="flex items-center text-yellow-200">
-                    <span className="mr-2">✅</span>
-                    Capinha de proteção grátis
-                  </div>
-                  <div className="flex items-center text-yellow-200">
-                    <span className="mr-2">✅</span>
-                    Até 20% OFF em acessórios originais
-                  </div>
-                  <div className="flex items-center text-yellow-200">
-                    <span className="mr-2">✅</span>
-                    Troca garantida nos próximos lançamentos
-                  </div>
-                  <div className="flex items-center text-yellow-200">
-                    <span className="mr-2">✅</span>
-                    Suporte técnico eterno
-                  </div>
-                  <div className="flex items-center text-yellow-200">
-                    <span className="mr-2">✅</span>
-                    Programa de indicações com desconto progressivo
-                  </div>
-                  <div className="flex items-center text-yellow-200">
-                    <span className="mr-2">✅</span>
-                    Garantia de 1 ano
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Urgency Timer */}
-            {result.cupomDesconto && timeLeft && timeLeft !== "EXPIRADO" && (
-              <div className="bg-red-900 bg-opacity-30 border border-red-600 rounded-lg p-6 mb-8 text-center">
-                <h3 className="text-red-300 font-bold text-xl mb-2">
-                  ⚡ Oferta Especial por Tempo Limitado!
-                </h3>
-                <p className="text-red-200 mb-3">
-                  Desconto extra de {result.descontoExtra}% expira em:
-                </p>
-                <div className="text-3xl font-mono font-bold text-red-400 mb-3">
-                  {timeLeft}
-                </div>
-                <p className="text-red-200 text-sm">
-                  Cupom:{" "}
-                  <span className="font-mono bg-red-800 px-2 py-1 rounded">
-                    {result.cupomDesconto}
-                  </span>
-                </p>
-              </div>
-            )}
-
-            {/* CTA Button */}
+          {/* Timer de Urgência */}
+          <div className="bg-gradient-to-r from-red-900 to-orange-900 rounded-lg p-6 mb-8 border border-red-700">
             <div className="text-center">
-              <button
-                onClick={() => setShowContactForm(true)}
-                className="bg-green-600 hover:bg-green-700 text-white font-bold py-4 px-12 rounded-lg text-xl transition-colors shadow-lg"
-              >
-                📱 Receber Proposta no WhatsApp
-              </button>
-              <p className="text-gray-400 text-sm mt-3">
-                Enviaremos todos os detalhes e próximos passos
+              <h3 className="text-xl font-bold text-white mb-2">
+                ⏰ Oferta Especial por Tempo Limitado!
+              </h3>
+              <p className="text-orange-200 mb-3">
+                Desconto extra de R$ 200 válido por apenas:
               </p>
+              <div className="text-3xl font-mono font-bold text-yellow-300">
+                {formatTime(timeLeft)}
+              </div>
             </div>
-          </>
-        ) : (
-          /* Contact Form */
-          <div className="max-w-md mx-auto">
-            <div className="text-center mb-8">
-              <h2 className="text-2xl font-bold text-white mb-4">
-                📧 Onde devemos enviar sua simulação?
-              </h2>
-              <p className="text-gray-400">
-                Preencha seus dados para receber a proposta completa com todos
-                os detalhes
-              </p>
-            </div>
+          </div>
 
-            <form onSubmit={handleSubmitContact} className="space-y-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
-                  Nome completo *
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={contactData.nome}
-                  onChange={(e) =>
-                    setContactData({ ...contactData, nome: e.target.value })
-                  }
-                  className="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-md text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none"
-                  placeholder="Seu nome completo"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
-                  E-mail *
-                </label>
-                <input
-                  type="email"
-                  required
-                  value={contactData.email}
-                  onChange={(e) =>
-                    setContactData({ ...contactData, email: e.target.value })
-                  }
-                  className="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-md text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none"
-                  placeholder="seu@email.com"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
-                  WhatsApp *
-                </label>
-                <input
-                  type="tel"
-                  required
-                  value={contactData.whatsapp}
-                  onChange={handlePhoneChange}
-                  className="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-md text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none"
-                  placeholder="(11) 99999-9999"
-                  maxLength={15}
-                />
-              </div>
-
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className="w-full bg-green-600 hover:bg-green-700 disabled:bg-gray-600 text-white font-semibold py-4 px-6 rounded-lg transition-colors"
-              >
-                {isSubmitting ? (
-                  <div className="flex items-center justify-center">
-                    <svg
-                      className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
-                      <circle
-                        className="opacity-25"
-                        cx="12"
-                        cy="12"
-                        r="10"
-                        stroke="currentColor"
-                        strokeWidth="4"
-                      ></circle>
-                      <path
-                        className="opacity-75"
-                        fill="currentColor"
-                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                      ></path>
-                    </svg>
-                    Enviando...
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* Resultado da Troca */}
+            <div className="space-y-6">
+              {/* Valor Principal */}
+              <div className="bg-gradient-to-br from-green-900 to-emerald-900 rounded-lg p-8 border border-green-700">
+                <div className="text-center">
+                  <h2 className="text-2xl font-bold text-white mb-4">
+                    💰 Valor da Sua Troca
+                  </h2>
+                  <div className="text-5xl font-bold text-green-300 mb-2">
+                    R$ {valorTroca.toLocaleString("pt-BR")}
                   </div>
-                ) : (
-                  "📱 Enviar Proposta Agora"
+                  <p className="text-green-200">
+                    Pelo seu {funnelData?.modeloAtual}{" "}
+                    {funnelData?.capacidadeAtual}
+                  </p>
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                <div className="flex justify-between">
+                  <span className="text-gray-400">Valor base do aparelho:</span>
+                  <span className="text-white">
+                    {formatCurrency(result?.valorBase)}
+                  </span>
+                </div>
+
+                <div className="flex justify-between text-red-400">
+                  <span>Depreciação bateria:</span>
+                  <span>- {formatCurrency(result?.depreciacaoBateria)}</span>
+                </div>
+
+                <div className="flex justify-between text-red-400">
+                  <span>Depreciação defeitos:</span>
+                  <span>- {formatCurrency(result?.depreciacaoDefeitos)}</span>
+                </div>
+
+                <hr className="border-gray-700" />
+
+                <div className="flex justify-between text-lg font-bold">
+                  <span className="text-white">Valor final aparelho:</span>
+                  <span className="text-green-400">
+                    {formatCurrency(result?.valorAparelho)}
+                  </span>
+                </div>
+              </div>
+
+              {/* Resumo da Troca */}
+              <div className="bg-gray-900 rounded-lg p-6 border border-gray-700">
+                <h3 className="text-xl font-bold text-white mb-4">
+                  📋 Resumo da Troca
+                </h3>
+
+                <div className="space-y-3">
+                  <div className="flex justify-between">
+                    <span className="text-gray-400">Valor original:</span>
+                    <span className="text-white">
+                      {result?.produtoDesejado.pixPrice || 0}
+                    </span>
+                  </div>
+
+                  <div className="flex justify-between text-red-400">
+                    <span>Depreciação total:</span>
+                    <span>- R$ {formatCurrency(result?.valorAparelho)}</span>
+                  </div>
+
+                  <hr className="border-gray-700" />
+
+                  <div className="flex justify-between text-lg font-bold">
+                    <span className="text-white">Valor final:</span>
+                    <span className="text-green-400">
+                      R$ {formatCurrency(result?.valorFinal)}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Produto Desejado */}
+              <div className="bg-blue-900 bg-opacity-50 rounded-lg p-6 border border-blue-700">
+                <h3 className="text-xl font-bold text-white mb-4">
+                  📱 iPhone Desejado
+                </h3>
+
+                <div className="space-y-3">
+                  <div className="flex justify-between">
+                    <span className="text-gray-400">Modelo:</span>
+                    <span className="text-white">
+                      {result.produtoDesejado?.model}
+                    </span>
+                  </div>
+
+                  <div className="flex justify-between">
+                    <span className="text-gray-400">Preço PIX:</span>
+                    <span className="text-white">
+                      {result.produtoDesejado?.pixPrice}
+                    </span>
+                  </div>
+
+                  <hr className="border-blue-700" />
+
+                  <div className="flex justify-between text-lg font-bold">
+                    <span className="text-white">Você paga apenas:</span>
+                    <span className="text-yellow-400">
+                      R$ {valorPagar.toLocaleString("pt-BR")}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Bônus */}
+              <div className="bg-purple-900 bg-opacity-50 rounded-lg p-6 border border-purple-700">
+                <h3 className="text-xl font-bold text-white mb-4">
+                  🎁 Bônus Inclusos
+                </h3>
+
+                <div className="space-y-2">
+                  <div className="flex items-center">
+                    <span className="text-green-400 mr-2">✓</span>
+                    <span className="text-white">Capinha premium grátis;</span>
+                  </div>
+                  <div className="flex items-center">
+                    <span className="text-green-400 mr-2">✓</span>
+                    <span className="text-white">
+                      Até 20% OFF em acessórios originais Apple;
+                    </span>
+                  </div>
+                  <div className="flex items-center">
+                    <span className="text-green-400 mr-2">✓</span>
+                    <span className="text-white">Suporte Eterno;</span>
+                  </div>
+                  <div className="flex items-center">
+                    <span className="text-green-400 mr-2">✓</span>
+                    <span className="text-white">
+                      Desconto de + R$ 200 (por 2h)
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Formulário de Contato */}
+            <div className="space-y-6">
+              <div className="bg-gray-900 rounded-lg p-6 border border-gray-700">
+                <h3 className="text-xl font-bold text-white mb-4">
+                  📞 Finalize Sua Troca
+                </h3>
+                <p className="text-gray-400 mb-6">
+                  Preencha seus dados e nossa equipe entrará em contato em até
+                  30 minutos!
+                </p>
+
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                      Nome completo *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={contactForm.nome}
+                      onChange={(e) =>
+                        setContactForm((prev) => ({
+                          ...prev,
+                          nome: e.target.value,
+                        }))
+                      }
+                      className="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-md text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none"
+                      placeholder="Seu nome completo"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                      Email *
+                    </label>
+                    <input
+                      type="email"
+                      required
+                      value={contactForm.email}
+                      onChange={(e) =>
+                        setContactForm((prev) => ({
+                          ...prev,
+                          email: e.target.value,
+                        }))
+                      }
+                      className="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-md text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none"
+                      placeholder="seu@email.com"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                      WhatsApp *
+                    </label>
+                    <input
+                      type="tel"
+                      required
+                      value={contactForm.whatsapp}
+                      onChange={handlePhoneChange}
+                      className="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-md text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none"
+                      placeholder="(11) 99999-9999"
+                      maxLength={15}
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                      Observações (opcional)
+                    </label>
+                    <textarea
+                      value={contactForm.observacoes}
+                      onChange={(e) =>
+                        setContactForm((prev) => ({
+                          ...prev,
+                          observacoes: e.target.value,
+                        }))
+                      }
+                      className="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-md text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none"
+                      placeholder="Alguma informação adicional..."
+                      rows={3}
+                    />
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 disabled:from-gray-600 disabled:to-gray-600 text-white font-bold py-4 px-6 rounded-md transition-all duration-200 flex items-center justify-center"
+                  >
+                    {loading ? (
+                      <>
+                        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                        Enviando...
+                      </>
+                    ) : (
+                      <>
+                        <span className="mr-2">💬</span>
+                        Finalizar via WhatsApp
+                      </>
+                    )}
+                  </button>
+                </form>
+              </div>
+
+              {/* FAQ */}
+              <div className="bg-gray-900 rounded-lg border border-gray-700">
+                <button
+                  onClick={() => setShowFAQ(!showFAQ)}
+                  className="w-full p-6 text-left flex justify-between items-center"
+                >
+                  <h3 className="text-xl font-bold text-white">
+                    ❓ Dúvidas Frequentes
+                  </h3>
+                  <span className="text-gray-400">{showFAQ ? "−" : "+"}</span>
+                </button>
+
+                {showFAQ && (
+                  <div className="px-6 pb-6 space-y-4">
+                    <div>
+                      <h4 className="font-semibold text-white mb-2">
+                        Como funciona a troca?
+                      </h4>
+                      <p className="text-gray-400 text-sm">
+                        Você nos envia seu iPhone atual e recebe o novo. Todo
+                        processo é feito com segurança e rastreamento.
+                      </p>
+                    </div>
+
+                    <div>
+                      <h4 className="font-semibold text-white mb-2">
+                        Quanto tempo demora?
+                      </h4>
+                      <p className="text-gray-400 text-sm">
+                        Em média 24-48 horas após recebermos seu aparelho.
+                        Processo completo em até 1 semana.
+                      </p>
+                    </div>
+
+                    <div>
+                      <h4 className="font-semibold text-white mb-2">
+                        E se eu desistir?
+                      </h4>
+                      <p className="text-gray-400 text-sm">
+                        Sem problemas! Devolvemos seu aparelho sem custo
+                        adicional em até 7 dias.
+                      </p>
+                    </div>
+                  </div>
                 )}
-              </button>
-            </form>
-
-            <div className="mt-8 text-center">
-              <p className="text-gray-400 text-sm">
-                🔒 Seus dados estão seguros e não serão compartilhados com
-                terceiros
-              </p>
-            </div>
-          </div>
-        )}
-
-        {/* FAQ Section */}
-        {!showContactForm && (
-          <div className="mt-16">
-            <h3 className="text-2xl font-bold text-white text-center mb-8">
-              ❓ Perguntas Frequentes
-            </h3>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="bg-gray-800 rounded-lg p-6">
-                <h4 className="text-white font-semibold mb-2">
-                  Como funciona a troca?
-                </h4>
-                <p className="text-gray-400 text-sm">
-                  Você nos envia seu iPhone usado, avaliamos e enviamos o novo.
-                  Todo o processo é seguro e rastreado.
-                </p>
-              </div>
-
-              <div className="bg-gray-800 rounded-lg p-6">
-                <h4 className="text-white font-semibold mb-2">
-                  E se meu iPhone valer menos?
-                </h4>
-                <p className="text-gray-400 text-sm">
-                  Nossa avaliação é precisa. Se houver diferença, você pode
-                  cancelar sem custos ou renegociar.
-                </p>
-              </div>
-
-              <div className="bg-gray-800 rounded-lg p-6">
-                <h4 className="text-white font-semibold mb-2">
-                  Qual a garantia?
-                </h4>
-                <p className="text-gray-400 text-sm">
-                  Todos os iPhones têm garantia de 1 ano e suporte técnico
-                  vitalício da CompreFi.
-                </p>
-              </div>
-
-              <div className="bg-gray-800 rounded-lg p-6">
-                <h4 className="text-white font-semibold mb-2">
-                  Posso parcelar?
-                </h4>
-                <p className="text-gray-400 text-sm">
-                  Sim! Oferecemos parcelamento em até 12x sem juros no cartão de
-                  crédito.
-                </p>
               </div>
             </div>
           </div>
-        )}
+        </div>
       </div>
     </div>
   );

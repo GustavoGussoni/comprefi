@@ -1,23 +1,46 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
-interface CalculationPageProps {
-  formData: {
-    modeloAtual: string;
-    capacidadeAtual: string;
-    modeloDesejado: string;
-  };
-  onComplete: (result: any) => void;
-  onError: (error: string) => void;
+interface FunnelData {
+  modeloAtual: string;
+  capacidadeAtual: string;
+  corAtual: string;
+  bateriaAtual: number;
+  defeitos: string[];
+  pecasTrocadas: boolean;
+  quaisPecas: string;
+  modeloDesejado: string;
+  ondeOuviu: string;
+  tempoPensando: string;
+  urgenciaTroca: string;
 }
 
-const CalculationPage: React.FC<CalculationPageProps> = ({
-  formData,
-  onComplete,
-  onError,
-}) => {
+interface TradeResult {
+  valorAparelho: number;
+  valorFinal: number;
+  temDefeito: boolean;
+  precisaCotacao: boolean;
+  cupomDesconto?: string; // Pode ser opcional
+  descontoExtra?: number; // Pode ser opcional
+  tempoExpiracao?: Date; // Pode ser opcional
+  produtoDesejado?: any;
+
+  // NOVAS VARIÁVEIS
+  valorBase?: number; // Valor base do aparelho
+  depreciacaoBateria?: number; // Depreciação por bateria
+  depreciacaoDefeitos?: number; // Depreciação por defeitos
+  valorAPagar?: number; // Valor a pagar
+  valorComDesconto?: number; // Valor com desconto
+}
+
+const CalculationPage: React.FC = () => {
+  const navigate = useNavigate();
   const [progress, setProgress] = useState<number>(0);
   const [currentStep, setCurrentStep] = useState<number>(0);
   const [isComplete, setIsComplete] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  const [funnelData, setFunnelData] = useState<FunnelData | null>(null);
 
   const steps = [
     {
@@ -36,7 +59,7 @@ const CalculationPage: React.FC<CalculationPageProps> = ({
     },
     {
       id: 3,
-      title: `Gerando cálculo específico para trocar ${formData.modeloAtual} por ${formData.modeloDesejado}`,
+      title: "Gerando cálculo específico para sua troca",
       description: "Calculando valor final da sua troca",
       duration: 2000,
       icon: "🧮",
@@ -44,10 +67,37 @@ const CalculationPage: React.FC<CalculationPageProps> = ({
   ];
 
   useEffect(() => {
-    simulateCalculation();
+    loadDataAndCalculate();
   }, []);
 
-  const simulateCalculation = async () => {
+  const loadDataAndCalculate = async () => {
+    try {
+      // Pegar dados do localStorage
+      const funnelDataStr = localStorage.getItem("funnelData");
+      if (!funnelDataStr) {
+        setError(
+          "Dados do questionário não encontrados. Refaça o questionário."
+        );
+        return;
+      }
+
+      const data: FunnelData = JSON.parse(funnelDataStr);
+      setFunnelData(data);
+
+      // Atualizar título da etapa 3 com dados reais
+      steps[2].title = `Gerando cálculo específico para trocar ${data.modeloAtual} por produto desejado`;
+
+      // Iniciar simulação
+      await simulateCalculation(data);
+    } catch (err) {
+      console.error("Erro ao carregar dados:", err);
+      setError("Erro ao processar dados. Tente novamente.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const simulateCalculation = async (data: FunnelData) => {
     // Simular progresso através das 3 etapas
     for (let stepIndex = 0; stepIndex < steps.length; stepIndex++) {
       setCurrentStep(stepIndex);
@@ -78,31 +128,182 @@ const CalculationPage: React.FC<CalculationPageProps> = ({
     // Finalizar cálculo
     setIsComplete(true);
 
-    // Simular chamada da API de cálculo
+    // Fazer chamada real para API ou usar fallback
     try {
-      // Aqui você faria a chamada real para a API
-      // const result = await apiService.calculateTrade(formData);
+      const result = await calculateTrade(data);
 
-      // Simulação de resultado
-      const mockResult = {
-        valorAparelho: 3500,
-        valorFinal: 1200,
-        temDefeito: false,
-        precisaCotacao: false,
-        cupomDesconto: "TROCA2H-ABC123",
-        descontoExtra: 3,
-        tempoExpiracao: new Date(Date.now() + 2 * 60 * 60 * 1000), // 2 horas
-      };
+      // Salvar resultado no localStorage
+      localStorage.setItem("tradeResult", JSON.stringify(result));
 
       // Aguardar um pouco antes de redirecionar
       setTimeout(() => {
-        onComplete(mockResult);
+        navigate("/resultado-troca");
       }, 1500);
     } catch (error) {
       console.error("Erro no cálculo:", error);
-      onError("Erro ao calcular a troca. Tente novamente.");
+      setError("Erro ao calcular a troca. Tente novamente.");
     }
   };
+
+  const calculateTrade = async (data: FunnelData): Promise<TradeResult> => {
+    try {
+      console.log("🔧 Iniciando cálculo de troca...");
+
+      // Buscar produto desejado (se necessário)
+      let produtoDesejado;
+      try {
+        const response = await fetch(
+          `http://localhost:3000/products/${data.modeloDesejado}`
+        );
+        if (response.ok) {
+          produtoDesejado = await response.json();
+          console.log("✅ Produto encontrado:", produtoDesejado);
+        } else {
+          console.warn("⚠️ Produto não encontrado, usando fallback");
+          produtoDesejado = {
+            id: data.modeloDesejado,
+            model: "iPhone 15 Pro",
+            pixPrice: "R$ 4.800,00",
+          };
+        }
+      } catch (err) {
+        console.warn("⚠️ Erro ao buscar produto, usando fallback:", err);
+        produtoDesejado = {
+          id: data.modeloDesejado,
+          model: "iPhone 15 Pro",
+          pixPrice: "R$ 4.800,00",
+        };
+      }
+
+      // Preparar dados para API de troca (Formato da Tentativa 4)
+      const tradeData = {
+        modeloAtual: data.modeloAtual,
+        capacidadeAtual: data.capacidadeAtual,
+        corAtual: data.corAtual, // Este campo é obrigatório!
+        bateriaAtual: data.bateriaAtual,
+        defeitos: data.defeitos, // Array de strings
+        pecasTrocadas: data.pecasTrocadas,
+        quaisPecas: data.quaisPecas,
+        modeloDesejado: produtoDesejado.model, // Nome do modelo
+      };
+
+      console.log("🔧 Dados enviados para API:", tradeData);
+
+      const tradeResponse = await fetch(
+        "http://localhost:3000/trade/calculate",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(tradeData),
+        }
+      );
+
+      if (!tradeResponse.ok) {
+        const errorText = await tradeResponse.text();
+        console.error("❌ Erro da API:", errorText);
+        throw new Error(`API Error: ${errorText}`);
+      }
+
+      const apiResult = await tradeResponse.json();
+      console.log("✅ Resultado da API:", apiResult);
+
+      // Mapear o resultado da API para o formato esperado pelo front-end
+      return {
+        valorAparelho: apiResult.valorAparelho || 0,
+        valorFinal: apiResult.valorFinal || 0,
+        temDefeito: data.defeitos.length > 0,
+        precisaCotacao: apiResult.precisaCotacao || false,
+        cupomDesconto:
+          apiResult.cupomDesconto ||
+          "TROCA2H-" + Math.random().toString(36).substr(2, 6).toUpperCase(),
+        descontoExtra: apiResult.descontoExtra || 0,
+        tempoExpiracao: apiResult.tempoExpiracao
+          ? new Date(apiResult.tempoExpiracao)
+          : new Date(Date.now() + 2 * 60 * 60 * 1000),
+        produtoDesejado: produtoDesejado,
+
+        // NOVAS VARIÁVEIS PARA O FRONT-END
+        valorBase: apiResult.valorBase || 0, // Adicione se a API retornar
+        depreciacaoBateria: apiResult.depreciacaoBateria || 0, // Adicione se a API retornar
+        depreciacaoDefeitos: apiResult.depreciacaoDefeitos || 0, // Adicione se a API retornar
+        valorAPagar: apiResult.valorAPagar || 0, // Adicione se a API retornar
+        valorComDesconto: apiResult.valorComDesconto || 0, // Adicione se a API retornar
+      };
+    } catch (err) {
+      console.error("❌ Erro no cálculo de troca:", err);
+      // Fallback inteligente (já existente)
+      const valorBase = getValorBase(data.modeloAtual);
+      const depreciacao = calculateDepreciacao(data);
+      const valorFinal = Math.max(500, valorBase - depreciacao);
+
+      return {
+        valorAparelho: valorBase,
+        valorFinal: valorFinal,
+        temDefeito: data.defeitos.length > 0,
+        precisaCotacao: data.defeitos.length > 3,
+        cupomDesconto:
+          "TROCA2H-" + Math.random().toString(36).substr(2, 6).toUpperCase(),
+        descontoExtra: 200,
+        tempoExpiracao: new Date(Date.now() + 2 * 60 * 60 * 1000),
+        produtoDesejado: {
+          model: "iPhone 15 Pro",
+          pixPrice: "R$ 4.800,00",
+        },
+        // NOVAS VARIÁVEIS PARA O FRONT-END (fallback)
+        valorBase: valorBase,
+        depreciacaoBateria: (100 - data.bateriaAtual) * 10, // Exemplo de cálculo
+        depreciacaoDefeitos: data.defeitos.length * 300, // Exemplo de cálculo
+        valorAPagar: valorFinal, // No fallback, valor a pagar é o valor final
+        valorComDesconto: valorFinal * 0.97, // Exemplo de cálculo
+      };
+    }
+  };
+
+  const getValorBase = (modelo: string): number => {
+    if (modelo.includes("16")) return 4500;
+    if (modelo.includes("15")) return 4000;
+    if (modelo.includes("14")) return 3500;
+    if (modelo.includes("13")) return 3000;
+    if (modelo.includes("12")) return 2500;
+    return 2000;
+  };
+
+  const calculateDepreciacao = (data: FunnelData): number => {
+    let depreciacao = 0;
+
+    // Depreciação por bateria
+    if (data.bateriaAtual < 80) depreciacao += (80 - data.bateriaAtual) * 20;
+
+    // Depreciação por defeitos
+    depreciacao += data.defeitos.length * 300;
+
+    // Depreciação por peças trocadas
+    if (data.pecasTrocadas) depreciacao += 500;
+
+    return depreciacao;
+  };
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <div className="text-center max-w-md mx-auto p-8">
+          <div className="text-red-500 text-6xl mb-4">⚠️</div>
+          <h2 className="text-2xl font-bold text-white mb-4">
+            Ops! Algo deu errado
+          </h2>
+          <p className="text-gray-400 mb-6">{error}</p>
+          <button
+            onClick={() => navigate("/questionario")}
+            className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-6 rounded-md transition-colors"
+          >
+            Refazer Questionário
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-black flex items-center justify-center p-4">

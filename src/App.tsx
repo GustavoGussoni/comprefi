@@ -98,18 +98,7 @@ function App() {
             path="/calculo-troca"
             element={
               <PageTransition>
-                <CalculationPage
-                  formData={JSON.parse(
-                    localStorage.getItem("funnelData") || "{}"
-                  )}
-                  onComplete={function (result: any): void {
-                    console.log("Resultado final:", result);
-                  }}
-                  onError={function (error: string): void {
-                    console.log("Erro final:", error);
-                    throw new Error("Function not implemented.");
-                  }}
-                />
+                <CalculationPage />
               </PageTransition>
             }
           />
@@ -117,17 +106,7 @@ function App() {
             path="/resultado-troca"
             element={
               <PageTransition>
-                <ResultPage
-                  result={undefined}
-                  formData={undefined}
-                  onSubmitContact={function (contactData: {
-                    nome: string;
-                    email: string;
-                    whatsapp: string;
-                  }): void {
-                    throw new Error("Function not implemented.");
-                  }}
-                />
+                <ResultPage />
               </PageTransition>
             }
           />{" "}
