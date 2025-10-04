@@ -1,3 +1,4 @@
+import PageTransition from "@/components/PageTransition";
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -16,21 +17,25 @@ interface FunnelData {
 }
 
 interface TradeResult {
+  // Campos principais
   valorAparelho: number;
   valorFinal: number;
   temDefeito: boolean;
   precisaCotacao: boolean;
-  cupomDesconto?: string; // Pode ser opcional
-  descontoExtra?: number; // Pode ser opcional
-  tempoExpiracao?: Date; // Pode ser opcional
-  produtoDesejado?: any;
 
-  // NOVAS VARIÁVEIS
-  valorBase?: number; // Valor base do aparelho
-  depreciacaoBateria?: number; // Depreciação por bateria
-  depreciacaoDefeitos?: number; // Depreciação por defeitos
-  valorAPagar?: number; // Valor a pagar
-  valorComDesconto?: number; // Valor com desconto
+  // Campos detalhados da API
+  valorBase: number;
+  depreciacaoBateria: number;
+  depreciacaoDefeitos: number;
+  precoProduto: number;
+  valorComDesconto: number;
+
+  // Campos opcionais
+  cupomDesconto?: string;
+  descontoExtra?: number;
+  tempoExpiracao?: Date;
+  produtoDesejado?: any;
+  resumoDetalhado?: string;
 }
 
 const CalculationPage: React.FC = () => {
@@ -128,7 +133,7 @@ const CalculationPage: React.FC = () => {
     // Finalizar cálculo
     setIsComplete(true);
 
-    // Fazer chamada real para API ou usar fallback
+    // Fazer chamada real para API
     try {
       const result = await calculateTrade(data);
 
@@ -149,7 +154,7 @@ const CalculationPage: React.FC = () => {
     try {
       console.log("🔧 Iniciando cálculo de troca...");
 
-      // Buscar produto desejado (se necessário)
+      // Buscar produto desejado
       let produtoDesejado;
       try {
         const response = await fetch(
@@ -175,20 +180,21 @@ const CalculationPage: React.FC = () => {
         };
       }
 
-      // Preparar dados para API de troca (Formato da Tentativa 4)
+      // Preparar dados para API (formato correto - tentativa 4)
       const tradeData = {
         modeloAtual: data.modeloAtual,
         capacidadeAtual: data.capacidadeAtual,
-        corAtual: data.corAtual, // Este campo é obrigatório!
+        corAtual: data.corAtual, // Campo obrigatório
         bateriaAtual: data.bateriaAtual,
         defeitos: data.defeitos, // Array de strings
         pecasTrocadas: data.pecasTrocadas,
         quaisPecas: data.quaisPecas,
-        modeloDesejado: produtoDesejado.model, // Nome do modelo
+        modeloDesejado: produtoDesejado.model,
       };
 
       console.log("🔧 Dados enviados para API:", tradeData);
 
+      // Fazer chamada para API
       const tradeResponse = await fetch(
         "http://localhost:3000/trade/calculate",
         {
@@ -209,54 +215,72 @@ const CalculationPage: React.FC = () => {
       const apiResult = await tradeResponse.json();
       console.log("✅ Resultado da API:", apiResult);
 
-      // Mapear o resultado da API para o formato esperado pelo front-end
+      // Mapear TODOS os campos da API para o frontend
       return {
+        // Campos principais
         valorAparelho: apiResult.valorAparelho || 0,
         valorFinal: apiResult.valorFinal || 0,
-        temDefeito: data.defeitos.length > 0,
+        temDefeito: (data.defeitos?.length || 0) > 0,
         precisaCotacao: apiResult.precisaCotacao || false,
+
+        // Campos detalhados da API (NOVOS)
+        valorBase: apiResult.valorBase || 0,
+        depreciacaoBateria: apiResult.depreciacaoBateria || 0,
+        depreciacaoDefeitos: apiResult.depreciacaoDefeitos || 0,
+        precoProduto: apiResult.precoProduto || 0,
+        valorComDesconto: apiResult.valorComDesconto || 0,
+
+        // Campos opcionais
         cupomDesconto:
           apiResult.cupomDesconto ||
           "TROCA2H-" + Math.random().toString(36).substr(2, 6).toUpperCase(),
-        descontoExtra: apiResult.descontoExtra || 0,
+        descontoExtra: apiResult.descontoExtra || 200,
         tempoExpiracao: apiResult.tempoExpiracao
           ? new Date(apiResult.tempoExpiracao)
           : new Date(Date.now() + 2 * 60 * 60 * 1000),
         produtoDesejado: produtoDesejado,
-
-        // NOVAS VARIÁVEIS PARA O FRONT-END
-        valorBase: apiResult.valorBase || 0, // Adicione se a API retornar
-        depreciacaoBateria: apiResult.depreciacaoBateria || 0, // Adicione se a API retornar
-        depreciacaoDefeitos: apiResult.depreciacaoDefeitos || 0, // Adicione se a API retornar
-        valorAPagar: apiResult.valorAPagar || 0, // Adicione se a API retornar
-        valorComDesconto: apiResult.valorComDesconto || 0, // Adicione se a API retornar
+        resumoDetalhado: apiResult.resumoDetalhado || "",
       };
     } catch (err) {
       console.error("❌ Erro no cálculo de troca:", err);
-      // Fallback inteligente (já existente)
+
+      // Fallback inteligente
       const valorBase = getValorBase(data.modeloAtual);
-      const depreciacao = calculateDepreciacao(data);
-      const valorFinal = Math.max(500, valorBase - depreciacao);
+      const depreciacaoBateria = calculateBatteryDepreciation(
+        data.bateriaAtual
+      );
+      const depreciacaoDefeitos = calculateDefectsDepreciation(data.defeitos);
+      const valorAparelho = Math.max(
+        0,
+        valorBase - depreciacaoBateria - depreciacaoDefeitos
+      );
+      const precoProduto = 7666.67; // Preço exemplo
+      const valorFinal = Math.max(0, precoProduto - valorAparelho);
+      const valorComDesconto = valorFinal * 0.97;
 
       return {
-        valorAparelho: valorBase,
+        // Campos principais
+        valorAparelho: valorAparelho,
         valorFinal: valorFinal,
         temDefeito: data.defeitos.length > 0,
         precisaCotacao: data.defeitos.length > 3,
+
+        // Campos detalhados (fallback)
+        valorBase: valorBase,
+        depreciacaoBateria: depreciacaoBateria,
+        depreciacaoDefeitos: depreciacaoDefeitos,
+        precoProduto: precoProduto,
+        valorComDesconto: valorComDesconto,
+
+        // Campos opcionais
         cupomDesconto:
           "TROCA2H-" + Math.random().toString(36).substr(2, 6).toUpperCase(),
         descontoExtra: 200,
         tempoExpiracao: new Date(Date.now() + 2 * 60 * 60 * 1000),
         produtoDesejado: {
           model: "iPhone 15 Pro",
-          pixPrice: "R$ 4.800,00",
+          pixPrice: "R$ 7.666,67",
         },
-        // NOVAS VARIÁVEIS PARA O FRONT-END (fallback)
-        valorBase: valorBase,
-        depreciacaoBateria: (100 - data.bateriaAtual) * 10, // Exemplo de cálculo
-        depreciacaoDefeitos: data.defeitos.length * 300, // Exemplo de cálculo
-        valorAPagar: valorFinal, // No fallback, valor a pagar é o valor final
-        valorComDesconto: valorFinal * 0.97, // Exemplo de cálculo
       };
     }
   };
@@ -270,19 +294,38 @@ const CalculationPage: React.FC = () => {
     return 2000;
   };
 
-  const calculateDepreciacao = (data: FunnelData): number => {
-    let depreciacao = 0;
+  const calculateBatteryDepreciation = (bateria: number): number => {
+    if (bateria === 100) return 200;
+    if (bateria >= 90) return 400;
+    if (bateria >= 80) return 1000;
+    return 1700;
+  };
 
-    // Depreciação por bateria
-    if (data.bateriaAtual < 80) depreciacao += (80 - data.bateriaAtual) * 20;
-
-    // Depreciação por defeitos
-    depreciacao += data.defeitos.length * 300;
-
-    // Depreciação por peças trocadas
-    if (data.pecasTrocadas) depreciacao += 500;
-
-    return depreciacao;
+  const calculateDefectsDepreciation = (defeitos: string[]): number => {
+    let total = 0;
+    for (const defeito of defeitos) {
+      switch (defeito) {
+        case "detalhe_leve":
+          total += 200;
+          break;
+        case "detalhe_capinha":
+          total += 150;
+          break;
+        case "risco_tela":
+          total += 300;
+          break;
+        case "risco_camera":
+          total += 400;
+          break;
+        case "amassado":
+          total += 400;
+          break;
+        default:
+          total += 300;
+          break;
+      }
+    }
+    return total;
   };
 
   if (error) {
@@ -306,63 +349,63 @@ const CalculationPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-black flex items-center justify-center p-4">
-      <div className="max-w-2xl w-full">
-        {/* Header */}
-        <div className="text-center mb-12">
-          <div className="mb-6">
-            <div className="w-20 h-20 mx-auto bg-blue-600 rounded-full flex items-center justify-center mb-4">
-              <svg
-                className="w-10 h-10 text-white animate-spin"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-                />
-              </svg>
+    <PageTransition>
+      <div className="min-h-screen bg-black flex items-center justify-center p-4">
+        <div className="max-w-2xl w-full">
+          {/* Header */}
+          <div className="text-center mb-12">
+            <div className="mb-6">
+              <div className="w-20 h-20 mx-auto bg-blue-600 rounded-full flex items-center justify-center mb-4">
+                <svg
+                  className="w-10 h-10 text-white animate-spin"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                  />
+                </svg>
+              </div>
+            </div>
+
+            <h1 className="text-3xl font-bold text-white mb-4">
+              Calculando sua proposta...
+            </h1>
+            <p className="text-gray-400 text-lg">
+              Estamos analisando todos os dados para gerar a melhor oferta para
+              você!
+            </p>
+          </div>
+
+          {/* Progress Bar */}
+          <div className="mb-12">
+            <div className="flex justify-between text-sm text-gray-400 mb-2">
+              <span>Progresso</span>
+              <span>{Math.round(progress)}%</span>
+            </div>
+
+            <div className="w-full bg-gray-800 rounded-full h-3 mb-4">
+              <div
+                className="bg-gradient-to-r from-blue-500 to-green-500 h-3 rounded-full transition-all duration-300 ease-out"
+                style={{ width: `${progress}%` }}
+              ></div>
             </div>
           </div>
 
-          <h1 className="text-3xl font-bold text-white mb-4">
-            Calculando sua proposta...
-          </h1>
-          <p className="text-gray-400 text-lg">
-            Estamos analisando todos os dados para gerar a melhor oferta para
-            você!
-          </p>
-        </div>
+          {/* Steps */}
+          <div className="space-y-6">
+            {steps.map((step, index) => {
+              const isActive = currentStep === index;
+              const isCompleted = currentStep > index;
 
-        {/* Progress Bar */}
-        <div className="mb-12">
-          <div className="flex justify-between text-sm text-gray-400 mb-2">
-            <span>Progresso</span>
-            <span>{Math.round(progress)}%</span>
-          </div>
-
-          <div className="w-full bg-gray-800 rounded-full h-3 mb-4">
-            <div
-              className="bg-gradient-to-r from-blue-500 to-green-500 h-3 rounded-full transition-all duration-300 ease-out"
-              style={{ width: `${progress}%` }}
-            ></div>
-          </div>
-        </div>
-
-        {/* Steps */}
-        <div className="space-y-6">
-          {steps.map((step, index) => {
-            const isActive = currentStep === index;
-            const isCompleted = currentStep > index;
-            const isPending = currentStep < index;
-
-            return (
-              <div
-                key={step.id}
-                className={`
+              return (
+                <div
+                  key={step.id}
+                  className={`
                   flex items-center space-x-4 p-4 rounded-lg border-2 transition-all duration-500
                   ${
                     isActive
@@ -372,10 +415,10 @@ const CalculationPage: React.FC = () => {
                         : "border-gray-600 bg-gray-800"
                   }
                 `}
-              >
-                {/* Icon/Status */}
-                <div
-                  className={`
+                >
+                  {/* Icon/Status */}
+                  <div
+                    className={`
                   w-12 h-12 rounded-full flex items-center justify-center text-xl
                   ${
                     isActive
@@ -385,44 +428,44 @@ const CalculationPage: React.FC = () => {
                         : "bg-gray-700 text-gray-400"
                   }
                 `}
-                >
-                  {isCompleted ? (
-                    <svg
-                      className="w-6 h-6"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                  ) : isActive ? (
-                    <div className="animate-spin">
+                  >
+                    {isCompleted ? (
                       <svg
                         className="w-6 h-6"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
                       >
                         <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                          fillRule="evenodd"
+                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                          clipRule="evenodd"
                         />
                       </svg>
-                    </div>
-                  ) : (
-                    step.icon
-                  )}
-                </div>
+                    ) : isActive ? (
+                      <div className="animate-spin">
+                        <svg
+                          className="w-6 h-6"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                          />
+                        </svg>
+                      </div>
+                    ) : (
+                      step.icon
+                    )}
+                  </div>
 
-                {/* Content */}
-                <div className="flex-1">
-                  <h3
-                    className={`
+                  {/* Content */}
+                  <div className="flex-1">
+                    <h3
+                      className={`
                     font-semibold text-lg
                     ${
                       isActive
@@ -432,67 +475,68 @@ const CalculationPage: React.FC = () => {
                           : "text-gray-400"
                     }
                   `}
-                  >
-                    {step.title}
-                  </h3>
-                  <p className="text-gray-400 text-sm mt-1">
-                    {step.description}
-                  </p>
-                </div>
-
-                {/* Loading Animation for Active Step */}
-                {isActive && (
-                  <div className="flex space-x-1">
-                    <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce"></div>
-                    <div
-                      className="w-2 h-2 bg-blue-500 rounded-full animate-bounce"
-                      style={{ animationDelay: "0.1s" }}
-                    ></div>
-                    <div
-                      className="w-2 h-2 bg-blue-500 rounded-full animate-bounce"
-                      style={{ animationDelay: "0.2s" }}
-                    ></div>
+                    >
+                      {step.title}
+                    </h3>
+                    <p className="text-gray-400 text-sm mt-1">
+                      {step.description}
+                    </p>
                   </div>
-                )}
-              </div>
-            );
-          })}
-        </div>
 
-        {/* Completion Message */}
-        {isComplete && (
-          <div className="mt-8 text-center">
-            <div className="inline-flex items-center space-x-2 bg-green-900 bg-opacity-30 border border-green-700 rounded-lg px-6 py-3">
-              <svg
-                className="w-6 h-6 text-green-400"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                  clipRule="evenodd"
-                />
-              </svg>
-              <p className="text-green-300 font-medium">
-                Cálculo concluído! Redirecionando para sua proposta...
-              </p>
-            </div>
+                  {/* Loading Animation for Active Step */}
+                  {isActive && (
+                    <div className="flex space-x-1">
+                      <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce"></div>
+                      <div
+                        className="w-2 h-2 bg-blue-500 rounded-full animate-bounce"
+                        style={{ animationDelay: "0.1s" }}
+                      ></div>
+                      <div
+                        className="w-2 h-2 bg-blue-500 rounded-full animate-bounce"
+                        style={{ animationDelay: "0.2s" }}
+                      ></div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
-        )}
 
-        {/* Fun Facts */}
-        <div className="mt-12 bg-gray-800 rounded-lg p-6">
-          <h4 className="text-white font-semibold mb-3">💡 Você sabia?</h4>
-          <div className="text-gray-400 text-sm space-y-2">
-            <p>• A CompreFi já realizou mais de 10.000 trocas de iPhones</p>
-            <p>• Nossos clientes economizam em média R$ 800 na troca</p>
-            <p>• 98% dos nossos clientes recomendam nossos serviços</p>
-            <p>• Garantia de 1 ano em todos os produtos</p>
+          {/* Completion Message */}
+          {isComplete && (
+            <div className="mt-8 text-center">
+              <div className="inline-flex items-center space-x-2 bg-green-900 bg-opacity-30 border border-green-700 rounded-lg px-6 py-3">
+                <svg
+                  className="w-6 h-6 text-green-400"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+                <p className="text-green-300 font-medium">
+                  Cálculo concluído! Redirecionando para sua proposta...
+                </p>
+              </div>
+            </div>
+          )}
+
+          {/* Fun Facts */}
+          <div className="mt-12 bg-gray-800 rounded-lg p-6">
+            <h4 className="text-white font-semibold mb-3">💡 Você sabia?</h4>
+            <div className="text-gray-400 text-sm space-y-2">
+              <p>• A CompreFi já realizou mais de 10.000 trocas de iPhones</p>
+              <p>• Nossos clientes economizam em média R$ 800 na troca</p>
+              <p>• 98% dos nossos clientes recomendam nossos serviços</p>
+              <p>• Garantia de 1 ano em todos os produtos</p>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </PageTransition>
   );
 };
 

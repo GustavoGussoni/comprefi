@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import StepProgress from "./funnel/StepProgress";
-import ModelStep from "./funnel/ModelStep";
-import CapacityStep from "./funnel/CapacityStep";
-import ColorStep from "./funnel/ColorStep";
-import BatteryStep from "./funnel/BatteryStep";
-import DefectsStep from "./funnel/DefectsStep";
-import PartsStep from "./funnel/PartsStep";
-import DesiredModelStep from "./funnel/DesiredModelStep";
-import QualificationStep from "./funnel/QualificationStep";
+import StepProgress from "../components/funnel/StepProgress";
+import ModelStep from "../components/funnel/ModelStep";
+import CapacityStep from "../components/funnel/CapacityStep";
+import ColorStep from "../components/funnel/ColorStep";
+import BatteryStep from "../components/funnel/BatteryStep";
+import DefectsStep from "../components/funnel/DefectsStep";
+import PartsStep from "../components/funnel/PartsStep";
+import DesiredModelStep from "../components/funnel/DesiredModelStep";
+import QualificationStep from "../components/funnel/QualificationStep";
 import { apiService } from "../services/api";
 
 export interface FunnelData {
