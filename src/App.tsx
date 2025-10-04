@@ -22,7 +22,7 @@ import Economia from "./pages/Economia";
 import Agradecimento from "./pages/Agradecimento";
 import Admin from "./pages/Admin";
 import ProtectedRoute from "./components/ProtectedRoute";
-import TradeFunnel from "./components/TradeFunnel";
+import TradeFunnel from "./pages/TradeFunnel";
 import CalculationPage from "./pages/CalculationPage";
 import ResultPage from "./pages/ResultPage";
 
@@ -86,14 +86,7 @@ function App() {
               </PageTransition>
             }
           />
-          <Route
-            path="/trocar-de-iphone"
-            element={
-              <PageTransition>
-                <TradeFunnel />
-              </PageTransition>
-            }
-          />
+          <Route path="/trocar-de-iphone" element={<TradeFunnel />} />
           <Route
             path="/calculo-troca"
             element={
