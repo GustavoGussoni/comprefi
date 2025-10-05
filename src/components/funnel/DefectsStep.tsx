@@ -71,9 +71,9 @@ const DefectsStep: React.FC<DefectsStepProps> = ({
   return (
     <div className="space-y-6">
       <div className="text-center">
-        <h2 className="text-2xl font-bold text-white mb-2">
+        {/* <h2 className="text-2xl font-bold text-white mb-2">
           Seu iPhone tem algum defeito?
-        </h2>
+        </h2> */}
         <p className="text-gray-400">
           Seja honesto para obtermos o valor mais preciso. Você pode selecionar
           múltiplos defeitos.
