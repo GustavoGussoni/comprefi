@@ -58,16 +58,17 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
     </div>
   );
 };
+// ... (imports e outros componentes permanecem os mesmos)
 
 function App() {
   const isMobile = window.innerWidth <= 768;
-  // const navigate = useNavigate();
 
   return (
     <Router>
       <ScrollToTop />
       <Layout>
         <Routes>
+          {/* Rota da Home e Admin (sem alterações) */}
           <Route
             path="/"
             element={
@@ -86,24 +87,15 @@ function App() {
               </PageTransition>
             }
           />
+
+          {/* --- INÍCIO DAS ROTAS DO FUNIL (ALTERAÇÃO AQUI) --- */}
+          {/* Removido o PageTransition para um fluxo mais rápido e direto */}
           <Route path="/trocar-de-iphone" element={<TradeFunnel />} />
-          <Route
-            path="/calculo-troca"
-            element={
-              <PageTransition>
-                <CalculationPage />
-              </PageTransition>
-            }
-          />
-          <Route
-            path="/resultado-troca"
-            element={
-              <PageTransition>
-                <ResultPage />
-              </PageTransition>
-            }
-          />{" "}
-          {/* ← ADICIONAR */}
+          <Route path="/calculo-troca" element={<CalculationPage />} />
+          <Route path="/resultado-troca" element={<ResultPage />} />
+          {/* --- FIM DAS ROTAS DO FUNIL --- */}
+
+          {/* Outras rotas do site (mantêm a transição) */}
           <Route
             path="/iphones-novos"
             element={
@@ -112,6 +104,7 @@ function App() {
               </PageTransition>
             }
           />
+          {/* ... (restante das rotas sem alteração) ... */}
           <Route
             path="/iphones-seminovos"
             element={

@@ -1,6 +1,19 @@
+// src/pages/ResultPage.tsx
+
+import {
+  CheckCircle2,
+  Gift,
+  MessageSquare,
+  Percent,
+  Repeat,
+  ShieldCheck,
+  Users,
+  Zap,
+} from "lucide-react";
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 
+// --- Interfaces ---
 interface FunnelData {
   modeloAtual: string;
   capacidadeAtual: string;
@@ -29,32 +42,42 @@ interface TradeResult {
   produtoDesejado?: any;
 }
 
+// --- INTERFACE ATUALIZADA ---
 interface ContactForm {
   nome: string;
   email: string;
   whatsapp: string;
+  cep: string; // <-- ADICIONADO
 }
+
+// --- CONSTANTES DE VALIDAÇÃO ATUALIZADAS ---
+const NAME_REGEX = /^[a-zA-ZÀ-ÿ']+\s+[a-zA-ZÀ-ÿ'\s]*$/;
+const PHONE_REGEX = /\(\d{2}\)\s\d{5}-\d{4}/;
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const CEP_REGEX = /^\d{5}-\d{3}$/; // <-- ADICIONADO
 
 const ResultPage: React.FC = () => {
   const navigate = useNavigate();
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const [funnelData, setFunnelData] = useState<FunnelData | null>(null);
   const [result, setResult] = useState<TradeResult | null>(null);
+  // --- ESTADO INICIAL ATUALIZADO ---
   const [contactForm, setContactForm] = useState<ContactForm>({
     nome: "",
     email: "",
     whatsapp: "",
+    cep: "", // <-- ADICIONADO
   });
   const [loading, setLoading] = useState<boolean>(false);
   const [showResult, setShowResult] = useState<boolean>(false);
-  const [timeLeft, setTimeLeft] = useState<number>(1800); // 30 minutos
+  const [timeLeft, setTimeLeft] = useState<number>(1800);
   const [showFAQ, setShowFAQ] = useState<boolean>(false);
+  const [errors, setErrors] = useState<{ [key: string]: string | null }>({});
 
   useEffect(() => {
     loadData();
     startTimer();
 
-    // Cleanup no unmount
     return () => {
       if (timerRef.current) {
         clearInterval(timerRef.current);
@@ -62,15 +85,22 @@ const ResultPage: React.FC = () => {
     };
   }, []);
 
+  useEffect(() => {
+    if (showResult) {
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+    }
+  }, [showResult]);
+
   const loadData = () => {
     try {
-      // Carregar dados do funil
       const funnelDataStr = localStorage.getItem("funnelData");
       if (funnelDataStr) {
         setFunnelData(JSON.parse(funnelDataStr));
       }
 
-      // Carregar resultado do cálculo
       const resultStr = localStorage.getItem("tradeResult");
       if (resultStr) {
         setResult(JSON.parse(resultStr));
@@ -81,7 +111,6 @@ const ResultPage: React.FC = () => {
   };
 
   const startTimer = () => {
-    // Limpar timer anterior se existir
     if (timerRef.current) {
       clearInterval(timerRef.current);
     }
@@ -105,16 +134,8 @@ const ResultPage: React.FC = () => {
     return `${minutes.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
   };
 
-  const formatPhone = (value: string): string => {
-    const numbers = value.replace(/\D/g, "");
-    if (numbers.length <= 11) {
-      return numbers.replace(/(\d{2})(\d{5})(\d{4})/, "($1) $2-$3");
-    }
-    return value;
-  };
-
   const formatCurrency = (value: number | undefined | null): string => {
-    if (!value || isNaN(value)) {
+    if (value === null || value === undefined || isNaN(value)) {
       return "R$ 0,00";
     }
     return new Intl.NumberFormat("pt-BR", {
@@ -123,322 +144,469 @@ const ResultPage: React.FC = () => {
     }).format(value);
   };
 
-  // Calcular desconto dinâmico (3% do valor final)
   const calculateDiscount = (): number => {
     if (!result?.valorFinal) return 0;
     return result.valorFinal * 0.03;
   };
 
-  // Valor atual baseado no timer (com ou sem desconto)
-  const getCurrentValue = (): number => {
-    if (!result?.valorFinal) return 0;
-    if (timeLeft > 0) {
-      return result.valorComDesconto || result.valorFinal * 0.97;
+  // --- FUNÇÃO DE VALIDAÇÃO ATUALIZADA ---
+  const validateField = (name: string, value: string) => {
+    let error: string | null = null;
+    switch (name) {
+      case "nome":
+        if (value && !NAME_REGEX.test(value.trim())) {
+          error = "Por favor, insira um nome e sobrenome válidos.";
+        }
+        break;
+      case "email":
+        if (value && !EMAIL_REGEX.test(value)) {
+          error = "Por favor, insira um e-mail válido.";
+        }
+        break;
+      case "whatsapp":
+        if (value && !PHONE_REGEX.test(value)) {
+          error = "Por favor, insira um número de WhatsApp completo.";
+        }
+        break;
+      case "cep": // <-- ADICIONADO
+        if (value && !CEP_REGEX.test(value)) {
+          error = "Por favor, insira um CEP válido (formato XXXXX-XXX).";
+        }
+        break;
+      default:
+        break;
     }
-    return result.valorFinal;
+    setErrors((prev) => ({ ...prev, [name]: error }));
+    return !error;
   };
 
-  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const formatted = formatPhone(e.target.value);
-    setContactForm((prev) => ({ ...prev, whatsapp: formatted }));
+  const formatPhone = (value: string): string => {
+    const numbers = value.replace(/\D/g, "");
+    if (numbers.length > 11) return contactForm.whatsapp;
+
+    let formatted = numbers;
+    if (numbers.length > 2) {
+      formatted = `(${numbers.substring(0, 2)}) ${numbers.substring(2)}`;
+    }
+    if (numbers.length > 7) {
+      formatted = `(${numbers.substring(0, 2)}) ${numbers.substring(2, 7)}-${numbers.substring(7, 11)}`;
+    }
+    return formatted;
   };
 
+  // --- NOVA FUNÇÃO DE FORMATAÇÃO DE CEP ---
+  const formatCep = (value: string): string => {
+    const numbers = value.replace(/\D/g, "");
+    if (numbers.length > 8) return contactForm.cep;
+
+    if (numbers.length > 5) {
+      return `${numbers.substring(0, 5)}-${numbers.substring(5, 8)}`;
+    }
+    return numbers;
+  };
+
+  // --- FUNÇÃO DE INPUT ATUALIZADA ---
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+
+    let processedValue = value;
+    if (name === "whatsapp") {
+      processedValue = formatPhone(value);
+    } else if (name === "cep") {
+      processedValue = formatCep(value);
+    }
+
+    setContactForm((prev) => ({ ...prev, [name]: processedValue }));
+    if (errors[name]) {
+      setErrors((prev) => ({ ...prev, [name]: null }));
+    }
+  };
+
+  // --- SUBMIT ATUALIZADO ---
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const isNameValid = validateField("nome", contactForm.nome);
+    const isEmailValid = validateField("email", contactForm.email);
+    const isWhatsappValid = validateField("whatsapp", contactForm.whatsapp);
+    const isCepValid = validateField("cep", contactForm.cep); // <-- ADICIONADO
+
+    if (!isNameValid || !isEmailValid || !isWhatsappValid || !isCepValid) {
+      return;
+    }
+
     setLoading(true);
-
     try {
-      // Simular envio para CRM
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-
-      // Mostrar resultado após envio
+      await new Promise((resolve) => setTimeout(resolve, 1500));
       setShowResult(true);
-
-      console.log("✅ Formulário enviado, mostrando resultado");
     } catch (err) {
-      console.error("❌ Erro ao enviar:", err);
-      alert("Erro ao enviar dados. Tente novamente.");
+      console.error("Erro ao enviar:", err);
+      setErrors((prev) => ({
+        ...prev,
+        general: "Erro ao enviar dados. Tente novamente.",
+      }));
     } finally {
       setLoading(false);
     }
   };
 
+  // --- MENSAGEM WHATSAPP ATUALIZADA ---
   const handleWhatsAppRedirect = () => {
-    const currentValue = getCurrentValue();
     const discount = calculateDiscount();
-
     const message = `
-🔥 *CONFIRMAÇÃO DE TROCA - CompreFi*
+*CONFIRMAÇÃO DE TROCA - CompreFi*
 
-👤 *Cliente:* ${contactForm.nome}
-📧 *Email:* ${contactForm.email}
-📱 *WhatsApp:* ${contactForm.whatsapp}
+*Cliente:* ${contactForm.nome}
+*Email:* ${contactForm.email}
+*WhatsApp:* ${contactForm.whatsapp}
+*CEP:* ${contactForm.cep}
 
-📱 *TROCA CONFIRMADA:*
+*TROCA CONFIRMADA:*
 • De: ${funnelData?.modeloAtual} ${funnelData?.capacidadeAtual}
 • Para: ${result?.produtoDesejado?.model}
 
-💰 *VALORES FINAIS:*
+*VALORES FINAIS:*
 • Valor do seu aparelho: ${formatCurrency(result?.valorAparelho)}
 • Valor a pagar: ${formatCurrency(result?.valorComDesconto)}
-${timeLeft > 0 ? `• Desconto aplicado: ${formatCurrency(discount)}` : "• Valor original (sem desconto)"}
+${timeLeft > 0 ? `• Desconto Refinado Exclusivo: ${formatCurrency(discount)}` : "• Valor original (sem desconto)"}
 
-⏰ *Confirmado em:* ${new Date().toLocaleString("pt-BR")}
+*Confirmado em:* ${new Date().toLocaleString("pt-BR")}
     `.trim();
-
     const whatsappUrl = `https://wa.me/5511999999999?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, "_blank");
-
-    // Limpar localStorage
     localStorage.removeItem("funnelData");
     localStorage.removeItem("tradeResult");
   };
 
   if (!result) {
     return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
+      <div className="min-h-screen bg-funnel-background flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
-          <p className="text-white">Carregando...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-funnel-primary mx-auto mb-4"></div>
+          <p className="text-funnel-text-primary">Carregando...</p>
         </div>
       </div>
     );
   }
 
-  const currentValue = getCurrentValue();
-  const discount = calculateDiscount();
+  const totalEconomy =
+    (result?.precoProduto || 0) - (result?.valorComDesconto || 0);
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-funnel-background text-funnel-text-primary">
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-2xl mx-auto">
           {!showResult ? (
-            // FORMULÁRIO PRIMEIRO - DESIGN MINIMALISTA
             <>
-              {/* Header Focado */}
               <div className="text-center mb-8">
-                <h1 className="text-4xl font-bold text-white mb-4">
-                  🎯 Sua Troca Personalizada Está Pronta!
+                <h1 className="text-4xl font-bold text-funnel-text-primary mb-4">
+                  Sua Troca Personalizada Está Pronta!
                 </h1>
-                <p className="text-gray-400 text-lg">
-                  Complete seus dados abaixo para desbloquear sua proposta
-                  exclusiva
+                <p className="text-funnel-text-secondary text-lg">
+                  Complete seus dados para desbloquear sua proposta exclusiva.
                 </p>
               </div>
 
-              {/* Timer de Urgência - Destaque Principal */}
               <div className="bg-gradient-to-r from-red-900 to-orange-900 rounded-lg p-8 mb-8 border border-red-700 text-center">
                 <h3 className="text-2xl font-bold text-white mb-3">
-                  ⏰ Desconto Especial Expira Em:
+                  Desconto Refinado Exclusivo Expira Em:
                 </h3>
-                <div className="text-5xl font-mono font-bold text-yellow-300 mb-3">
+                <div className="text-5xl font-mono font-bold text-funnel-warning mb-3">
                   {formatTime(timeLeft)}
                 </div>
-                <p className="text-orange-200 text-lg">
-                  Economia de {formatCurrency(discount)} • Apenas hoje!
-                </p>
-                {timeLeft === 0 && (
+                {timeLeft > 0 ? (
+                  <p className="text-orange-200 text-lg">
+                    Economia de {formatCurrency(calculateDiscount())} • Apenas
+                    hoje!
+                  </p>
+                ) : (
                   <p className="text-red-300 text-sm mt-2">
-                    ⚠️ Desconto expirado - valor original aplicado
+                    Você perdeu o desconto exclusivo, mas ainda pode garantir os
+                    4 bônus se fechar hoje. Não perca!
                   </p>
                 )}
               </div>
 
-              {/* Teaser do Valor - SEM DETALHES */}
               <div className="bg-gradient-to-r from-green-900 to-emerald-900 rounded-lg p-6 mb-8 border border-green-700 text-center">
                 <h3 className="text-xl font-bold text-white mb-2">
-                  💰 Sua Troca Final
+                  Você está a um passo de economizar
                 </h3>
                 <div className="text-4xl font-bold text-green-400 mb-2">
-                  {formatCurrency(result?.valorComDesconto)}
+                  {formatCurrency(totalEconomy)}
                 </div>
                 <p className="text-green-200">
-                  {funnelData?.modeloAtual} → {result?.produtoDesejado?.model}
+                  na troca do seu {funnelData?.modeloAtual} por um{" "}
+                  {result?.produtoDesejado?.model}
                 </p>
-                <div className="mt-4 p-3 bg-green-800 bg-opacity-50 rounded-lg">
-                  <p className="text-green-300 text-sm">
-                    🔒 <strong>Breakdown completo + bônus exclusivos</strong>{" "}
-                    serão revelados após o cadastro
+                <div className="mt-4 p-4 bg-green-800 bg-opacity-50 rounded-lg text-left text-sm">
+                  <p className="text-green-300 font-semibold mb-2">
+                    Ao desbloquear, você verá:
                   </p>
+                  <ul className="space-y-1 text-green-200">
+                    <li className="flex items-start">
+                      <span className="mr-2">✓</span>
+                      <span>O valor exato que pagaremos no seu iPhone.</span>
+                    </li>
+                    <li className="flex items-start">
+                      <span className="mr-2">✓</span>
+                      <span>
+                        O cálculo detalhado da depreciação (100% transparente).
+                      </span>
+                    </li>
+                    <li className="flex items-start">
+                      <span className="mr-2">✓</span>
+                      <span>
+                        O valor final com seu Desconto Refinado Exclusivo.
+                      </span>
+                    </li>
+                    <li className="flex items-start">
+                      <span className="mr-2">✓</span>
+                      <span>Acesso a 4 Bônus Exclusivos da CompreFi.</span>
+                    </li>
+                  </ul>
                 </div>
               </div>
 
-              {/* Formulário Minimalista - Foco Principal */}
-              <div className="bg-gray-900 rounded-lg p-8 border border-gray-700">
-                <h3 className="text-2xl font-bold text-white mb-2 text-center">
-                  📞 Desbloqueie Sua Proposta
+              <div className="mb-12 space-y-6">
+                <h3 className="text-2xl font-bold text-center text-funnel-text-primary">
+                  Junte-se a milhares de clientes satisfeitos
                 </h3>
-                <p className="text-gray-400 mb-6 text-center">
-                  Preencha abaixo para ver todos os detalhes e garantir seus
-                  bônus
+                <div className="bg-funnel-surface p-4 rounded-lg border border-funnel-surface-light flex items-start">
+                  <img
+                    src="https://randomuser.me/api/portraits/women/44.jpg"
+                    alt="Foto do cliente"
+                    className="w-12 h-12 rounded-full mr-4 border-2 border-funnel-primary"
+                  />
+                  <div>
+                    <p className="text-funnel-text-secondary italic">
+                      "Processo super rápido e transparente. Fui muito bem
+                      atendido pelo Gustavo. Recomendo demais!"
+                    </p>
+                    <p className="text-right font-semibold text-funnel-text-primary mt-2">
+                      - Maria S., São Paulo
+                    </p>
+                  </div>
+                </div>
+                <div className="bg-funnel-surface p-4 rounded-lg border border-funnel-surface-light flex items-start">
+                  <img
+                    src="https://randomuser.me/api/portraits/men/32.jpg"
+                    alt="Foto do cliente"
+                    className="w-12 h-12 rounded-full mr-4 border-2 border-funnel-primary"
+                  />
+                  <div>
+                    <p className="text-funnel-text-secondary italic">
+                      "Consegui o melhor valor pelo meu aparelho antigo. A
+                      economia na troca foi real. Virei cliente!"
+                    </p>
+                    <p className="text-right font-semibold text-funnel-text-primary mt-2">
+                      - João P., Campinas
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-funnel-surface rounded-lg p-8 border border-funnel-surface-light">
+                <h3 className="text-2xl font-bold text-funnel-text-primary mb-2 text-center">
+                  Desbloqueie Sua Proposta
+                </h3>
+                <p className="text-funnel-text-secondary mb-6 text-center">
+                  Preencha para ver os detalhes e garantir seus bônus.
                 </p>
 
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                    <label className="block text-sm font-medium text-funnel-text-secondary mb-2">
                       Nome completo *
                     </label>
                     <input
                       type="text"
+                      name="nome"
                       required
                       value={contactForm.nome}
-                      onChange={(e) =>
-                        setContactForm((prev) => ({
-                          ...prev,
-                          nome: e.target.value,
-                        }))
+                      onChange={handleInputChange}
+                      onBlur={(e) =>
+                        validateField(e.target.name, e.target.value)
                       }
-                      className="w-full px-4 py-4 bg-gray-800 border border-gray-600 rounded-md text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none text-lg"
-                      placeholder="Seu nome completo"
+                      className={`w-full px-4 py-4 bg-funnel-surface-light border rounded-md text-funnel-text-primary placeholder-gray-400 focus:border-funnel-primary focus:outline-none text-lg ${errors.nome ? "border-funnel-error" : "border-gray-600"}`}
+                      placeholder="Seu nome e sobrenome"
                     />
+                    {errors.nome && (
+                      <p className="text-funnel-error text-sm mt-2">
+                        {errors.nome}
+                      </p>
+                    )}
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                    <label className="block text-sm font-medium text-funnel-text-secondary mb-2">
                       Email *
                     </label>
                     <input
                       type="email"
+                      name="email"
                       required
                       value={contactForm.email}
-                      onChange={(e) =>
-                        setContactForm((prev) => ({
-                          ...prev,
-                          email: e.target.value,
-                        }))
+                      onChange={handleInputChange}
+                      onBlur={(e) =>
+                        validateField(e.target.name, e.target.value)
                       }
-                      className="w-full px-4 py-4 bg-gray-800 border border-gray-600 rounded-md text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none text-lg"
+                      className={`w-full px-4 py-4 bg-funnel-surface-light border rounded-md text-funnel-text-primary placeholder-gray-400 focus:border-funnel-primary focus:outline-none text-lg ${errors.email ? "border-funnel-error" : "border-gray-600"}`}
                       placeholder="seu@email.com"
                     />
+                    {errors.email && (
+                      <p className="text-funnel-error text-sm mt-2">
+                        {errors.email}
+                      </p>
+                    )}
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                    <label className="block text-sm font-medium text-funnel-text-secondary mb-2">
                       WhatsApp *
                     </label>
                     <input
                       type="tel"
+                      name="whatsapp"
                       required
                       value={contactForm.whatsapp}
-                      onChange={handlePhoneChange}
-                      className="w-full px-4 py-4 bg-gray-800 border border-gray-600 rounded-md text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none text-lg"
+                      onChange={handleInputChange}
+                      onBlur={(e) =>
+                        validateField(e.target.name, e.target.value)
+                      }
+                      className={`w-full px-4 py-4 bg-funnel-surface-light border rounded-md text-funnel-text-primary placeholder-gray-400 focus:border-funnel-primary focus:outline-none text-lg ${errors.whatsapp ? "border-funnel-error" : "border-gray-600"}`}
                       placeholder="(11) 99999-9999"
-                      maxLength={15}
                     />
+                    {errors.whatsapp && (
+                      <p className="text-funnel-error text-sm mt-2">
+                        {errors.whatsapp}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* --- NOVO CAMPO DE CEP --- */}
+                  <div>
+                    <label className="block text-sm font-medium text-funnel-text-secondary mb-2">
+                      CEP (para agilizar a visita) *
+                    </label>
+                    <input
+                      type="tel"
+                      name="cep"
+                      required
+                      value={contactForm.cep}
+                      onChange={handleInputChange}
+                      onBlur={(e) =>
+                        validateField(e.target.name, e.target.value)
+                      }
+                      className={`w-full px-4 py-4 bg-funnel-surface-light border rounded-md text-funnel-text-primary placeholder-gray-400 focus:border-funnel-primary focus:outline-none text-lg ${errors.cep ? "border-funnel-error" : "border-gray-600"}`}
+                      placeholder="00000-000"
+                    />
+                    {errors.cep && (
+                      <p className="text-funnel-error text-sm mt-2">
+                        {errors.cep}
+                      </p>
+                    )}
                   </div>
 
                   <button
                     type="submit"
                     disabled={loading}
-                    className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 disabled:from-gray-600 disabled:to-gray-600 text-white font-bold py-5 px-6 rounded-md transition-all duration-200 flex items-center justify-center text-lg"
+                    className="w-full bg-funnel-primary hover:opacity-90 disabled:bg-gray-600 text-funnel-text-on-primary font-bold py-5 px-6 rounded-md transition-all duration-200 flex items-center justify-center text-lg"
                   >
                     {loading ? (
                       <>
                         <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white mr-3"></div>
-                        Desbloqueando sua proposta...
+                        Desbloqueando...
                       </>
                     ) : (
-                      <>
-                        <span className="mr-3">🔓</span>
-                        Desbloquear Minha Proposta Completa
-                      </>
+                      "Desbloquear Minha Proposta Completa"
                     )}
                   </button>
                 </form>
 
                 <div className="mt-6 text-center">
-                  <p className="text-gray-500 text-sm">
-                    🔒 Seus dados estão seguros • Sem spam • Sem
-                    compartilhamento
+                  <p className="text-funnel-text-secondary text-sm">
+                    Seus dados estão seguros.
                   </p>
-                </div>
-              </div>
-
-              {/* Social Proof Minimalista */}
-              <div className="mt-8 text-center">
-                <p className="text-gray-400 text-sm mb-4">
-                  ⭐⭐⭐⭐⭐ Mais de 2.847 clientes já fizeram sua troca conosco
-                </p>
-                <div className="flex justify-center space-x-8 text-xs text-gray-500">
-                  <span>✓ Processo 100% seguro</span>
-                  <span>✓ Garantia total</span>
-                  <span>✓ Suporte vitalício</span>
                 </div>
               </div>
             </>
           ) : (
-            // RESULTADO COMPLETO - REVEAL PROGRESSIVO
             <>
-              {/* Header de Sucesso */}
               <div className="text-center mb-8">
-                <div className="w-20 h-20 mx-auto bg-green-600 rounded-full flex items-center justify-center mb-4">
-                  <svg
-                    className="w-10 h-10 text-white"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
+                <div className="w-20 h-20 mx-auto bg-funnel-success rounded-full flex items-center justify-center mb-4">
+                  <CheckCircle2 className="w-12 h-12 text-white" />
                 </div>
-                <h1 className="text-4xl font-bold text-white mb-4">
-                  🎉 Parabéns, {contactForm.nome.split(" ")[0]}!
+                <h1 className="text-4xl font-bold text-funnel-text-primary mb-4">
+                  Parabéns, {contactForm.nome.split(" ")[0]}!
                 </h1>
-                <p className="text-gray-400 text-lg">
-                  Sua proposta exclusiva foi desbloqueada. Veja todos os
-                  detalhes:
+                <p className="text-funnel-text-secondary text-lg">
+                  Sua proposta exclusiva foi desbloqueada. Veja os detalhes:
                 </p>
               </div>
 
-              {/* Valor Principal - Destaque */}
-              <div className="bg-gradient-to-br from-green-900 to-emerald-900 rounded-lg p-8 border border-green-700 mb-8">
-                <div className="text-center">
-                  <h2 className="text-2xl font-bold text-white mb-4">
-                    💰 Valor Final da Sua Troca
-                  </h2>
-                  <div className="text-6xl font-bold text-green-400 mb-4">
-                    {formatCurrency(result?.valorComDesconto)}
+              <div className="bg-gradient-to-br from-blue-900 to-purple-900 rounded-lg p-8 border border-blue-700 mb-8">
+                <h3 className="text-2xl font-bold text-white mb-6 text-center">
+                  Resumo da Sua Oferta Refinada
+                </h3>
+                <div className="space-y-4 text-lg">
+                  <div className="flex justify-between items-center">
+                    <span className="text-blue-200">
+                      Crédito pelo seu {funnelData?.modeloAtual}:
+                    </span>
+                    <span className="font-bold text-white">
+                      {formatCurrency(result?.valorAparelho)}
+                    </span>
                   </div>
-                  <p className="text-green-200 text-lg mb-4">
-                    Você economiza{" "}
-                    {formatCurrency((result?.precoProduto || 0) - currentValue)}{" "}
-                    na troca!
-                  </p>
                   {timeLeft > 0 && (
-                    <div className="bg-yellow-900 bg-opacity-50 rounded-lg p-4 border border-yellow-700">
-                      <p className="text-yellow-300 font-bold">
-                        ⏰ Desconto válido por mais {formatTime(timeLeft)}
-                      </p>
+                    <div className="flex justify-between items-center">
+                      <span className="text-blue-200">
+                        Desconto Refinado Exclusivo:
+                      </span>
+                      <span className="font-bold text-white">
+                        - {formatCurrency(calculateDiscount())}
+                      </span>
                     </div>
                   )}
+                  <div className="flex justify-between items-center">
+                    <span className="text-blue-200">4 Bônus Exclusivos:</span>
+                    <span className="font-bold text-white">Inclusos</span>
+                  </div>
+                  <hr className="border-blue-600" />
+                  <div className="flex justify-between items-center text-2xl">
+                    <span className="font-bold text-white">
+                      Sua Economia Total Hoje:
+                    </span>
+                    <span className="font-bold text-green-400">
+                      {formatCurrency(totalEconomy)}
+                    </span>
+                  </div>
                 </div>
               </div>
 
-              {/* Breakdown Detalhado */}
-              <div className="bg-gray-900 rounded-lg p-6 border border-gray-700 mb-8">
-                <h3 className="text-xl font-bold text-white mb-6 text-center">
-                  📊 Breakdown Completo da Sua Troca
+              <div className="bg-funnel-surface rounded-lg p-6 border border-funnel-surface-light mb-8">
+                <h3 className="text-xl font-bold text-funnel-text-primary mb-6 text-center">
+                  Breakdown Completo da Sua Troca
                 </h3>
 
                 <div className="space-y-4">
-                  <div className="bg-gray-800 rounded-lg p-4">
-                    <h4 className="text-white font-medium mb-3">
-                      📱 Seu Aparelho Atual:
+                  <div className="bg-funnel-surface-light rounded-lg p-4">
+                    <h4 className="text-funnel-text-primary font-medium mb-3">
+                      Seu Aparelho Atual:
                     </h4>
                     <div className="space-y-2 text-sm">
                       <div className="flex justify-between">
-                        <span className="text-gray-400">Modelo:</span>
-                        <span className="text-white">
+                        <span className="text-funnel-text-secondary">
+                          Modelo:
+                        </span>
+                        <span className="text-funnel-text-primary">
                           {funnelData?.modeloAtual}{" "}
                           {funnelData?.capacidadeAtual}
                         </span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-gray-400">Valor base:</span>
-                        <span className="text-white">
+                        <span className="text-funnel-text-secondary">
+                          Valor base:
+                        </span>
+                        <span className="text-funnel-text-primary">
                           {formatCurrency(result?.valorBase)}
                         </span>
                       </div>
@@ -456,10 +624,12 @@ ${timeLeft > 0 ? `• Desconto aplicado: ${formatCurrency(discount)}` : "• Val
                           - {formatCurrency(result?.depreciacaoDefeitos)}
                         </span>
                       </div>
-                      <hr className="border-gray-700" />
+                      <hr className="border-gray-700 my-2" />
                       <div className="flex justify-between text-lg font-bold">
-                        <span className="text-white">Valor final:</span>
-                        <span className="text-green-400">
+                        <span className="text-funnel-text-primary">
+                          Valor final do seu aparelho:
+                        </span>
+                        <span className="text-funnel-success">
                           {formatCurrency(result?.valorAparelho)}
                         </span>
                       </div>
@@ -468,7 +638,7 @@ ${timeLeft > 0 ? `• Desconto aplicado: ${formatCurrency(discount)}` : "• Val
 
                   <div className="bg-blue-900 bg-opacity-30 rounded-lg p-4 border border-blue-700">
                     <h4 className="text-white font-medium mb-3">
-                      🎯 Aparelho Desejado:
+                      Aparelho Desejado:
                     </h4>
                     <div className="space-y-2 text-sm">
                       <div className="flex justify-between">
@@ -494,9 +664,9 @@ ${timeLeft > 0 ? `• Desconto aplicado: ${formatCurrency(discount)}` : "• Val
                       {timeLeft > 0 && (
                         <div className="flex justify-between text-lg font-bold text-green-400">
                           <span className="text-white">
-                            Com desconto especial (3%):
+                            Com Desconto Refinado Exclusivo:
                           </span>
-                          <span className="text-green-400">
+                          <span className="text-funnel-success">
                             {formatCurrency(result?.valorComDesconto)}
                           </span>
                         </div>
@@ -504,112 +674,126 @@ ${timeLeft > 0 ? `• Desconto aplicado: ${formatCurrency(discount)}` : "• Val
                     </div>
                   </div>
                 </div>
-              </div>
 
-              {/* Bônus Exclusivos */}
-              <div className="bg-purple-900 bg-opacity-50 rounded-lg p-6 border border-purple-700 mb-8">
-                <h3 className="text-xl font-bold text-white mb-4 text-center">
-                  🎁 Seus Bônus Exclusivos Desbloqueados
-                </h3>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="bg-purple-800 bg-opacity-50 rounded-lg p-4">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center">
-                        <span className="text-green-400 mr-2">✓</span>
-                        <span className="text-white text-sm">
-                          Capinha premium
-                        </span>
-                      </div>
-                      <span className="text-green-400 text-sm font-bold">
-                        R$ 150
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="bg-purple-800 bg-opacity-50 rounded-lg p-4">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center">
-                        <span className="text-green-400 mr-2">✓</span>
-                        <span className="text-white text-sm">
-                          Película aplicada
-                        </span>
-                      </div>
-                      <span className="text-green-400 text-sm font-bold">
-                        R$ 80
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="bg-purple-800 bg-opacity-50 rounded-lg p-4">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center">
-                        <span className="text-green-400 mr-2">✓</span>
-                        <span className="text-white text-sm">
-                          Garantia estendida
-                        </span>
-                      </div>
-                      <span className="text-green-400 text-sm font-bold">
-                        R$ 200
-                      </span>
-                    </div>
-                  </div>
-
-                  {timeLeft > 0 && (
-                    <div className="bg-yellow-800 bg-opacity-50 rounded-lg p-4 border border-yellow-600">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center">
-                          <span className="text-yellow-400 mr-2">⚡</span>
-                          <span className="text-white text-sm">
-                            Desconto especial
-                          </span>
-                        </div>
-                        <span className="text-yellow-400 text-sm font-bold">
-                          {formatCurrency(discount)}
-                        </span>
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                <div className="mt-4 p-4 bg-purple-800 bg-opacity-50 rounded-lg border border-purple-600">
-                  <div className="flex items-center justify-between font-bold">
-                    <span className="text-white">Total em bônus:</span>
-                    <span className="text-green-400 text-lg">
-                      {formatCurrency(430 + (timeLeft > 0 ? discount : 0))}
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              {/* CTA Principal */}
-              <div className="text-center mb-8">
-                <button
-                  onClick={handleWhatsAppRedirect}
-                  className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold py-5 px-8 rounded-md transition-all duration-200 flex items-center justify-center mx-auto text-lg"
-                >
-                  <span className="mr-3">💬</span>
-                  Confirmar Troca no WhatsApp
-                </button>
-
-                <p className="text-gray-500 text-sm mt-4">
-                  🔒 Proposta válida por{" "}
-                  {formatTime(timeLeft > 0 ? timeLeft : 0)}
-                  {timeLeft === 0 && " (valor original)"}
+                <p className="text-funnel-text-secondary text-xs mt-4 text-center">
+                  Nota sobre a avaliação: Esta é uma proposta preliminar baseada
+                  nas suas respostas. Na visita, nossa equipe fará uma
+                  verificação final do aparelho para confirmar as condições e
+                  garantir o valor mais justo para você.
                 </p>
               </div>
 
-              {/* FAQ */}
-              <div className="bg-gray-900 rounded-lg border border-gray-700">
+              <div className="bg-funnel-surface rounded-lg p-6 border border-funnel-surface-light mb-8">
+                <h3 className="text-xl font-bold text-funnel-text-primary mb-6 text-center flex items-center justify-center">
+                  <Gift className="w-6 h-6 mr-3 text-funnel-primary" />
+                  Seus Bônus Exclusivos Desbloqueados
+                </h3>
+
+                <div className="space-y-4">
+                  <div className="flex items-start p-4 bg-funnel-surface-light rounded-lg">
+                    <ShieldCheck className="w-8 h-8 text-funnel-success mr-4 flex-shrink-0" />
+                    <div>
+                      <h4 className="font-semibold text-funnel-text-primary">
+                        Suporte Eterno
+                      </h4>
+                      <p className="text-sm text-funnel-text-secondary">
+                        Qualquer dúvida sobre o uso do seu aparelho ou
+                        necessidade de orientação, nossa equipe estará aqui para
+                        te ajudar. Para sempre e sem custo adicional.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start p-4 bg-funnel-surface-light rounded-lg">
+                    <Percent className="w-8 h-8 text-funnel-success mr-4 flex-shrink-0" />
+                    <div>
+                      <h4 className="font-semibold text-funnel-text-primary">
+                        Até 20% OFF em Acessórios Originais
+                      </h4>
+                      <p className="text-sm text-funnel-text-secondary">
+                        Como nosso cliente, você tem acesso a descontos
+                        exclusivos em toda a nossa linha de acessórios originais
+                        Apple.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start p-4 bg-funnel-surface-light rounded-lg">
+                    <Repeat className="w-8 h-8 text-funnel-success mr-4 flex-shrink-0" />
+                    <div>
+                      <h4 className="font-semibold text-funnel-text-primary">
+                        Garantia de Recompra Futura
+                      </h4>
+                      <p className="text-sm text-funnel-text-secondary">
+                        Quando decidir trocar este novo iPhone no futuro, nós
+                        garantimos a recompra dele, facilitando seu próximo
+                        upgrade e valorizando seu investimento.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start p-4 bg-funnel-surface-light rounded-lg">
+                    <Users className="w-8 h-8 text-funnel-success mr-4 flex-shrink-0" />
+                    <div>
+                      <h4 className="font-semibold text-funnel-text-primary">
+                        Acesso ao Programa de Indicações
+                      </h4>
+                      <p className="text-sm text-funnel-text-secondary">
+                        Indique amigos e acumule descontos para a sua próxima
+                        troca. Quanto mais amigos você traz, mais você economiza
+                        no futuro.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="text-center mb-8 bg-funnel-surface p-6 rounded-lg border border-funnel-surface-light">
+                <h3 className="text-2xl font-bold text-funnel-text-primary mb-4">
+                  Próximo Passo: Agende sua Troca
+                </h3>
+                <p className="text-funnel-text-secondary mb-6">
+                  Clique no botão abaixo para confirmar sua proposta no WhatsApp
+                  e agendar a visita da nossa equipe.
+                </p>
+                <button
+                  onClick={handleWhatsAppRedirect}
+                  className="bg-funnel-success hover:opacity-90 text-white font-bold py-4 px-8 rounded-md transition-all"
+                >
+                  <MessageSquare className="w-6 h-6 mr-3" />
+                  Confirmar Troca no WhatsApp
+                </button>
+                <div className="text-left mt-6 space-y-2 text-funnel-text-secondary text-sm">
+                  <p>
+                    <strong>Como funciona:</strong>
+                  </p>
+                  <p>
+                    1. <strong>Confirme no WhatsApp:</strong> Nossa equipe irá
+                    validar sua proposta, tirar todas as suas dúvidas, e enviar
+                    o link de pagamento ou chave Pix.
+                  </p>
+                  <p>
+                    2. <strong>Agende a Visita:</strong> Combinaremos o melhor
+                    dia e horário para irmos até você.
+                  </p>
+                  <p>
+                    3. <strong>Receba e Troque:</strong> Entregamos seu novo
+                    iPhone em mãos e ajudamos na transferência de dados na hora.
+                    Simples, rápido, seguro e Refinado.
+                  </p>
+                </div>
+              </div>
+
+              <div className="bg-funnel-surface rounded-lg border border-funnel-surface-light">
                 <button
                   onClick={() => setShowFAQ(!showFAQ)}
                   className="w-full p-6 text-left flex justify-between items-center"
                 >
-                  <h3 className="text-xl font-bold text-white">
-                    ❓ Perguntas Frequentes
+                  <h3 className="text-xl font-bold text-funnel-text-primary">
+                    Perguntas Frequentes
                   </h3>
                   <svg
-                    className={`w-6 h-6 text-gray-400 transform transition-transform ${
+                    className={`w-6 h-6 text-funnel-text-secondary transform transition-transform ${
                       showFAQ ? "rotate-180" : ""
                     }`}
                     fill="none"
@@ -628,61 +812,57 @@ ${timeLeft > 0 ? `• Desconto aplicado: ${formatCurrency(discount)}` : "• Val
                 {showFAQ && (
                   <div className="px-6 pb-6 space-y-4">
                     <div>
-                      <h4 className="text-white font-medium mb-2">
+                      <h4 className="text-funnel-text-primary font-medium mb-2">
                         Como funciona a troca?
                       </h4>
-                      <p className="text-gray-400 text-sm">
-                        Você nos envia seu iPhone atual e recebe o novo.
-                        Pagamento apenas da diferença.
+                      <p className="text-funnel-text-secondary text-sm">
+                        É simples, rápido, seguro e Refinado. Após confirmar sua
+                        compra, nossa equipe agenda uma visita para ir até você.
+                        Entregamos seu novo iPhone em mãos e te ajudamos com a
+                        transferência de todos os seus dados.
                       </p>
                     </div>
-
                     <div>
-                      <h4 className="text-white font-medium mb-2">
+                      <h4 className="text-funnel-text-primary font-medium mb-2">
+                        Como é feita a avaliação final?
+                      </h4>
+                      <p className="text-funnel-text-secondary text-sm">
+                        Nossa equipe técnica faz uma verificação rápida do seu
+                        aparelho no momento da troca para confirmar as condições
+                        que você informou no questionário. O objetivo é garantir
+                        uma troca justa e transparente para ambos.
+                      </p>
+                    </div>
+                    <div>
+                      <h4 className="text-funnel-text-primary font-medium mb-2">
                         Qual a garantia?
                       </h4>
-                      <p className="text-gray-400 text-sm">
-                        Todos os produtos têm garantia de 1 ano da Apple ou
-                        CompreFi.
+                      <p className="text-funnel-text-secondary text-sm">
+                        Todos os nossos produtos têm garantia completa de 1 ano
+                        com a Apple. Todos os detalhes estarão na sua proposta
+                        final.
                       </p>
                     </div>
-
                     <div>
-                      <h4 className="text-white font-medium mb-2">
-                        Como é feita a avaliação?
+                      <h4 className="text-funnel-text-primary font-medium mb-2">
+                        Posso adicionar acessórios ao meu pedido com desconto?
                       </h4>
-                      <p className="text-gray-400 text-sm">
-                        Nossa equipe técnica avalia seu aparelho pessoalmente
-                        antes da troca.
+                      <p className="text-funnel-text-secondary text-sm">
+                        Com certeza! Como nosso cliente, você tem até 20% de
+                        desconto em acessórios originais. Basta informar à nossa
+                        equipe no WhatsApp quais itens você gostaria de
+                        adicionar, e eles incluirão na sua proposta final.
                       </p>
                     </div>
 
                     <div>
-                      <h4 className="text-white font-medium mb-2">
+                      <h4 className="text-funnel-text-primary font-medium mb-2">
                         Posso cancelar?
                       </h4>
-                      <p className="text-gray-400 text-sm">
+                      <p className="text-funnel-text-secondary text-sm">
                         Sim, você pode cancelar a qualquer momento antes da
-                        finalização.
-                      </p>
-                    </div>
-
-                    <div>
-                      <h4 className="text-white font-medium mb-2">
-                        Quanto tempo demora?
-                      </h4>
-                      <p className="text-gray-400 text-sm">
-                        O processo completo leva de 2 a 5 dias úteis.
-                      </p>
-                    </div>
-
-                    <div>
-                      <h4 className="text-white font-medium mb-2">
-                        E se meu iPhone valer menos?
-                      </h4>
-                      <p className="text-gray-400 text-sm">
-                        Reavaliamos e você decide se aceita a nova proposta ou
-                        cancela.
+                        finalização da troca e deve avisar com antecedência à
+                        visita.
                       </p>
                     </div>
                   </div>

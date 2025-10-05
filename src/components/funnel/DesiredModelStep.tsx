@@ -87,9 +87,9 @@ const DesiredModelStep: React.FC<DesiredModelStepProps> = ({
   return (
     <div className="space-y-6">
       <div className="text-center">
-        <h2 className="text-2xl font-bold text-white mb-2">
+        {/* <h2 className="text-2xl font-bold text-white mb-2">
           Qual iPhone você deseja?
-        </h2>
+        </h2> */}
         <p className="text-gray-400">
           Escolha o modelo que você gostaria de ter. Mostraremos apenas produtos
           disponíveis.
