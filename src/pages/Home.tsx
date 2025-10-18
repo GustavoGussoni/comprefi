@@ -2,6 +2,9 @@ import React from "react";
 import { Link } from "react-router-dom";
 import FAQ from "../components/FAQ";
 import WhyChooseCompreFi from "../components/WhyChooseCompreFi";
+import TestimonialCard from "../components/TestimonialCard";
+import CategoryCard from "../components/CategoryCard";
+import ImageLoader from "../components/ImageLoader";
 
 // Imagens
 import desktopBanner from "../assets/images/IMG_2816_desktop.png";
@@ -12,6 +15,25 @@ interface HomeProps {
 }
 
 const Home: React.FC<HomeProps> = ({ isMobile }) => {
+  // Dados dos depoimentos
+  const testimonials = [
+    {
+      name: "Carlos Silva",
+      text: "Comprei meu iPhone na CompreFi e fiquei impressionado com a qualidade do atendimento. Recomendo!",
+      rating: 5,
+    },
+    {
+      name: "Madu",
+      text: "Com certeza vou recomendar você pra quem perguntar algo, um dos únicos que se preocupou em achar oq eu queria.",
+      rating: 5,
+    },
+    {
+      name: "Luana Bernardes",
+      text: "Muuuuito obrigada Gustavo. Pelo atendimento e agilidade. To muito feliz com meu novo celular. Você ganhou uma cliente e vai ganhar mais alguns hahaha pq vou super indicar",
+      rating: 5,
+    },
+  ];
+
   return (
     <div className="home-container">
       {/* Parábola - Padrão de Interrupção (Russell Brunson) */}
@@ -22,7 +44,7 @@ const Home: React.FC<HomeProps> = ({ isMobile }) => {
             <span className="text-[#ff6100]">Ofertas Tentadoras</span>
           </h2>
 
-          <div className="space-y-6 text-lg text-gray-200 leading-relaxed">
+          <div className="space-y-6 text-lg text-gray-200 leading-relaxed max-w-3xl mx-auto">
             <p>
               Você não pode ver, tocar ou segurar a gravidade. Mas basta dar um
               passo para fora de uma borda... e você aprende, da forma mais
@@ -51,33 +73,12 @@ const Home: React.FC<HomeProps> = ({ isMobile }) => {
               você merece.
             </p>
           </div>
-
-          <div className="mt-8 flex justify-center">
-            <Link
-              to="/economia"
-              className="bg-[#ff6100] hover:bg-[#e55a00] text-white py-3 px-8 rounded-md transition-all duration-300 transform hover:scale-105 flex items-center"
-            >
-              Descubra Como
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5 ml-2"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z"
-                  clipRule="evenodd"
-                />
-              </svg>
-            </Link>
-          </div>
         </div>
       </section>
 
-      {/* Banner Principal */}
+      {/* Banner Principal com ImageLoader */}
       <section className="banner-section w-full">
-        <img
+        <ImageLoader
           src={isMobile ? mobileBanner : desktopBanner}
           alt="CompreFi - Produtos Apple Premium"
           className="w-full h-auto object-cover"
@@ -90,133 +91,69 @@ const Home: React.FC<HomeProps> = ({ isMobile }) => {
           Minha Jornada
         </h2>
 
-        <div className="story-block mb-10">
-          {/* <h3 className="text-xl md:text-2xl font-semibold mb-4 text-[#ff6100]">
-            Início
-          </h3> */}
-          <p className="text-lg text-gray-200 leading-relaxed">
-            Um dia, me vi sentado numa sala, trabalhando duro… mas para realizar
-            o sonho de outra pessoa. Eu vendia para uma grande empresa do setor
-            alimentício. Tinha um bom salário, estabilidade — o que muitos
-            considerariam sucesso. Mas, por dentro, eu estava vazio.
-          </p>
-        </div>
+        <div className="space-y-8 max-w-3xl mx-auto">
+          <div className="story-block">
+            <p className="text-lg text-gray-200 leading-relaxed">
+              Um dia, me vi sentado numa sala, trabalhando duro… mas para
+              realizar o sonho de outra pessoa. Eu vendia para uma grande
+              empresa do setor alimentício. Tinha um bom salário, estabilidade —
+              o que muitos considerariam sucesso. Mas, por dentro, eu estava
+              vazio.
+            </p>
+          </div>
 
-        <div className="story-block mb-10">
-          {/* <h3 className="text-xl md:text-2xl font-semibold mb-4 text-[#ff6100]">
-            Mudança
-          </h3> */}
-          <p className="text-lg text-gray-200 leading-relaxed">
-            Buscando propósito, entrei no mercado financeiro. Achei que seria
-            uma jornada de aprendizado e liberdade, mas acabei perdendo tudo.
-            Foi um dos momentos mais difíceis da minha vida.
-          </p>
-        </div>
+          <div className="story-block">
+            <p className="text-lg text-gray-200 leading-relaxed">
+              Buscando propósito, entrei no mercado financeiro. Achei que seria
+              uma jornada de aprendizado e liberdade, mas acabei perdendo tudo.
+              Foi um dos momentos mais difíceis da minha vida.
+            </p>
+          </div>
 
-        <div className="story-block mb-10">
-          {/* <h3 className="text-xl md:text-2xl font-semibold mb-4 text-[#ff6100]">
-            Reflexão
-          </h3> */}
-          <p className="text-lg text-gray-200 leading-relaxed">
-            Depois de muita reflexão, percebi: eu nunca deveria ter parado de
-            servir pessoas. Sempre fui movido por oferecer uma experiência de
-            compra de verdade — daquelas que encantam, que surpreendem, que
-            criam vínculos.
-          </p>
-        </div>
+          <div className="story-block">
+            <p className="text-lg text-gray-200 leading-relaxed">
+              Depois de muita reflexão, percebi: eu nunca deveria ter parado de
+              servir pessoas. Sempre fui movido por oferecer uma experiência de
+              compra de verdade — daquelas que encantam, que surpreendem, que
+              criam vínculos.
+            </p>
+          </div>
 
-        <div className="story-block">
-          {/* <h3 className="text-xl md:text-2xl font-semibold mb-4 text-[#ff6100]">
-            Renascimento
-          </h3> */}
-          <p className="text-lg text-gray-200 leading-relaxed">
-            Foi então que decidi voltar às minhas raízes. Escolhi trabalhar com
-            algo que eu realmente amava: Apple. Me aprofundei, estudei, vivi o
-            ecossistema — e me tornei especialista.
-          </p>
-          <p className="text-lg text-gray-200 leading-relaxed mt-4 font-semibold">
-            Hoje, ajudo clientes Apple exigentes, que valorizam segurança,
-            confiança e agilidade, a atualizarem seus produtos com
-            tranquilidade, muitas vezes economizando de R$300 a quase R$20.000 —
-            tudo isso sem abrir mão da experiência premium que eles merecem.
-          </p>
+          <div className="story-block">
+            <p className="text-lg text-gray-200 leading-relaxed">
+              Foi então que decidi voltar às minhas raízes. Escolhi trabalhar
+              com algo que eu realmente amava: Apple. Me aprofundei, estudei,
+              vivi o ecossistema — e me tornei especialista.
+            </p>
+            <p className="text-lg text-gray-200 leading-relaxed mt-4 font-semibold">
+              Hoje, ajudo clientes Apple exigentes, que valorizam segurança,
+              confiança e agilidade, a atualizarem seus produtos com
+              tranquilidade, muitas vezes economizando de R$300 a quase R$20.000
+              — tudo isso sem abrir mão da experiência premium que eles merecem.
+            </p>
+          </div>
         </div>
       </section>
 
-      {/* Espaço para Depoimentos - Será implementado quando o usuário enviar os depoimentos */}
+      {/* Depoimentos com TestimonialCard */}
       <section className="testimonials-section py-16 px-4">
         <h2 className="text-3xl md:text-4xl font-bold mb-12 text-center text-white">
           O Que Nossos Clientes Dizem
         </h2>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <div className="bg-gray-900 rounded-lg p-6 border border-gray-800">
-            <div className="flex mb-4">
-              {[...Array(5)].map((_, i) => (
-                <svg
-                  key={i}
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5 text-[#ff6100]"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                >
-                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                </svg>
-              ))}
-            </div>
-            <p className="text-gray-300 mb-4 italic">
-              "Comprei meu iPhone na CompreFi e fiquei impressionado com a
-              qualidade do atendimento. Recomendo!"
-            </p>
-            <p className="text-white font-medium">Carlos Silva</p>
-          </div>
-
-          <div className="bg-gray-900 rounded-lg p-6 border border-gray-800">
-            <div className="flex mb-4">
-              {[...Array(5)].map((_, i) => (
-                <svg
-                  key={i}
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5 text-[#ff6100]"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                >
-                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                </svg>
-              ))}
-            </div>
-            <p className="text-gray-300 mb-4 italic">
-              "Com certeza vou recomendar você pra quem perguntar algo, um dos
-              únicos que se preocupou em achar oq eu queria."
-            </p>
-            <p className="text-white font-medium">Madu</p>
-          </div>
-
-          <div className="bg-gray-900 rounded-lg p-6 border border-gray-800">
-            <div className="flex mb-4">
-              {[...Array(5)].map((_, i) => (
-                <svg
-                  key={i}
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5 text-[#ff6100]"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                >
-                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                </svg>
-              ))}
-            </div>
-            <p className="text-gray-300 mb-4 italic">
-              "Muuuuito obrigada Gustavo. Pelo atendimento e agilidade. To muito
-              feliz com meu novo celular. Você ganhou uma cliente e vai ganhar
-              mais alguns hahaha pq vou super indicar "
-            </p>
-            <p className="text-white font-medium">Luana Bernardes</p>
-          </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+          {testimonials.map((testimonial, index) => (
+            <TestimonialCard
+              key={index}
+              name={testimonial.name}
+              text={testimonial.text}
+              rating={testimonial.rating}
+            />
+          ))}
         </div>
       </section>
 
-      {/* Módulo de Categorias */}
+      {/* Módulo de Categorias com CategoryCard */}
       <section className="categories-section py-16 px-4 bg-gray-900">
         <h2 className="text-3xl md:text-4xl font-bold mb-12 text-center text-white">
           Nossos Produtos
@@ -256,56 +193,216 @@ const Home: React.FC<HomeProps> = ({ isMobile }) => {
         </div>
       </section>
 
+      {/* Por que escolher a CompreFi */}
+      <section className="why-choose-section py-16 px-4 ">
+        <WhyChooseCompreFi />
+      </section>
+
       {/* FAQ */}
       <section className="faq-section py-16 px-4">
         <FAQ />
       </section>
 
-      {/* Por que escolher a CompreFi */}
-      <section className="why-choose-section py-16 px-4">
-        <WhyChooseCompreFi />
+      {/* NOVA SEÇÃO: Escolha Seu Caminho - Conexão com Funis */}
+      <section className="choose-path-section py-20 px-4 bg-gradient-to-b from-black to-gray-900">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-3xl md:text-5xl font-bold mb-6 text-center text-white">
+            Escolha Seu Caminho
+          </h2>
+          <p className="text-xl text-gray-300 text-center mb-12 max-w-3xl mx-auto">
+            Seja para trocar seu iPhone atual ou aprender como economizar na
+            compra de produtos Apple, temos a solução perfeita para você.
+          </p>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+            {/* Card 1: TradeFunnel */}
+            <div className="bg-gradient-to-br from-blue-900 to-blue-800 rounded-2xl p-8 border-2 border-blue-600 hover:border-blue-400 transition-all duration-300 transform hover:scale-105 shadow-2xl">
+              <div className="text-center mb-6">
+                <div className="w-20 h-20 mx-auto bg-blue-600 rounded-full flex items-center justify-center mb-4">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-10 w-10 text-white"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"
+                    />
+                  </svg>
+                </div>
+                <h3 className="text-2xl md:text-3xl font-bold text-white mb-3">
+                  Quer Trocar Seu iPhone?
+                </h3>
+                <p className="text-blue-100 text-lg mb-6">
+                  Descubra quanto vale seu iPhone atual e quanto você economiza
+                  na troca por um modelo mais novo.
+                </p>
+              </div>
+
+              <ul className="space-y-3 mb-8">
+                <li className="flex items-start text-blue-50">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-6 w-6 mr-3 text-green-400 flex-shrink-0 mt-0.5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
+                  <span>Avaliação instantânea do seu aparelho</span>
+                </li>
+                <li className="flex items-start text-blue-50">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-6 w-6 mr-3 text-green-400 flex-shrink-0 mt-0.5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
+                  <span>Proposta personalizada em minutos</span>
+                </li>
+                <li className="flex items-start text-blue-50">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-6 w-6 mr-3 text-green-400 flex-shrink-0 mt-0.5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
+                  <span>Bônus exclusivos desbloqueados</span>
+                </li>
+              </ul>
+
+              <Link
+                to="/trocar-de-iphone"
+                className="block w-full bg-white hover:bg-gray-100 text-blue-900 font-bold py-4 px-6 rounded-lg transition-all duration-300 text-center text-lg shadow-lg"
+              >
+                Calcular Minha Troca Agora →
+              </Link>
+            </div>
+
+            {/* Card 2: Economia (Lead Magnet) */}
+            <div className="bg-gradient-to-br from-orange-900 to-orange-800 rounded-2xl p-8 border-2 border-orange-600 hover:border-orange-400 transition-all duration-300 transform hover:scale-105 shadow-2xl">
+              <div className="text-center mb-6">
+                <div className="w-20 h-20 mx-auto bg-orange-600 rounded-full flex items-center justify-center mb-4">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-10 w-10 text-white"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+                    />
+                  </svg>
+                </div>
+                <h3 className="text-2xl md:text-3xl font-bold text-white mb-3">
+                  Quer Aprender a Economizar?
+                </h3>
+                <p className="text-orange-100 text-lg mb-6">
+                  Receba nosso guia exclusivo e descubra como economizar de
+                  R$300 a R$20.000 em produtos Apple.
+                </p>
+              </div>
+
+              <ul className="space-y-3 mb-8">
+                <li className="flex items-start text-orange-50">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-6 w-6 mr-3 text-green-400 flex-shrink-0 mt-0.5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
+                  <span>Guia completo de economia em produtos Apple</span>
+                </li>
+                <li className="flex items-start text-orange-50">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-6 w-6 mr-3 text-green-400 flex-shrink-0 mt-0.5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
+                  <span>Como evitar as 5 armadilhas mais comuns</span>
+                </li>
+                <li className="flex items-start text-orange-50">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-6 w-6 mr-3 text-green-400 flex-shrink-0 mt-0.5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
+                  <span>Acesso imediato por email</span>
+                </li>
+              </ul>
+
+              <Link
+                to="/economia"
+                className="block w-full bg-white hover:bg-gray-100 text-orange-900 font-bold py-4 px-6 rounded-lg transition-all duration-300 text-center text-lg shadow-lg"
+              >
+                Baixar Guia Gratuito →
+              </Link>
+            </div>
+          </div>
+
+          <p className="text-center text-gray-400 mt-8 text-sm">
+            Mais de 1.400 clientes já escolheram a CompreFi para suas compras
+            Apple
+          </p>
+        </div>
       </section>
     </div>
-  );
-};
-
-// Componente de Card para Categorias
-interface CategoryCardProps {
-  title: string;
-  link: string;
-  description: string;
-}
-
-const CategoryCard: React.FC<CategoryCardProps> = ({
-  title,
-  link,
-  description,
-}) => {
-  return (
-    <Link
-      to={link}
-      className="category-card block bg-gray-800 rounded-lg overflow-hidden transition-all duration-300 hover:shadow-lg hover:shadow-[#ff6100]/20 hover:-translate-y-1 cursor-pointer"
-    >
-      <div className="p-6">
-        <h3 className="text-xl font-bold mb-2 text-white">{title}</h3>
-        <p className="text-gray-300 mb-4">{description}</p>
-        <div className="text-[#ff6100] font-medium flex items-center">
-          Ver produtos
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-5 w-5 ml-2"
-            viewBox="0 0 20 20"
-            fill="currentColor"
-          >
-            <path
-              fillRule="evenodd"
-              d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z"
-              clipRule="evenodd"
-            />
-          </svg>
-        </div>
-      </div>
-    </Link>
   );
 };
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 
 interface PageTransitionProps {
   children: React.ReactNode;
@@ -10,17 +10,18 @@ const PageTransition: React.FC<PageTransitionProps> = ({ children }) => {
   useEffect(() => {
     // Simular carregamento de página
     setIsLoading(true);
-    
+
     // Detectar se é iOS para otimizações específicas
-    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
-    
+    const isIOS =
+      /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
+
     // Tempo de carregamento mais curto para iOS para melhor performance
     const loadTime = isIOS ? 300 : 500;
-    
+
     const timer = setTimeout(() => {
       setIsLoading(false);
     }, loadTime);
-    
+
     return () => clearTimeout(timer);
   }, []);
 
@@ -29,20 +30,20 @@ const PageTransition: React.FC<PageTransitionProps> = ({ children }) => {
       {isLoading ? (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-90">
           <div className="text-center">
-            <div className="inline-block">
+            <div className="flex flex-col flex-center items-center">
               {/* Loader otimizado para iOS - mais leve e com menos animações complexas */}
               <svg className="w-16 h-16 text-[#ff6100]" viewBox="0 0 24 24">
-                <circle 
-                  className="opacity-25" 
-                  cx="12" 
-                  cy="12" 
-                  r="10" 
-                  stroke="currentColor" 
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
                   strokeWidth="4"
                 ></circle>
-                <path 
-                  className="opacity-75" 
-                  fill="currentColor" 
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
                   d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                 >
                   <animateTransform

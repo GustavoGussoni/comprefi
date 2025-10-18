@@ -148,9 +148,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
     // Preparar dados conforme esperado pela API
     const apiData: any = {
       model: formData.model.trim(),
-      storage: formData.storage.trim(),
       color: formData.color.trim(),
-      battery: formData.battery.trim(),
       originalPrice: formData.originalPrice.trim(),
       installmentPrice: formData.installmentPrice.trim(),
       pixPrice: formData.pixPrice.trim(),
@@ -161,6 +159,16 @@ const ProductForm: React.FC<ProductFormProps> = ({
       isNew: formData.isNew,
       realImages: cleanRealImages,
     };
+
+    // Adicionar storage apenas se não for vazio
+    if (formData.storage.trim()) {
+      apiData.storage = formData.storage.trim();
+    }
+
+    // Adicionar battery apenas se não for vazio
+    if (formData.battery.trim()) {
+      apiData.battery = formData.battery.trim();
+    }
 
     // Adicionar imagem principal se fornecida
     if (formData.image.trim()) {

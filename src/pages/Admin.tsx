@@ -4,6 +4,7 @@ import ProductForm from "../components/admin/ProductForm";
 import ProductTable from "../components/admin/ProductTable";
 import PriceCalculator from "../components/admin/PriceCalculator";
 import AdminStats from "../components/admin/AdminStats";
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 const Admin: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -284,8 +285,7 @@ const Admin: React.FC = () => {
             {/* Tabela de Produtos */}
             {loading ? (
               <div className="text-center py-12">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
-                <p>Carregando produtos...</p>
+                <LoadingSpinner message="Carregando..." />
               </div>
             ) : (
               <ProductTable
@@ -293,6 +293,7 @@ const Admin: React.FC = () => {
                 onEdit={handleEditProduct}
                 onDelete={handleDeleteProduct}
                 onToggleActive={handleToggleActive}
+                onProductUpdated={loadProducts}
               />
             )}
           </div>

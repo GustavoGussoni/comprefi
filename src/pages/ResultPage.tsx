@@ -61,6 +61,8 @@ const ResultPage: React.FC = () => {
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const [funnelData, setFunnelData] = useState<FunnelData | null>(null);
   const [result, setResult] = useState<TradeResult | null>(null);
+
+  // console.log(result);
   // --- ESTADO INICIAL ATUALIZADO ---
   const [contactForm, setContactForm] = useState<ContactForm>({
     nome: "",
@@ -271,7 +273,7 @@ ${timeLeft > 0 ? `• Desconto Refinado Exclusivo: ${formatCurrency(discount)}` 
 
 *Confirmado em:* ${new Date().toLocaleString("pt-BR")}
     `.trim();
-    const whatsappUrl = `https://wa.me/5511999999999?text=${encodeURIComponent(message)}`;
+    const whatsappUrl = `https://wa.me/5534999252590?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, "_blank");
     localStorage.removeItem("funnelData");
     localStorage.removeItem("tradeResult");
@@ -334,8 +336,8 @@ ${timeLeft > 0 ? `• Desconto Refinado Exclusivo: ${formatCurrency(discount)}` 
                   {formatCurrency(totalEconomy)}
                 </div>
                 <p className="text-green-200">
-                  na troca do seu {funnelData?.modeloAtual} por um{" "}
-                  {result?.produtoDesejado?.model}
+                  na troca do seu {funnelData?.modeloAtual} por um <br></br>
+                  {result?.produtoDesejado?.modelo}
                 </p>
                 <div className="mt-4 p-4 bg-green-800 bg-opacity-50 rounded-lg text-left text-sm">
                   <p className="text-green-300 font-semibold mb-2">
@@ -367,38 +369,41 @@ ${timeLeft > 0 ? `• Desconto Refinado Exclusivo: ${formatCurrency(discount)}` 
               </div>
 
               <div className="mb-12 space-y-6">
-                <h3 className="text-2xl font-bold text-center text-funnel-text-primary">
+                {/* <h3 className="text-2xl font-bold text-center text-funnel-text-primary">
                   Junte-se a milhares de clientes satisfeitos
-                </h3>
+                </h3> */}
+
                 <div className="bg-funnel-surface p-4 rounded-lg border border-funnel-surface-light flex items-start">
-                  <img
-                    src="https://randomuser.me/api/portraits/women/44.jpg"
+                  {/* <img
+                    src="https://randomuser.me/api/portraits/men/32.jpg"
                     alt="Foto do cliente"
                     className="w-12 h-12 rounded-full mr-4 border-2 border-funnel-primary"
-                  />
+                  /> */}
                   <div>
                     <p className="text-funnel-text-secondary italic">
-                      "Processo super rápido e transparente. Fui muito bem
-                      atendido pelo Gustavo. Recomendo demais!"
+                      "Comprei meu iPhone na CompreFi e fiquei impressionado com
+                      a qualidade do atendimento. Recomendo!"
                     </p>
                     <p className="text-right font-semibold text-funnel-text-primary mt-2">
-                      - Maria S., São Paulo
+                      - Carlos Silva
                     </p>
                   </div>
                 </div>
                 <div className="bg-funnel-surface p-4 rounded-lg border border-funnel-surface-light flex items-start">
-                  <img
-                    src="https://randomuser.me/api/portraits/men/32.jpg"
+                  {/* <img
+                    src="https://randomuser.me/api/portraits/women/44.jpg"
                     alt="Foto do cliente"
                     className="w-12 h-12 rounded-full mr-4 border-2 border-funnel-primary"
-                  />
+                  /> */}
                   <div>
                     <p className="text-funnel-text-secondary italic">
-                      "Consegui o melhor valor pelo meu aparelho antigo. A
-                      economia na troca foi real. Virei cliente!"
+                      "Muuuuito obrigada Gustavo. Pelo atendimento e agilidade.
+                      To muito feliz com meu novo celular. Você ganhou uma
+                      cliente e vai ganhar mais alguns hahaha pq vou super
+                      indicar "
                     </p>
                     <p className="text-right font-semibold text-funnel-text-primary mt-2">
-                      - João P., Campinas
+                      - Luana Bernardes
                     </p>
                   </div>
                 </div>
@@ -644,7 +649,7 @@ ${timeLeft > 0 ? `• Desconto Refinado Exclusivo: ${formatCurrency(discount)}` 
                       <div className="flex justify-between">
                         <span className="text-gray-400">Modelo:</span>
                         <span className="text-white">
-                          {result?.produtoDesejado?.model}
+                          {result?.produtoDesejado?.modelo}
                         </span>
                       </div>
                       <div className="flex justify-between">
@@ -676,10 +681,10 @@ ${timeLeft > 0 ? `• Desconto Refinado Exclusivo: ${formatCurrency(discount)}` 
                 </div>
 
                 <p className="text-funnel-text-secondary text-xs mt-4 text-center">
-                  Nota sobre a avaliação: Esta é uma proposta preliminar baseada
-                  nas suas respostas. Na visita, nossa equipe fará uma
-                  verificação final do aparelho para confirmar as condições e
-                  garantir o valor mais justo para você.
+                  Nota sobre a avaliação: Esta é baseada nas suas respostas.
+                  Nossa equipe fará uma verificação final do aparelho para
+                  confirmar as condições e garantir o valor mais justo para
+                  você.
                 </p>
               </div>
 
@@ -753,8 +758,8 @@ ${timeLeft > 0 ? `• Desconto Refinado Exclusivo: ${formatCurrency(discount)}` 
                   Próximo Passo: Agende sua Troca
                 </h3>
                 <p className="text-funnel-text-secondary mb-6">
-                  Clique no botão abaixo para confirmar sua proposta no WhatsApp
-                  e agendar a visita da nossa equipe.
+                  Clique no botão abaixo para confirmar sua compra no WhatsApp e
+                  agendar a sua entrega.
                 </p>
                 <button
                   onClick={handleWhatsAppRedirect}
@@ -779,7 +784,7 @@ ${timeLeft > 0 ? `• Desconto Refinado Exclusivo: ${formatCurrency(discount)}` 
                   <p>
                     3. <strong>Receba e Troque:</strong> Entregamos seu novo
                     iPhone em mãos e ajudamos na transferência de dados na hora.
-                    Simples, rápido, seguro e Refinado.
+                    simples, rápido, seguro e Refinado.
                   </p>
                 </div>
               </div>
@@ -838,9 +843,8 @@ ${timeLeft > 0 ? `• Desconto Refinado Exclusivo: ${formatCurrency(discount)}` 
                         Qual a garantia?
                       </h4>
                       <p className="text-funnel-text-secondary text-sm">
-                        Todos os nossos produtos têm garantia completa de 1 ano
-                        com a Apple. Todos os detalhes estarão na sua proposta
-                        final.
+                        Todos os produtos têm garantia completa de 1 ano com a
+                        Apple. E você terá Suporte Eterno com a CompreFi.
                       </p>
                     </div>
                     <div>
@@ -848,9 +852,9 @@ ${timeLeft > 0 ? `• Desconto Refinado Exclusivo: ${formatCurrency(discount)}` 
                         Posso adicionar acessórios ao meu pedido com desconto?
                       </h4>
                       <p className="text-funnel-text-secondary text-sm">
-                        Com certeza! Como nosso cliente, você tem até 20% de
-                        desconto em acessórios originais. Basta informar à nossa
-                        equipe no WhatsApp quais itens você gostaria de
+                        Com certeza! Como nosso cliente Refinado, você tem até
+                        20% de desconto em acessórios originais. Basta informar
+                        à nossa equipe no WhatsApp quais itens você gostaria de
                         adicionar, e eles incluirão na sua proposta final.
                       </p>
                     </div>

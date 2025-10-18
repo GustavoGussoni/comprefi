@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { apiService } from "../services/api";
 import AdminLogin from "../pages/AdminLogin";
+import LoadingSpinner from "./LoadingSpinner";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -74,8 +75,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
-          <p className="text-white">Verificando autenticação...</p>
+          <LoadingSpinner message="Verificando autenticação..." />
         </div>
       </div>
     );

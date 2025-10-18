@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { apiService } from "../services/api";
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 interface AdminLoginProps {
   onLoginSuccess: () => void;
@@ -106,8 +107,7 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLoginSuccess }) => {
             >
               {loading ? (
                 <>
-                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-                  Entrando...
+                  <LoadingSpinner size="sm" message="Entrando..." />
                 </>
               ) : (
                 <>🔑 Entrar no Admin</>

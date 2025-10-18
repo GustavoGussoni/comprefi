@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import ProductDetail from "../components/ProductDetail";
 import PageTransition from "../components/PageTransition";
 import { apiService, categoryMapping, type Product } from "../services/api";
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 const ProductPage: React.FC = () => {
   const { category, id } = useParams<{ category: string; id: string }>();
@@ -69,10 +70,12 @@ const ProductPage: React.FC = () => {
   if (loading) {
     return (
       <PageTransition>
-        <div className="min-h-screen bg-black text-white flex items-center justify-center">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
-            <p className="text-lg">Carregando produto...</p>
+        <div className="bg-black min-h-screen">
+          <div className="container mx-auto px-4 py-12">
+            <h1 className="text-3xl font-bold text-white text-center mb-8">
+              Produtos
+            </h1>
+            <LoadingSpinner message="Carregando produtos..." />
           </div>
         </div>
       </PageTransition>

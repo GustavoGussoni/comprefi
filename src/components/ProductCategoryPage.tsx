@@ -2,10 +2,24 @@ import React, { useState, useEffect } from "react";
 import FAQ from "../components/FAQ";
 import WhyChooseCompreFi from "../components/WhyChooseCompreFi";
 import ProductCard from "../components/ProductCard";
+import LoadingSpinner from "../components/LoadingSpinner";
 import { apiService, type Product } from "../services/api";
-import LoadingSpinner from "@/components/LoadingSpinner";
 
-const Acessorios: React.FC = () => {
+interface ProductCategoryPageProps {
+  title: string;
+  subtitle: string;
+  category: string;
+  emptyIcon?: string;
+  emptyMessage?: string;
+}
+
+const ProductCategoryPage: React.FC<ProductCategoryPageProps> = ({
+  title,
+  subtitle,
+  category,
+  emptyIcon = "📦",
+  emptyMessage = "Nenhum produto disponível no momento",
+}) => {
   // Número de WhatsApp
   const whatsappNumber = "+5534999252590";
 
@@ -26,18 +40,10 @@ const Acessorios: React.FC = () => {
         setLoading(true);
         setError(null);
 
-        // Buscar TODOS os produtos ativos primeiro
-        const allProducts = await apiService.getProductsWithFilters({
+        // Buscar produtos da categoria especificada que estão ativos
+        const data = await apiService.getProductsWithFilters({
+          category: category,
           isActive: true,
-        });
-
-        // Filtrar produtos da categoria "Acessórios" (com ou sem acento)
-        const data = allProducts.filter((product) => {
-          const category = product.category
-            .toLowerCase()
-            .normalize("NFD")
-            .replace(/[\u0300-\u036f]/g, "");
-          return category === "acessorios";
         });
 
         setProducts(data);
@@ -50,7 +56,7 @@ const Acessorios: React.FC = () => {
     };
 
     fetchProducts();
-  }, []);
+  }, [category]);
 
   // Função para selecionar forma de pagamento
   const selectPaymentMethod = (productId: string, method: "pix" | "card") => {
@@ -67,7 +73,7 @@ const Acessorios: React.FC = () => {
       paymentMethod === "pix"
         ? product.pixPrice
         : `12x ${product.installmentPrice}`;
-    const message = `Quero comprar o ${product.model} por ${price}`;
+    const message = `Quero comprar o ${product.model} ${product.storage || ""} por ${price}`;
     const encodedMessage = encodeURIComponent(message);
     window.open(
       `https://wa.me/${whatsappNumber}?text=${encodedMessage}`,
@@ -78,20 +84,14 @@ const Acessorios: React.FC = () => {
   // Loading state
   if (loading) {
     return (
-      <div className="acessorios-container bg-black min-h-screen">
+      <div className="product-category-container bg-black min-h-screen">
         <div className="container mx-auto px-4 py-12">
           <h1 className="text-3xl md:text-4xl font-bold mb-2 text-white text-center">
-            Acessórios Apple
+            {title}
           </h1>
-          <p className="text-xl text-gray-300 mb-8 text-center">
-            Lacrados | 1 ano de garantia Apple
-          </p>
+          <p className="text-xl text-gray-300 mb-8 text-center">{subtitle}</p>
 
-          <div className="flex justify-center items-center py-20">
-            <div className="text-center">
-              <LoadingSpinner message="Carregando produtos..." />
-            </div>
-          </div>
+          <LoadingSpinner message="Carregando produtos..." />
         </div>
       </div>
     );
@@ -100,14 +100,12 @@ const Acessorios: React.FC = () => {
   // Error state
   if (error) {
     return (
-      <div className="acessorios-container bg-black min-h-screen">
+      <div className="product-category-container bg-black min-h-screen">
         <div className="container mx-auto px-4 py-12">
           <h1 className="text-3xl md:text-4xl font-bold mb-2 text-white text-center">
-            Acessórios Apple
+            {title}
           </h1>
-          <p className="text-xl text-gray-300 mb-8 text-center">
-            Lacrados | 1 ano de garantia Apple
-          </p>
+          <p className="text-xl text-gray-300 mb-8 text-center">{subtitle}</p>
 
           <div className="bg-red-900 border border-red-700 text-red-100 px-6 py-4 rounded-lg mb-8 max-w-2xl mx-auto">
             <p className="text-center">{error}</p>
@@ -126,20 +124,16 @@ const Acessorios: React.FC = () => {
   // Empty state
   if (products.length === 0) {
     return (
-      <div className="acessorios-container bg-black min-h-screen">
+      <div className="product-category-container bg-black min-h-screen">
         <div className="container mx-auto px-4 py-12">
           <h1 className="text-3xl md:text-4xl font-bold mb-2 text-white text-center">
-            Acessórios Apple
+            {title}
           </h1>
-          <p className="text-xl text-gray-300 mb-8 text-center">
-            Lacrados | 1 ano de garantia Apple
-          </p>
+          <p className="text-xl text-gray-300 mb-8 text-center">{subtitle}</p>
 
           <div className="bg-gray-900 border border-gray-800 text-gray-300 px-6 py-12 rounded-lg mb-8 max-w-2xl mx-auto text-center">
-            <div className="text-6xl mb-4">📦</div>
-            <p className="text-xl mb-2">
-              Nenhum acessório disponível no momento
-            </p>
+            <div className="text-6xl mb-4">{emptyIcon}</div>
+            <p className="text-xl mb-2">{emptyMessage}</p>
             <p className="text-gray-400">
               Estamos atualizando nosso estoque. Volte em breve!
             </p>
@@ -150,14 +144,12 @@ const Acessorios: React.FC = () => {
   }
 
   return (
-    <div className="acessorios-container bg-black min-h-screen">
+    <div className="product-category-container bg-black min-h-screen">
       <div className="container mx-auto px-4 py-12">
         <h1 className="text-3xl md:text-4xl font-bold mb-2 text-white text-center">
-          Acessórios Apple
+          {title}
         </h1>
-        <p className="text-xl text-gray-300 mb-8 text-center">
-          Lacrados | 1 ano de garantia Apple
-        </p>
+        <p className="text-xl text-gray-300 mb-8 text-center">{subtitle}</p>
 
         {/* Lista de produtos usando ProductCard */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
@@ -186,4 +178,4 @@ const Acessorios: React.FC = () => {
   );
 };
 
-export default Acessorios;
+export default ProductCategoryPage;
