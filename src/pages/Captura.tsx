@@ -1,25 +1,14 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import PageTransition from "../components/PageTransition";
+import TestimonialCard from "../components/TestimonialCard";
+import FAQ from "../components/FAQ";
 
 const Captura: React.FC = () => {
   const navigate = useNavigate();
 
-  // const formatarDataHoraBrasileira = () => {
-  //   const agora = new Date();
-
-  //   const dia = String(agora.getDate()).padStart(2, "0");
-  //   const mes = String(agora.getMonth() + 1).padStart(2, "0"); // Mês começa em 0
-  //   const ano = agora.getFullYear();
-
-  //   const hora = String(agora.getHours()).padStart(2, "0");
-  //   const minuto = String(agora.getMinutes()).padStart(2, "0");
-  //   const segundo = String(agora.getSeconds()).padStart(2, "0");
-
-  //   return `${dia}/${mes}/${ano} ${hora}:${minuto}:${segundo}`;
-  // };
   const formatarDataHoraISO = () => {
-    return new Date().toISOString(); // Exemplo: 2025-06-17T18:25:43.511Z
+    return new Date().toISOString();
   };
 
   const [formData, setFormData] = useState({
@@ -38,6 +27,7 @@ const Captura: React.FC = () => {
       [name]: value,
     }));
   };
+
   const dataHoraFormatada = formatarDataHoraISO();
 
   const dadosCompletos = {
@@ -65,7 +55,7 @@ const Captura: React.FC = () => {
 
       if (!response.ok) {
         throw new Error(
-          "Falha ao enviar o formulário. Por favor, tente novamente.",
+          "Falha ao enviar o formulário. Por favor, tente novamente."
         );
       }
 
@@ -77,12 +67,60 @@ const Captura: React.FC = () => {
       setSubmitError(
         error instanceof Error
           ? error.message
-          : "Ocorreu um erro ao enviar o formulário",
+          : "Ocorreu um erro ao enviar o formulário"
       );
     } finally {
       setIsSubmitting(false);
     }
   };
+
+  // Dados dos depoimentos
+  const testimonials = [
+    {
+      name: "Roberto M.",
+      text: "Quase caí em um golpe de R$ 4.200 comprando um MacBook. O guia me salvou e me ensinou a identificar fraudes em segundos!",
+      rating: 5,
+    },
+    {
+      name: "Juliana Santos",
+      text: "Perdi R$ 2.800 em um golpe antes de conhecer a CompreFi. Agora sei exatamente o que verificar antes de comprar qualquer produto Apple.",
+      rating: 5,
+    },
+    {
+      name: "Pedro Oliveira",
+      text: "O checklist de verificação é incrível! Identifiquei 3 ofertas falsas em menos de 5 minutos. Recomendo muito!",
+      rating: 5,
+    },
+  ];
+
+  // FAQ específico para Captura
+  const faqItems = [
+    {
+      question: "O guia anti-golpes é realmente gratuito?",
+      answer:
+        "Sim! O guia completo + checklist + bônus são 100% gratuitos. Não há nenhum custo oculto.",
+    },
+    {
+      question: "Quando vou receber o guia?",
+      answer:
+        "Você receberá o guia no seu e-mail em até 2 minutos após o cadastro. Verifique também sua caixa de spam.",
+    },
+    {
+      question: "O guia funciona para todos os produtos Apple?",
+      answer:
+        "Sim! As técnicas de verificação funcionam para iPhone, MacBook, iPad, Apple Watch e acessórios Apple.",
+    },
+    {
+      question: "Como o guia me protege de golpes?",
+      answer:
+        "O guia ensina a identificar ofertas falsas, verificar autenticidade de produtos, reconhecer sites fraudulentos e muito mais. São técnicas práticas e fáceis de aplicar.",
+    },
+    {
+      question: "Meus dados estão seguros?",
+      answer:
+        "Sim! Seus dados são protegidos e usados apenas para enviar o guia. Você pode cancelar a qualquer momento.",
+    },
+  ];
 
   return (
     <PageTransition>
@@ -90,143 +128,258 @@ const Captura: React.FC = () => {
         <div className="container mx-auto px-4 py-12">
           {/* Cabeçalho da página */}
           <div className="text-center mb-12">
+            <div className="inline-block bg-red-900/30 border border-red-600 px-4 py-2 rounded-lg mb-6">
+              <p className="text-red-400 font-semibold text-sm">
+                ⚠️ ALERTA: Mais de 12.000 pessoas foram vítimas de golpes em
+                2024
+              </p>
+            </div>
+
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 text-white leading-tight">
-              Você está prestes a descobrir segredos que a maioria dos golpistas
+              Guia Definitivo:{" "}
               <span className="text-[#ff6100]">
-                {" "}
-                não gostaria que você soubesse...
-              </span>
+                Como Nunca Mais Cair em Golpes
+              </span>{" "}
+              ao Comprar Produtos Apple
             </h1>
+            <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+              Receba gratuitamente nosso guia completo e aprenda o método
+              infalível para identificar fraudes, ofertas falsas e produtos
+              piratas em menos de 2 minutos.
+            </p>
+
+            {/* Urgência Sutil */}
+            <div className="mt-6 inline-block bg-gradient-to-r from-orange-900 to-red-900 px-6 py-3 rounded-lg border border-orange-600">
+              <p className="text-white font-semibold">
+                🔥 Mais de 2.300 pessoas já se protegeram esta semana
+              </p>
+            </div>
           </div>
 
-          {/* Conteúdo principal em duas colunas em telas maiores */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            {/* Coluna da esquerda - Informações */}
+          {/* Conteúdo principal em duas colunas */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start mb-16">
+            {/* Coluna da esquerda - Stack de Bônus */}
             <div className="bg-gray-900 rounded-xl p-8 border border-gray-800 shadow-lg">
-              <h2 className="text-2xl font-bold mb-6 text-white">
-                Aqui você vai aprender:
+              <h2 className="text-2xl font-bold mb-6 text-white text-center">
+                🛡️ Ao Se Cadastrar HOJE, Você Recebe:
               </h2>
 
-              <ul className="space-y-4">
-                <li className="flex items-start">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-6 w-6 mr-3 text-[#ff6100] flex-shrink-0"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
-                  <span className="text-gray-300">
-                    O teste infalível: como identificar um perfil suspeito
-                  </span>
-                </li>
-                <li className="flex items-start">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-6 w-6 mr-3 text-[#ff6100] flex-shrink-0"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
-                  <span className="text-gray-300">
-                    As 5 armadilhas mais comuns em anúncios de produtos Apple
-                  </span>
-                </li>
-                <li className="flex items-start">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-6 w-6 mr-3 text-[#ff6100] flex-shrink-0"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
-                  <span className="text-gray-300">
-                    Como verificar a procedência de um iPhone antes de comprar
-                  </span>
-                </li>
-                <li className="flex items-start">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-6 w-6 mr-3 text-[#ff6100] flex-shrink-0"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
-                  <span className="text-gray-300">
-                    Os sinais de alerta que indicam uma oferta fraudulenta
-                  </span>
-                </li>
-                <li className="flex items-start">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-6 w-6 mr-3 text-[#ff6100] flex-shrink-0"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
-                  <span className="text-gray-300">
-                    Como economizar de verdade na compra de produtos Apple
-                    premium
-                  </span>
-                </li>
-              </ul>
+              {/* Stack de Bônus */}
+              <div className="space-y-6">
+                {/* Bônus Principal */}
+                <div className="bg-gradient-to-r from-red-900 to-red-800 rounded-lg p-6 border-2 border-red-600">
+                  <div className="flex items-start">
+                    <div className="bg-red-600 rounded-full p-3 mr-4">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-6 w-6 text-white"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
+                        />
+                      </svg>
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="text-xl font-bold text-white mb-2">
+                        Guia Anti-Golpes Completo
+                      </h3>
+                      <p className="text-red-100 mb-2">
+                        Método infalível para identificar fraudes em produtos
+                        Apple
+                      </p>
+                      <p className="text-red-200 text-sm line-through">
+                        Valor: R$127
+                      </p>
+                      <p className="text-green-400 font-bold">HOJE: GRÁTIS</p>
+                    </div>
+                  </div>
+                </div>
 
-              <div className="mt-8 p-4 bg-gray-800 rounded-lg border border-gray-700">
-                <p className="text-white italic">
-                  "Depois de perder R$ 3.500 em um golpe online, descobri a
-                  CompreFi e finalmente pude comprar meu iPhone com segurança e
-                  ainda economizei mais de R$ 1.200!"
-                </p>
-                <p className="text-[#ff6100] mt-2 font-medium">
-                  — Maria C., cliente desde 2023
-                </p>
+                {/* Bônus 1 */}
+                <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
+                  <div className="flex items-start">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-6 w-6 text-[#ff6100] mr-3 flex-shrink-0 mt-1"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
+                    </svg>
+                    <div>
+                      <h4 className="text-white font-bold mb-1">
+                        BÔNUS 1: Checklist de Verificação Instantânea
+                      </h4>
+                      <p className="text-gray-300 text-sm mb-1">
+                        Verifique a autenticidade de qualquer produto Apple em
+                        menos de 2 minutos
+                      </p>
+                      <p className="text-gray-400 text-xs line-through">
+                        Valor: R$67
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Bônus 2 */}
+                <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
+                  <div className="flex items-start">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-6 w-6 text-[#ff6100] mr-3 flex-shrink-0 mt-1"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
+                    </svg>
+                    <div>
+                      <h4 className="text-white font-bold mb-1">
+                        BÔNUS 2: Lista dos 10 Golpes Mais Comuns
+                      </h4>
+                      <p className="text-gray-300 text-sm mb-1">
+                        Conheça as fraudes mais aplicadas e como se proteger de
+                        cada uma
+                      </p>
+                      <p className="text-gray-400 text-xs line-through">
+                        Valor: R$87
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Bônus 3 */}
+                <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
+                  <div className="flex items-start">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-6 w-6 text-[#ff6100] mr-3 flex-shrink-0 mt-1"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
+                    </svg>
+                    <div>
+                      <h4 className="text-white font-bold mb-1">
+                        BÔNUS 3: Garantia de Compra Segura
+                      </h4>
+                      <p className="text-gray-300 text-sm mb-1">
+                        Certificado de proteção ao comprar na CompreFi + suporte
+                        prioritário
+                      </p>
+                      <p className="text-gray-400 text-xs line-through">
+                        Valor: R$150
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Total */}
+                <div className="bg-gradient-to-r from-green-900 to-green-800 rounded-lg p-4 border-2 border-green-600">
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <p className="text-green-100 text-sm">VALOR TOTAL:</p>
+                      <p className="text-white text-2xl font-bold line-through">
+                        R$431
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-green-100 text-sm">HOJE:</p>
+                      <p className="text-green-400 text-3xl font-bold">
+                        GRÁTIS
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Garantias */}
+              <div className="mt-8 space-y-3">
+                <div className="flex items-center text-gray-300">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5 mr-2 text-green-400"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                    />
+                  </svg>
+                  <span className="text-sm">Seus dados estão 100% seguros</span>
+                </div>
+                <div className="flex items-center text-gray-300">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5 mr-2 text-green-400"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                    />
+                  </svg>
+                  <span className="text-sm">Acesso imediato por email</span>
+                </div>
+                <div className="flex items-center text-gray-300">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5 mr-2 text-green-400"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"
+                    />
+                  </svg>
+                  <span className="text-sm">Sem spam, prometemos</span>
+                </div>
               </div>
             </div>
 
             {/* Coluna da direita - Formulário */}
-            <div className="bg-gray-900 rounded-xl p-8 border border-gray-800 shadow-lg">
-              <h2 className="text-2xl font-bold mb-6 text-white">
-                Receba nosso guia exclusivo
+            <div className="bg-gray-900 rounded-xl p-8 border border-gray-800 shadow-lg sticky top-4">
+              <h2 className="text-2xl font-bold mb-6 text-white text-center">
+                🛡️ Proteja-se Agora Gratuitamente
               </h2>
-              <p className="text-gray-300 mb-6">
-                Preencha o formulário abaixo para receber gratuitamente nosso
-                guia completo sobre como evitar golpes na compra de produtos
-                Apple.
+              <p className="text-gray-300 mb-6 text-center">
+                Preencha o formulário e receba o guia completo + bônus por email
+                em menos de 2 minutos.
               </p>
 
               {submitSuccess ? (
@@ -249,15 +402,15 @@ const Captura: React.FC = () => {
                     Cadastro realizado com sucesso!
                   </h3>
                   <p className="text-gray-300">
-                    Enviamos o guia para o seu e-mail. Verifique também sua
-                    caixa de spam.
+                    Enviamos o guia anti-golpes + bônus para o seu e-mail.
+                    Verifique também sua caixa de spam.
                   </p>
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div>
                     <label htmlFor="nome" className="block text-gray-300 mb-2">
-                      Nome completo
+                      Nome completo *
                     </label>
                     <input
                       type="text"
@@ -272,27 +425,8 @@ const Captura: React.FC = () => {
                   </div>
 
                   <div>
-                    <label
-                      htmlFor="whatsapp"
-                      className="block text-gray-300 mb-2"
-                    >
-                      WhatsApp
-                    </label>
-                    <input
-                      type="tel"
-                      id="whatsapp"
-                      name="whatsapp"
-                      value={formData.whatsapp}
-                      onChange={handleChange}
-                      required
-                      className="w-full bg-gray-800 border border-gray-700 rounded-md py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-[#ff6100] focus:border-transparent"
-                      placeholder="(00) 00000-0000"
-                    />
-                  </div>
-
-                  <div>
                     <label htmlFor="email" className="block text-gray-300 mb-2">
-                      E-mail
+                      E-mail *
                     </label>
                     <input
                       type="email"
@@ -306,113 +440,136 @@ const Captura: React.FC = () => {
                     />
                   </div>
 
+                  <div>
+                    <label
+                      htmlFor="whatsapp"
+                      className="block text-gray-300 mb-2"
+                    >
+                      WhatsApp *
+                    </label>
+                    <input
+                      type="tel"
+                      id="whatsapp"
+                      name="whatsapp"
+                      value={formData.whatsapp}
+                      onChange={handleChange}
+                      required
+                      className="w-full bg-gray-800 border border-gray-700 rounded-md py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-[#ff6100] focus:border-transparent"
+                      placeholder="(00) 00000-0000"
+                    />
+                  </div>
+
                   {submitError && (
-                    <div className="bg-red-900/30 border border-red-500 rounded-md p-3 text-red-200">
-                      {submitError}
+                    <div className="bg-red-900/30 border border-red-500 rounded-lg p-4">
+                      <p className="text-red-300 text-sm">{submitError}</p>
                     </div>
                   )}
 
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className={`w-full bg-[#ff6100] hover:bg-[#e55a00] text-white py-4 px-6 rounded-md transition-colors font-medium text-lg flex items-center justify-center ${isSubmitting ? "opacity-70 cursor-not-allowed" : ""}`}
+                    className="w-full bg-gradient-to-r from-[#ff6100] to-orange-600 hover:from-orange-600 hover:to-[#ff6100] text-white font-bold py-4 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none shadow-lg"
                   >
-                    {isSubmitting ? (
-                      <>
-                        <svg
-                          className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                        >
-                          <circle
-                            className="opacity-25"
-                            cx="12"
-                            cy="12"
-                            r="10"
-                            stroke="currentColor"
-                            strokeWidth="4"
-                          ></circle>
-                          <path
-                            className="opacity-75"
-                            fill="currentColor"
-                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                          ></path>
-                        </svg>
-                        Enviando...
-                      </>
-                    ) : (
-                      "Receber Guia Gratuito"
-                    )}
+                    {isSubmitting
+                      ? "Enviando..."
+                      : "🛡️ Quero Me Proteger de Golpes Agora"}
                   </button>
 
-                  <p className="text-gray-400 text-sm text-center mt-4">
-                    Seus dados estão seguros e nunca serão compartilhados com
-                    terceiros. Ao se cadastrar, você concorda com nossa política
-                    de privacidade.
+                  <p className="text-gray-400 text-xs text-center">
+                    Ao se cadastrar, você concorda em receber comunicações da
+                    CompreFi. Você pode cancelar a qualquer momento.
                   </p>
                 </form>
               )}
             </div>
           </div>
 
-          {/* Seção de garantias */}
-          <div className="mt-16 text-center">
-            <div className="flex flex-wrap justify-center gap-8">
-              <div className="flex items-center">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-8 w-8 text-[#ff6100] mr-3"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-                  />
-                </svg>
-                <span className="text-gray-300">Dados 100% seguros</span>
-              </div>
-              <div className="flex items-center">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-8 w-8 text-[#ff6100] mr-3"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M5 13l4 4L19 7"
-                  />
-                </svg>
-                <span className="text-gray-300">
-                  Conteúdo verificado por especialistas
-                </span>
-              </div>
-              <div className="flex items-center">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-8 w-8 text-[#ff6100] mr-3"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
-                <span className="text-gray-300">Acesso imediato</span>
+          {/* Depoimentos */}
+          <section className="testimonials-section py-16 px-4 bg-gray-900 rounded-xl mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-center text-white">
+              Veja Como Outras Pessoas Se Protegeram
+            </h2>
+            <p className="text-gray-300 text-center mb-12 max-w-2xl mx-auto">
+              Mais de 2.300 pessoas já evitaram golpes usando nosso guia
+            </p>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+              {testimonials.map((testimonial, index) => (
+                <TestimonialCard
+                  key={index}
+                  name={testimonial.name}
+                  text={testimonial.text}
+                  rating={testimonial.rating}
+                />
+              ))}
+            </div>
+          </section>
+
+          {/* FAQ */}
+          <section className="faq-section py-16 px-4 bg-black rounded-xl">
+            <h2 className="text-3xl md:text-4xl font-bold mb-12 text-center text-white">
+              Perguntas Frequentes
+            </h2>
+            <div className="max-w-3xl mx-auto">
+              <div className="faq-container space-y-4">
+                {faqItems.map((item, index) => (
+                  <div
+                    key={index}
+                    className="faq-item bg-gray-900 rounded-lg border border-gray-800 overflow-hidden"
+                  >
+                    <details className="group">
+                      <summary className="cursor-pointer list-none p-6 flex justify-between items-center hover:bg-gray-800 transition-colors duration-200">
+                        <h3 className="text-lg font-semibold text-white pr-4">
+                          {item.question}
+                        </h3>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-6 w-6 text-[#ff6100] flex-shrink-0 transform transition-transform duration-200 group-open:rotate-180"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M19 9l-7 7-7-7"
+                          />
+                        </svg>
+                      </summary>
+                      <div className="px-6 pb-6">
+                        <p className="text-gray-300 leading-relaxed">
+                          {item.answer}
+                        </p>
+                      </div>
+                    </details>
+                  </div>
+                ))}
               </div>
             </div>
+          </section>
+
+          {/* CTA Final */}
+          <div className="text-center mt-16 bg-gradient-to-r from-gray-900 to-black p-8 rounded-xl border border-gray-800">
+            <h3 className="text-2xl md:text-3xl font-bold text-white mb-4">
+              Não Seja a Próxima Vítima de Golpes
+            </h3>
+            <p className="text-gray-300 mb-6 max-w-2xl mx-auto">
+              Cadastre-se agora e receba o guia anti-golpes completo + 3 bônus
+              exclusivos gratuitamente
+            </p>
+            <a
+              href="#"
+              onClick={(e) => {
+                e.preventDefault();
+                document
+                  .querySelector("form")
+                  ?.scrollIntoView({ behavior: "smooth" });
+              }}
+              className="inline-block bg-gradient-to-r from-[#ff6100] to-orange-600 hover:from-orange-600 hover:to-[#ff6100] text-white font-bold py-4 px-8 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg"
+            >
+              Sim! Quero Me Proteger Agora →
+            </a>
           </div>
         </div>
       </div>

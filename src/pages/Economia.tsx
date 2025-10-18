@@ -1,25 +1,14 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import PageTransition from "../components/PageTransition";
+import TestimonialCard from "../components/TestimonialCard";
+import FAQ from "../components/FAQ";
 
 const Economia: React.FC = () => {
   const navigate = useNavigate();
 
-  // const formatarDataHoraBrasileira = () => {
-  //   const agora = new Date();
-
-  //   const dia = String(agora.getDate()).padStart(2, "0");
-  //   const mes = String(agora.getMonth() + 1).padStart(2, "0"); // Mês começa em 0
-  //   const ano = agora.getFullYear();
-
-  //   const hora = String(agora.getHours()).padStart(2, "0");
-  //   const minuto = String(agora.getMinutes()).padStart(2, "0");
-  //   const segundo = String(agora.getSeconds()).padStart(2, "0");
-
-  //   return `${dia}/${mes}/${ano} ${hora}:${minuto}:${segundo}`;
-  // };
   const formatarDataHoraISO = () => {
-    return new Date().toISOString(); // Exemplo: 2025-06-17T18:25:43.511Z
+    return new Date().toISOString();
   };
 
   const [formData, setFormData] = useState({
@@ -52,7 +41,6 @@ const Economia: React.FC = () => {
     setSubmitError("");
 
     try {
-      // Substitua a URL abaixo pela URL do seu webhook
       const webhookUrl =
         "https://api.datacrazy.io/v1/crm/api/crm/integrations/webhook/business/77af256e-7701-4254-8be1-77e266f3dc6d";
 
@@ -71,172 +59,289 @@ const Economia: React.FC = () => {
 
       if (!response.ok) {
         throw new Error(
-          "Falha ao enviar o formulário. Por favor, tente novamente.",
+          "Falha ao enviar o formulário. Por favor, tente novamente."
         );
       }
 
       setSubmitSuccess(true);
-      // Opcional: redirecionar para uma página de agradecimento após alguns segundos
       setTimeout(() => navigate("/agradecimento?source=economia"), 2000);
     } catch (error) {
       console.error("Erro ao enviar formulário:", error);
       setSubmitError(
         error instanceof Error
           ? error.message
-          : "Ocorreu um erro ao enviar o formulário",
+          : "Ocorreu um erro ao enviar o formulário"
       );
     } finally {
       setIsSubmitting(false);
     }
   };
 
+  // Dados dos depoimentos
+  const testimonials = [
+    {
+      name: "Maria C.",
+      text: "Depois de perder R$ 3.500 em um golpe online, descobri a CompreFi e finalmente pude comprar meu iPhone com segurança e ainda economizei mais de R$ 1.200!",
+      rating: 5,
+    },
+    {
+      name: "Carlos Silva",
+      text: "O guia me ajudou a identificar ofertas falsas e economizar R$ 2.300 na compra do meu MacBook. Recomendo!",
+      rating: 5,
+    },
+    {
+      name: "Ana Paula",
+      text: "Aprendi técnicas que nunca imaginei. Economizei R$ 890 no meu iPad e ainda ganhei garantia estendida!",
+      rating: 5,
+    },
+  ];
+
   return (
     <PageTransition>
-      <div className="captura-container bg-black min-h-screen">
+      <div className="economia-container bg-black min-h-screen">
         <div className="container mx-auto px-4 py-12">
           {/* Cabeçalho da página */}
           <div className="text-center mb-12">
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 text-white leading-tight">
-              Você está prestes a descobrir
-              <span className="text-[#ff6100]">
-                {" "}
-                como mais de 1400 pessoas economizaram de R$300,00 a
-                R$20.000,00{" "}
-              </span>
-              na compra de produtos Apple com segurança, agilidade e
-              tranquilidade
+              Descubra Como Economizar{" "}
+              <span className="text-[#ff6100]">em Produtos Apple</span>
             </h1>
+            <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+              Receba gratuitamente nosso guia completo e aprenda as estratégias
+              que já ajudaram mais de 1.400 pessoas a comprarem produtos Apple
+              premium com segurança e economia real.
+            </p>
+
+            {/* Urgência Sutil */}
+            <div className="mt-6 inline-block bg-gradient-to-r from-orange-900 to-red-900 px-6 py-3 rounded-lg border border-orange-600">
+              <p className="text-white font-semibold">
+                ⚡ Últimas 50 vagas para receber o guia hoje
+              </p>
+            </div>
           </div>
 
           {/* Conteúdo principal em duas colunas em telas maiores */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            {/* Coluna da esquerda - Informações */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start mb-16">
+            {/* Coluna da esquerda - Stack de Bônus */}
             <div className="bg-gray-900 rounded-xl p-8 border border-gray-800 shadow-lg">
-              <h2 className="text-2xl font-bold mb-6 text-white">
-                Aqui você vai aprender:
+              <h2 className="text-2xl font-bold mb-6 text-white text-center">
+                🎁 Ao Se Cadastrar HOJE, Você Recebe:
               </h2>
 
-              <ul className="space-y-4">
-                <li className="flex items-start">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-6 w-6 mr-3 text-[#ff6100] flex-shrink-0"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
-                  <span className="text-gray-300">
-                    Como economizar de R$300,00 a R$20.000,00 em produtos Apple
-                  </span>
-                </li>
-                <li className="flex items-start">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-6 w-6 mr-3 text-[#ff6100] flex-shrink-0"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
-                  <span className="text-gray-300">
-                    As 5 armadilhas mais comuns em anúncios de produtos Apple
-                  </span>
-                </li>
-                <li className="flex items-start">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-6 w-6 mr-3 text-[#ff6100] flex-shrink-0"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
-                  <span className="text-gray-300">
-                    Como verificar a procedência de um iPhone antes de comprar
-                  </span>
-                </li>
-                <li className="flex items-start">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-6 w-6 mr-3 text-[#ff6100] flex-shrink-0"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
-                  <span className="text-gray-300">
-                    Os sinais de alerta que indicam uma oferta fraudulenta
-                  </span>
-                </li>
-                <li className="flex items-start">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-6 w-6 mr-3 text-[#ff6100] flex-shrink-0"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
-                  <span className="text-gray-300">
-                    Como economizar de verdade na compra de produtos Apple
-                    premium
-                  </span>
-                </li>
-              </ul>
+              {/* Stack de Bônus */}
+              <div className="space-y-6">
+                {/* Bônus Principal */}
+                <div className="bg-gradient-to-r from-blue-900 to-blue-800 rounded-lg p-6 border-2 border-blue-600">
+                  <div className="flex items-start">
+                    <div className="bg-blue-600 rounded-full p-3 mr-4">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-6 w-6 text-white"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+                        />
+                      </svg>
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="text-xl font-bold text-white mb-2">
+                        Guia Completo de Economia
+                      </h3>
+                      <p className="text-blue-100 mb-2">
+                        Como economizar em produtos Apple com segurança e
+                        qualidade
+                      </p>
+                      <p className="text-blue-200 text-sm line-through">
+                        Valor: R$97
+                      </p>
+                      <p className="text-green-400 font-bold">HOJE: GRÁTIS</p>
+                    </div>
+                  </div>
+                </div>
 
-              <div className="mt-8 p-4 bg-gray-800 rounded-lg border border-gray-700">
-                <p className="text-white italic">
-                  "Depois de perder R$ 3.500 em um golpe online, descobri a
-                  CompreFi e finalmente pude comprar meu iPhone com segurança e
-                  ainda economizei mais de R$ 1.200!"
-                </p>
-                <p className="text-[#ff6100] mt-2 font-medium">
-                  — Maria C., cliente desde 2023
-                </p>
+                {/* Bônus 1 */}
+                <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
+                  <div className="flex items-start">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-6 w-6 text-[#ff6100] mr-3 flex-shrink-0 mt-1"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
+                    </svg>
+                    <div>
+                      <h4 className="text-white font-bold mb-1">
+                        BÔNUS 1: Checklist de Verificação
+                      </h4>
+                      <p className="text-gray-300 text-sm mb-1">
+                        Passo a passo para verificar a autenticidade de qualquer
+                        produto Apple
+                      </p>
+                      <p className="text-gray-400 text-xs line-through">
+                        Valor: R$47
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Bônus 2 */}
+                <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
+                  <div className="flex items-start">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-6 w-6 text-[#ff6100] mr-3 flex-shrink-0 mt-1"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
+                    </svg>
+                    <div>
+                      <h4 className="text-white font-bold mb-1">
+                        BÔNUS 2: As 5 Armadilhas Mais Comuns
+                      </h4>
+                      <p className="text-gray-300 text-sm mb-1">
+                        Identifique ofertas fraudulentas antes de cair em golpes
+                      </p>
+                      <p className="text-gray-400 text-xs line-through">
+                        Valor: R$67
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Bônus 3 */}
+                <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
+                  <div className="flex items-start">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-6 w-6 text-[#ff6100] mr-3 flex-shrink-0 mt-1"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
+                    </svg>
+                    <div>
+                      <h4 className="text-white font-bold mb-1">
+                        BÔNUS 3: Cupom de R$100
+                      </h4>
+                      <p className="text-gray-300 text-sm mb-1">
+                        Desconto exclusivo na sua primeira compra na CompreFi
+                      </p>
+                      <p className="text-gray-400 text-xs line-through">
+                        Valor: R$100
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Total */}
+                <div className="bg-gradient-to-r from-green-900 to-green-800 rounded-lg p-4 border-2 border-green-600">
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <p className="text-green-100 text-sm">VALOR TOTAL:</p>
+                      <p className="text-white text-2xl font-bold line-through">
+                        R$311
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-green-100 text-sm">HOJE:</p>
+                      <p className="text-green-400 text-3xl font-bold">
+                        GRÁTIS
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Garantias */}
+              <div className="mt-8 space-y-3">
+                <div className="flex items-center text-gray-300">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5 mr-2 text-green-400"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                    />
+                  </svg>
+                  <span className="text-sm">Seus dados estão 100% seguros</span>
+                </div>
+                <div className="flex items-center text-gray-300">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5 mr-2 text-green-400"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                    />
+                  </svg>
+                  <span className="text-sm">Acesso imediato por email</span>
+                </div>
+                <div className="flex items-center text-gray-300">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5 mr-2 text-green-400"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"
+                    />
+                  </svg>
+                  <span className="text-sm">Sem spam, prometemos</span>
+                </div>
               </div>
             </div>
 
             {/* Coluna da direita - Formulário */}
-            <div className="bg-gray-900 rounded-xl p-8 border border-gray-800 shadow-lg">
-              <h2 className="text-2xl font-bold mb-6 text-white">
-                Receba nosso guia exclusivo
+            <div className="bg-gray-900 rounded-xl p-8 border border-gray-800 shadow-lg sticky top-4">
+              <h2 className="text-2xl font-bold mb-6 text-white text-center">
+                Receba Seu Guia + Bônus Grátis
               </h2>
-              <p className="text-gray-300 mb-6">
-                Preencha o formulário abaixo para descobrir gratuitamente como
-                mais de 1400 pessoas economizaram de R$300,00 a R$20.000,00 na
-                compra de produtos Apple com segurança, agilidade e
-                tranquilidade
+              <p className="text-gray-300 mb-6 text-center">
+                Preencha o formulário abaixo e receba tudo por email em menos de
+                2 minutos.
               </p>
 
               {submitSuccess ? (
@@ -259,8 +364,8 @@ const Economia: React.FC = () => {
                     Cadastro realizado com sucesso!
                   </h3>
                   <p className="text-gray-300">
-                    Enviamos o guia para o seu e-mail. Verifique também sua
-                    caixa de spam.
+                    Enviamos o guia + bônus para o seu e-mail. Verifique também
+                    sua caixa de spam.
                   </p>
                 </div>
               ) : (
@@ -352,7 +457,7 @@ const Economia: React.FC = () => {
                         Enviando...
                       </>
                     ) : (
-                      "Receber Guia Gratuito"
+                      "🎁 Quero Receber o Guia Grátis"
                     )}
                   </button>
 
@@ -366,61 +471,56 @@ const Economia: React.FC = () => {
             </div>
           </div>
 
-          {/* Seção de garantias */}
-          <div className="mt-16 text-center">
-            <div className="flex md:flex-wrap md:flex-row flex-col  justify-center gap-8">
-              <div className="flex items-center">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-8 w-8 text-[#ff6100] mr-3"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-                  />
-                </svg>
-                <span className="text-gray-300">Dados 100% seguros</span>
-              </div>
-              <div className="flex items-center">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-8 w-8 text-[#ff6100] mr-3"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M5 13l4 4L19 7"
-                  />
-                </svg>
-                <span className="text-gray-300">Conteúdo verificado</span>
-              </div>
-              <div className="flex items-center">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-8 w-8 text-[#ff6100] mr-3"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
-                <span className="text-gray-300">Acesso imediato</span>
-              </div>
+          {/* Depoimentos */}
+          <section className="testimonials-section py-16 px-4 bg-gray-900 rounded-xl mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-center text-white">
+              Veja O Que Quem Recebeu o Guia Está Dizendo
+            </h2>
+            <p className="text-gray-300 text-center mb-12 max-w-2xl mx-auto">
+              Mais de 1.400 pessoas já economizaram milhares de reais usando
+              nossas estratégias
+            </p>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+              {testimonials.map((testimonial, index) => (
+                <TestimonialCard
+                  key={index}
+                  name={testimonial.name}
+                  text={testimonial.text}
+                  rating={testimonial.rating}
+                />
+              ))}
             </div>
+          </section>
+
+          {/* FAQ */}
+          <section className="faq-section py-16 px-4 bg-black rounded-xl">
+            <div className="max-w-3xl mx-auto">
+              <FAQ />
+            </div>
+          </section>
+
+          {/* CTA Final */}
+          <div className="text-center mt-16 bg-gradient-to-r from-gray-900 to-black p-8 rounded-xl border border-gray-800">
+            <h3 className="text-2xl md:text-3xl font-bold text-white mb-4">
+              Pronto para Economizar em Produtos Apple?
+            </h3>
+            <p className="text-gray-300 mb-6 max-w-2xl mx-auto">
+              Cadastre-se agora e receba o guia completo + 3 bônus exclusivos
+              gratuitamente
+            </p>
+            <a
+              href="#"
+              onClick={(e) => {
+                e.preventDefault();
+                document
+                  .querySelector("form")
+                  ?.scrollIntoView({ behavior: "smooth" });
+              }}
+              className="inline-block bg-[#ff6100] hover:bg-[#e55a00] text-white font-bold py-4 px-8 rounded-lg transition-colors duration-300 shadow-lg"
+            >
+              Sim! Quero Receber o Guia Grátis →
+            </a>
           </div>
         </div>
       </div>
