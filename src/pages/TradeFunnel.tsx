@@ -11,6 +11,8 @@ import DesiredModelStep from "../components/funnel/DesiredModelStep";
 import QualificationStep from "../components/funnel/QualificationStep";
 import { apiService } from "../services/api";
 
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+
 export interface FunnelData {
   modeloAtual: string;
   capacidadeAtual: string;
@@ -142,13 +144,9 @@ const TradeFunnel: React.FC = () => {
       setLoading(true);
       const [combData, defectsData, qualData, productsData] = await Promise.all(
         [
-          fetch("http://localhost:3000/trade/combinations").then((r) =>
-            r.json()
-          ),
-          fetch("http://localhost:3000/trade/defects").then((r) => r.json()),
-          fetch("http://localhost:3000/trade/qualification-options").then((r) =>
-            r.json()
-          ),
+          fetch(`${API_URL}/trade/combinations`).then((r) => r.json()),
+          fetch(`${API_URL}/trade/defects`).then((r) => r.json()),
+          fetch(`${API_URL}/trade/qualification-options`).then((r) => r.json()),
           apiService.getAllProducts(),
         ]
       );
@@ -243,7 +241,7 @@ const TradeFunnel: React.FC = () => {
     if (!funnelData.modeloAtual) return [];
     try {
       const response = await fetch(
-        `http://localhost:3000/trade/colors/${encodeURIComponent(funnelData.modeloAtual)}`
+        `${API_URL}/trade/colors/${encodeURIComponent(funnelData.modeloAtual)}`
       );
       const data = await response.json();
       return data.colors || [];

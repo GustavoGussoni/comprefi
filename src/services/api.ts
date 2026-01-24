@@ -2,7 +2,7 @@
 // Serviço para conectar o frontend à API NestJS com tipagem TypeScript
 // Versão atualizada com métodos para admin
 
-const API_BASE_URL = "http://localhost:3000"; // URL da sua API NestJS
+const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3000"; // URL da sua API NestJS
 
 // Interface para o produto da API (como vem do backend)
 interface ApiProduct {

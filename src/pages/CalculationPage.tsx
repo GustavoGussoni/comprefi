@@ -12,6 +12,7 @@ import {
   AlertTriangle,
 } from "lucide-react";
 import { apiService } from "../services/api"; // Certifique-se que o apiService está acessível
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
 // --- Interfaces (sem alterações) ---
 interface FunnelData {
@@ -158,7 +159,7 @@ const CalculationPage: React.FC = () => {
     };
 
     // 3. Fazer a chamada à API
-    const response = await fetch("http://localhost:3000/trade/calculate", {
+    const response = await fetch(`${API_URL}/trade/calculate`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(requestBody),
