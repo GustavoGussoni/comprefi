@@ -37,7 +37,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
     "/economia",
     "/teste-infalivel",
     "/agradecimento",
-    "/iphones-seminovos",
+    // "/iphones-seminovos",
   ];
   const shouldHideHeader = hideHeaderRoutes.includes(location.pathname);
   // || location.pathname.startsWith("/produto/");
