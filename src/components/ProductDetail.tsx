@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { useNavigate } from "react-router-dom";
 import ImageLoader from "./ImageLoader";
@@ -28,16 +28,35 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ product }) => {
     "pix" | "card"
   >("pix");
   const [enlargedImage, setEnlargedImage] = useState<string | null>(null);
+  const scrollYRef = useRef(0);
 
-  // Bloqueia scroll do body quando modal está aberto
+  // Bloqueia scroll do body quando modal está aberto (compatível com iOS Safari)
   useEffect(() => {
     if (enlargedImage) {
+      // Salvar posição atual do scroll
+      scrollYRef.current = window.scrollY;
+      // Bloquear scroll no html E body (necessário para iOS Safari)
+      document.documentElement.style.overflow = "hidden";
       document.body.style.overflow = "hidden";
+      document.body.style.position = "fixed";
+      document.body.style.top = `-${scrollYRef.current}px`;
+      document.body.style.width = "100%";
     } else {
+      // Restaurar estilos
+      document.documentElement.style.overflow = "";
       document.body.style.overflow = "";
+      document.body.style.position = "";
+      document.body.style.top = "";
+      document.body.style.width = "";
+      // Restaurar scroll para posição original
+      window.scrollTo(0, scrollYRef.current);
     }
     return () => {
+      document.documentElement.style.overflow = "";
       document.body.style.overflow = "";
+      document.body.style.position = "";
+      document.body.style.top = "";
+      document.body.style.width = "";
     };
   }, [enlargedImage]);
 
@@ -262,7 +281,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ product }) => {
               {product.realImages.map((img, index) => (
                 <div
                   key={index}
-                  className="bg-gray-900 rounded-lg overflow-hidden cursor-pointer transform transition-transform md:hover:scale-105 active:scale-95"
+                  className="bg-gray-900 rounded-lg overflow-hidden cursor-pointer md:hover:scale-105 md:transition-transform"
                   onClick={() => setEnlargedImage(img)}
                 >
                   <ImageLoader
@@ -293,7 +312,6 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ product }) => {
                 zIndex: 99999,
                 padding: "16px",
                 touchAction: "none",
-                WebkitOverflowScrolling: "touch",
               }}
               onClick={() => setEnlargedImage(null)}
             >

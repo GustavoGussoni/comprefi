@@ -10,7 +10,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
   selectedPaymentMethod = "pix",
 }) => {
   return (
-    <div className="bg-gray-900 rounded-lg overflow-hidden border border-gray-800 hover:border-[#ff6100] transition-all duration-300 hover:shadow-lg hover:shadow-[#ff6100]/10">
+    <div className="bg-gray-900 rounded-lg overflow-hidden border border-gray-800 transition-all duration-300 hover:shadow-lg hover:shadow-black/20">
       <div className="p-4">
         {/* Imagem do produto com link para página de detalhes */}
         <Link
@@ -52,8 +52,8 @@ const ProductCard: React.FC<ProductCardProps> = ({
                 parseInt(product.battery) > 85
                   ? "text-green-500"
                   : parseInt(product.battery) > 80
-                  ? "text-yellow-500"
-                  : "text-orange-500"
+                    ? "text-yellow-500"
+                    : "text-orange-500"
               }`}
             >
               {product.battery}

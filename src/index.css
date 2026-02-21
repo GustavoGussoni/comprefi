@@ -3,8 +3,7 @@
 @tailwind utilities;
 @layer base {
   :root {
-    --radius: 0.5rem
-  ;
+    --radius: 0.5rem;
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
     --sidebar-primary: 240 5.9% 10%;
@@ -53,16 +52,13 @@
     }
   }
   
-  /* Otimizar animações para melhor performance em iOS */
-  .animate-fadeIn,
-  .transition-all,
-  .transition-colors,
-  .transition-opacity {
-    -webkit-backface-visibility: hidden;
-    -webkit-perspective: 1000;
-    -webkit-transform: translate3d(0, 0, 0);
-    transform: translate3d(0, 0, 0);
-  }
+  /*
+   * REMOVIDO: transform: translate3d(0,0,0) em .animate-fadeIn e .transition-*
+   * MOTIVO: Criava um novo "containing block" no iOS Safari que quebrava
+   * position:fixed de qualquer elemento filho, fazendo modais abrirem
+   * fora da tela visível. A GPU acceleration não é necessária aqui
+   * pois o Safari já otimiza automaticamente.
+   */
   
   /* Melhorar renderização de texto */
   h1, h2, h3, p {
