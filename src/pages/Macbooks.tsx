@@ -501,7 +501,7 @@ const Macbooks: React.FC = () => {
     const encodedMessage = encodeURIComponent(message);
     window.open(
       `https://wa.me/${whatsappNumber}?text=${encodedMessage}`,
-      "_blank"
+      "_blank",
     );
   };
 
@@ -535,7 +535,8 @@ const Macbooks: React.FC = () => {
             {m4Products.map((product) => (
               <div
                 key={product.id}
-                className="bg-gray-900 rounded-lg overflow-hidden border border-gray-800 hover:border-[#ff6100] transition-all duration-300 hover:shadow-lg hover:shadow-[#ff6100]/10 cursor-pointer"
+                className="bg-gray-900 rounded-lg overflow-hidden border border-gray-800 transition-all duration-300 hover:shadow-lg hover:shadow-black/20
+ cursor-pointer"
               >
                 <div className="p-6">
                   <Link
@@ -631,7 +632,8 @@ const Macbooks: React.FC = () => {
             {olderProducts.map((product) => (
               <div
                 key={product.id}
-                className="bg-gray-900 rounded-lg overflow-hidden border border-gray-800 hover:border-[#ff6100] transition-all duration-300 hover:shadow-lg hover:shadow-[#ff6100]/10 cursor-pointer"
+                className="bg-gray-900 rounded-lg overflow-hidden border border-gray-800 transition-all duration-300 hover:shadow-lg hover:shadow-black/20
+ cursor-pointer"
               >
                 <div className="p-6">
                   <Link
