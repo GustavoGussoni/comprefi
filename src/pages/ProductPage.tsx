@@ -24,13 +24,13 @@ const productDatabase = {
   "iphones-seminovos": [
     {
       id: 1,
-      model: "iPhone 15 Pro Max",
-      storage: "256GB",
-      color: "Titânio Natural",
-      battery: "89%",
-      originalPrice: "R$ 6.590,00",
-      installmentPrice: "R$ 540,67",
-      pixPrice: "R$ 5.690",
+      model: "iPhone 16",
+      storage: "128GB",
+      color: "Branco",
+      battery: "98%",
+      originalPrice: "R$ 4.790,00",
+      installmentPrice: "R$ 417,15",
+      pixPrice: "R$ 4.190",
       details: "sem detalhes | garantia Apple até junho",
       image: iphone15ProMaxImg,
       realImages: [iphone15ProMaxReal1, iphone15ProMaxReal2],
@@ -1532,7 +1532,7 @@ const ProductPage: React.FC = () => {
         productDatabase[category as keyof typeof productDatabase];
       if (categoryProducts) {
         const foundProduct = categoryProducts.find(
-          (p) => p.id === parseInt(id)
+          (p) => p.id === parseInt(id),
         );
         if (foundProduct) {
           setProduct(foundProduct);
