@@ -10,12 +10,6 @@ import iphone16VTraseira from "../assets/new-images/semi/16v/16-green-traseira.j
 import iphone15PMPTraseira from "../assets/new-images/semi/15-pm-p/15-pm-black-traseira.jpg";
 import iphone14PMRTraseira from "../assets/new-images/semi/14-pm-r/14-pm-purple-traseira.jpg";
 
-import iphone15Img from "../assets/images/iphone15_fancy.png";
-import iphone14ProMaxImg from "../assets/images/iphone14promax_fancy.png";
-import iphone12ProImg from "../assets/images/iphone12pro_fancy.png";
-
-// Imagens reais
-
 //16 branco
 
 import iphone16ImgFrente from "../assets/new-images/semi/16b/16-white-frente.jpg";
@@ -47,11 +41,6 @@ import iphone14PMRImgLaterald from "../assets/new-images/semi/14-pm-r/14-pm-purp
 import iphone14PMRImgLaterale from "../assets/new-images/semi/14-pm-r/14-pm-purple-laterale.jpg";
 import iphone14PMRImgBaixo from "../assets/new-images/semi/14-pm-r/14-pm-purple-baixo.jpg";
 import iphone14PMRImgCima from "../assets/new-images/semi/14-pm-r/14-pm-purple-laterale.jpg";
-
-import iphone14ProMaxReal1 from "../assets/images/IMG_3401.png";
-import iphone14ProMaxReal2 from "../assets/images/IMG_3381.png";
-import iphone12ProReal1 from "../assets/images/IMG_3400.png";
-import iphone12ProReal2 from "../assets/images/IMG_3380.png";
 
 // Banco de dados de produtos
 const productDatabase = {
