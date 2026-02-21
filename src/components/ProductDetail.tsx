@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { useNavigate } from "react-router-dom";
 import ImageLoader from "./ImageLoader";
 import FAQ from "./FAQ";
@@ -28,21 +29,15 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ product }) => {
   >("pix");
   const [enlargedImage, setEnlargedImage] = useState<string | null>(null);
 
-  // 🔒 SCROLL LOCK: Bloqueia scroll quando modal está aberto
+  // Bloqueia scroll do body quando modal está aberto
   useEffect(() => {
     if (enlargedImage) {
-      // Bloquear scroll do body
       document.body.style.overflow = "hidden";
-      // Scroll para o topo para garantir que modal apareça no viewport
-      window.scrollTo({ top: 0, behavior: "smooth" });
     } else {
-      // Restaurar scroll
-      document.body.style.overflow = "unset";
+      document.body.style.overflow = "";
     }
-
-    // Cleanup: garantir que scroll seja restaurado ao desmontar
     return () => {
-      document.body.style.overflow = "unset";
+      document.body.style.overflow = "";
     };
   }, [enlargedImage]);
 
@@ -281,33 +276,61 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ product }) => {
           </div>
         )}
 
-        {/* 🎯 MODAL CORRIGIDO: Scroll lock + posicionamento correto + sem scroll de fundo */}
-        {enlargedImage && (
-          <div
-            className="fixed inset-0 bg-black bg-opacity-95 flex items-center justify-center z-50 p-4 overflow-hidden"
-            onClick={() => setEnlargedImage(null)}
-            style={{ touchAction: "none" }}
-          >
+        {/* Modal renderizado via Portal - FORA da árvore DOM do componente */}
+        {enlargedImage &&
+          createPortal(
             <div
-              className="relative max-w-4xl w-full flex items-center justify-center"
-              onClick={(e) => e.stopPropagation()}
+              style={{
+                position: "fixed",
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                backgroundColor: "rgba(0, 0, 0, 0.95)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                zIndex: 99999,
+                padding: "16px",
+                touchAction: "none",
+                WebkitOverflowScrolling: "touch",
+              }}
+              onClick={() => setEnlargedImage(null)}
             >
               <button
-                className="absolute top-4 right-4 bg-[#ff6100] hover:bg-[#e55a00] rounded-full p-3 text-white z-10 transition-colors shadow-lg"
-                onClick={() => setEnlargedImage(null)}
-                aria-label="Fechar visualização de imagem"
+                style={{
+                  position: "absolute",
+                  top: "16px",
+                  right: "16px",
+                  backgroundColor: "#ff6100",
+                  border: "none",
+                  borderRadius: "50%",
+                  width: "44px",
+                  height: "44px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  cursor: "pointer",
+                  zIndex: 100000,
+                }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setEnlargedImage(null);
+                }}
+                aria-label="Fechar"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6"
+                  width="24"
+                  height="24"
                   fill="none"
                   viewBox="0 0 24 24"
-                  stroke="currentColor"
+                  stroke="white"
+                  strokeWidth={2}
                 >
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
-                    strokeWidth={2}
                     d="M6 18L18 6M6 6l12 12"
                   />
                 </svg>
@@ -315,11 +338,17 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ product }) => {
               <img
                 src={enlargedImage}
                 alt="Imagem ampliada do produto"
-                className="max-w-full max-h-[85vh] object-contain rounded-lg shadow-2xl"
+                onClick={(e) => e.stopPropagation()}
+                style={{
+                  maxWidth: "100%",
+                  maxHeight: "85vh",
+                  objectFit: "contain",
+                  borderRadius: "8px",
+                }}
               />
-            </div>
-          </div>
-        )}
+            </div>,
+            document.body,
+          )}
 
         {/* Seção de Depoimentos */}
         <div className="testimonials-section mb-16">
