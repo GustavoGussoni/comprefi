@@ -33,8 +33,15 @@ const ScrollToTop = () => {
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
   const location = useLocation();
-  const hideHeaderRoutes = ["/economia", "/teste-infalivel", "/agradecimento"];
-  const shouldHideHeader = hideHeaderRoutes.includes(location.pathname);
+  const hideHeaderRoutes = [
+    "/economia",
+    "/teste-infalivel",
+    "/agradecimento",
+    "/iphones-seminovos",
+  ];
+  const shouldHideHeader =
+    hideHeaderRoutes.includes(location.pathname) ||
+    location.pathname.startsWith("/produto/");
 
   return (
     <div className="app bg-black text-white min-h-screen flex flex-col">

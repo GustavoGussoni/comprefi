@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
-import { createPortal } from "react-dom";
+import React, { useState, useEffect, useCallback } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import ImageLoader from "../components/ImageLoader";
 import FAQ from "../components/FAQ";
 import ProductCard from "../components/ProductCard";
 import WhyChooseCompreFi from "../components/WhyChooseCompreFi";
+import ZoomableLightbox from "../components/ZoomableLightbox";
 
 // Imagens capa
 
@@ -233,83 +233,11 @@ const IphonesSeminovos: React.FC = () => {
   // Estado para lightbox
   const [lightboxImages, setLightboxImages] = useState<string[] | null>(null);
   const [lightboxIndex, setLightboxIndex] = useState<number>(0);
-  const [lightboxCurrent, setLightboxCurrent] = useState(0);
-  const scrollYRef = useRef(0);
-
-  // Embla para lightbox
-  const [lightboxRef, lightboxApi] = useEmblaCarousel({
-    loop: true,
-    startIndex: lightboxIndex,
-  });
-
-  // Atualizar contador do lightbox quando navega
-  const onLightboxSelect = useCallback(() => {
-    if (!lightboxApi) return;
-    setLightboxCurrent(lightboxApi.selectedScrollSnap());
-  }, [lightboxApi]);
-
-  useEffect(() => {
-    if (!lightboxApi) return;
-    onLightboxSelect();
-    lightboxApi.on("select", onLightboxSelect);
-    return () => {
-      lightboxApi.off("select", onLightboxSelect);
-    };
-  }, [lightboxApi, onLightboxSelect]);
-
-  // Sincronizar lightbox com o índice correto ao abrir
-  useEffect(() => {
-    if (lightboxApi && lightboxImages) {
-      lightboxApi.scrollTo(lightboxIndex, true);
-    }
-  }, [lightboxApi, lightboxImages, lightboxIndex]);
-
-  // Bloqueia scroll do body quando lightbox está aberto
-  useEffect(() => {
-    if (lightboxImages) {
-      scrollYRef.current = window.scrollY;
-      document.documentElement.style.overflow = "hidden";
-      document.body.style.overflow = "hidden";
-      document.body.style.position = "fixed";
-      document.body.style.top = `-${scrollYRef.current}px`;
-      document.body.style.width = "100%";
-    } else {
-      document.documentElement.style.overflow = "";
-      document.body.style.overflow = "";
-      document.body.style.position = "";
-      document.body.style.top = "";
-      document.body.style.width = "";
-      window.scrollTo(0, scrollYRef.current);
-    }
-    return () => {
-      document.documentElement.style.overflow = "";
-      document.body.style.overflow = "";
-      document.body.style.position = "";
-      document.body.style.top = "";
-      document.body.style.width = "";
-    };
-  }, [lightboxImages]);
-
-  // Fechar lightbox com Escape e navegar com setas
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        setLightboxImages(null);
-      }
-      if (e.key === "ArrowLeft") lightboxApi?.scrollPrev();
-      if (e.key === "ArrowRight") lightboxApi?.scrollNext();
-    };
-    if (lightboxImages) {
-      window.addEventListener("keydown", handleKeyDown);
-      return () => window.removeEventListener("keydown", handleKeyDown);
-    }
-  }, [lightboxImages, lightboxApi]);
 
   // Abrir lightbox
   const openLightbox = (images: string[], index: number) => {
     setLightboxImages(images);
     setLightboxIndex(index);
-    setLightboxCurrent(index);
   };
 
   // Fechar lightbox
@@ -337,171 +265,6 @@ const IphonesSeminovos: React.FC = () => {
     window.open(
       `https://wa.me/${whatsappNumber}?text=${encodedMessage}`,
       "_blank",
-    );
-  };
-
-  // Lightbox com Portal
-  const renderLightbox = () => {
-    if (!lightboxImages) return null;
-    return createPortal(
-      <div
-        style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundColor: "rgba(0, 0, 0, 0.97)",
-          zIndex: 99999,
-          display: "flex",
-          flexDirection: "column",
-          touchAction: "pan-x",
-        }}
-      >
-        {/* Header do lightbox */}
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            padding: "12px 16px",
-            flexShrink: 0,
-          }}
-        >
-          <span style={{ color: "#999", fontSize: "14px" }}>
-            {lightboxCurrent + 1} / {lightboxImages.length}
-          </span>
-          <button
-            style={{
-              backgroundColor: "#ff6100",
-              border: "none",
-              borderRadius: "50%",
-              width: "44px",
-              height: "44px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              cursor: "pointer",
-            }}
-            onClick={closeLightbox}
-            aria-label="Fechar"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="white"
-              strokeWidth={2}
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
-          </button>
-        </div>
-
-        {/* Carrossel do lightbox */}
-        <div
-          style={{ flex: 1, overflow: "hidden", position: "relative" }}
-          ref={lightboxRef}
-        >
-          <div style={{ display: "flex", height: "100%" }}>
-            {lightboxImages.map((img, index) => (
-              <div
-                key={index}
-                style={{
-                  flex: "0 0 100%",
-                  minWidth: 0,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  padding: "16px",
-                }}
-              >
-                <img
-                  src={img}
-                  alt={`Foto ${index + 1}`}
-                  style={{
-                    maxWidth: "100%",
-                    maxHeight: "100%",
-                    objectFit: "contain",
-                    borderRadius: "8px",
-                  }}
-                />
-              </div>
-            ))}
-          </div>
-
-          {/* Setas de navegação (desktop) */}
-          <button
-            onClick={() => lightboxApi?.scrollPrev()}
-            className="hidden md:flex"
-            style={{
-              position: "absolute",
-              left: "8px",
-              top: "50%",
-              transform: "translateY(-50%)",
-              backgroundColor: "rgba(255, 97, 0, 0.8)",
-              border: "none",
-              borderRadius: "50%",
-              width: "44px",
-              height: "44px",
-              alignItems: "center",
-              justifyContent: "center",
-              cursor: "pointer",
-              color: "white",
-              fontSize: "24px",
-              fontWeight: "bold",
-            }}
-            aria-label="Anterior"
-          >
-            ‹
-          </button>
-          <button
-            onClick={() => lightboxApi?.scrollNext()}
-            className="hidden md:flex"
-            style={{
-              position: "absolute",
-              right: "8px",
-              top: "50%",
-              transform: "translateY(-50%)",
-              backgroundColor: "rgba(255, 97, 0, 0.8)",
-              border: "none",
-              borderRadius: "50%",
-              width: "44px",
-              height: "44px",
-              alignItems: "center",
-              justifyContent: "center",
-              cursor: "pointer",
-              color: "white",
-              fontSize: "24px",
-              fontWeight: "bold",
-            }}
-            aria-label="Próxima"
-          >
-            ›
-          </button>
-        </div>
-
-        {/* Hint de swipe no mobile */}
-        <div
-          className="md:hidden"
-          style={{
-            textAlign: "center",
-            padding: "8px",
-            color: "#666",
-            fontSize: "12px",
-            flexShrink: 0,
-          }}
-        >
-          Deslize para navegar entre as fotos
-        </div>
-      </div>,
-      document.body,
     );
   };
 
@@ -540,8 +303,15 @@ const IphonesSeminovos: React.FC = () => {
           ))}
         </div>
 
-        {/* Lightbox */}
-        {renderLightbox()}
+        {/* Lightbox com Zoom */}
+        {lightboxImages && (
+          <ZoomableLightbox
+            images={lightboxImages}
+            startIndex={lightboxIndex}
+            productName="iPhone"
+            onClose={closeLightbox}
+          />
+        )}
 
         {/* Por que escolher a CompreFi */}
         <div className="mt-16">
