@@ -27,7 +27,7 @@ const ZoomableLightbox: React.FC<ZoomableLightboxProps> = ({
   const [lightboxRef, lightboxApi] = useEmblaCarousel({
     loop: true,
     startIndex,
-    watchDrag: (_, event) => {
+    watchDrag: () => {
       // Desabilitar drag do Embla quando estiver com zoom
       if (zoomRef.current > 1.05) return false;
       return true;
