@@ -4,21 +4,44 @@ import FAQ from "../components/FAQ";
 import ProductCard from "../components/ProductCard";
 import WhyChooseCompreFi from "../components/WhyChooseCompreFi";
 
-// Imagens estilizadas
-import iphone15ProMaxImg from "../assets/images/iphone15promax_fancy.png";
-import iphone15Img from "../assets/images/iphone15_fancy.png";
-import iphone14ProMaxImg from "../assets/images/iphone14promax_fancy.png";
-import iphone12ProImg from "../assets/images/iphone12pro_fancy.png";
+// Imagens capa
 
-// Imagens reais
-import iphone15ProMaxReal1 from "../assets/images/IMG_3371.HEIC.png";
-import iphone15ProMaxReal2 from "../assets/images/IMG_3396.png";
-import iphone15Real1 from "../assets/images/IMG_3397.png";
-import iphone15Real2 from "../assets/images/IMG_3375.png";
-import iphone14ProMaxReal1 from "../assets/images/IMG_3401.png";
-import iphone14ProMaxReal2 from "../assets/images/IMG_3381.png";
-import iphone12ProReal1 from "../assets/images/IMG_3400.png";
-import iphone12ProReal2 from "../assets/images/IMG_3380.png";
+import iphone16BTraseira from "../assets/new-images/semi/16b/16-white-traseira.jpg";
+import iphone16VTraseira from "../assets/new-images/semi/16v/16-green-traseira.jpg";
+import iphone15PMPTraseira from "../assets/new-images/semi/15-pm-p/15-pm-black-traseira.jpg";
+import iphone14PMRTraseira from "../assets/new-images/semi/14-pm-r/14-pm-purple-traseira.jpg";
+
+//16 branco
+
+import iphone16ImgFrente from "../assets/new-images/semi/16b/16-white-frente.jpg";
+import iphone16ImgLaterald from "../assets/new-images/semi/16b/16-white-laterald.jpg";
+import iphone16ImgLaterale from "../assets/new-images/semi/16b/16-white-laterale.jpg";
+import iphone16ImgBaixo from "../assets/new-images/semi/16b/16-white-baixo.jpg";
+import iphone16ImgCima from "../assets/new-images/semi/16b/16-white-cima.jpg";
+
+//16 verde
+
+import iphone16VImgFrente from "../assets/new-images/semi/16v/16-green-frente.jpg";
+import iphone16VImgLaterald from "../assets/new-images/semi/16v/16-green-laterald.jpg";
+import iphone16VImgLaterale from "../assets/new-images/semi/16v/16-green-laterale.jpg";
+import iphone16VImgBaixo from "../assets/new-images/semi/16v/16-green-baixo.jpg";
+import iphone16VImgCima from "../assets/new-images/semi/16v/16-green-cima.jpg";
+
+//15 Pro Max preto
+
+import iphone15PMPImgFrente from "../assets/new-images/semi/15-pm-p/15-pm-black-frente.jpg";
+import iphone15PMPImgLaterald from "../assets/new-images/semi/15-pm-p/15-pm-black-laterald.jpg";
+import iphone15PMPImgLaterale from "../assets/new-images/semi/15-pm-p/15-pm-black-laterale.jpg";
+import iphone15PMPImgBaixo from "../assets/new-images/semi/15-pm-p/15-pm-black-baixo.jpg";
+import iphone15PMPImgCima from "../assets/new-images/semi/15-pm-p/15-pm-black-cima.jpg";
+
+// 14 Pro Max roxo
+
+import iphone14PMRImgFrente from "../assets/new-images/semi/14-pm-r/14-pm-purple-frente.jpg";
+import iphone14PMRImgLaterald from "../assets/new-images/semi/14-pm-r/14-pm-purple-laterald.jpg";
+import iphone14PMRImgLaterale from "../assets/new-images/semi/14-pm-r/14-pm-purple-laterale.jpg";
+import iphone14PMRImgBaixo from "../assets/new-images/semi/14-pm-r/14-pm-purple-baixo.jpg";
+import iphone14PMRImgCima from "../assets/new-images/semi/14-pm-r/14-pm-purple-laterale.jpg";
 
 const IphonesSeminovos: React.FC = () => {
   // Número de WhatsApp
@@ -28,73 +51,92 @@ const IphonesSeminovos: React.FC = () => {
   const products = [
     {
       id: 1,
-      model: "iPhone 15 Pro Max",
-      storage: "256GB",
-      color: "Titânio Natural",
-      battery: "89%",
-      originalPrice: "R$ 6.590,00",
-      installmentPrice: "R$ 540,67",
-      pixPrice: "R$ 5.690",
-      details: "sem detalhes | garantia Apple até junho",
-      image: iphone15ProMaxImg,
-      realImages: [iphone15ProMaxReal1, iphone15ProMaxReal2],
+      model: "iPhone 16",
+      storage: "128GB",
+      color: "Branco",
+      battery: "98%",
+      originalPrice: "R$ 4.790,00",
+      installmentPrice: "R$ 398,14",
+      pixPrice: "R$ 4.190",
+      details:
+        "sem detalhes | acompanha caixa e capinha | Garantia Apple até 04/2026",
+      image: iphone16BTraseira,
+      realImages: [
+        iphone16ImgFrente,
+        iphone16ImgLaterald,
+        iphone16ImgLaterale,
+        iphone16ImgBaixo,
+        iphone16ImgCima,
+      ],
       category: "iPhones Seminovos",
+      specs:
+        'O iPhone 16 (2024) traz o processador A18 (3nm), 8 GB de RAM para Apple Intelligence, e câmeras de 48 MP, apresentando o novo "Controle da Câmera", botão de Ação e tela Super Retina XDR OLED de 6,1 polegadas. Possui bateria de 3561 mAh, conector USB-C, Wi-Fi 7 e estrutura em alumínio com Ceramic Shield.',
     },
     {
       id: 2,
-      model: "iPhone 15",
-      storage: "256GB",
-      color: "Preto",
+      model: "iPhone 16",
+      storage: "128GB",
+      color: "Verde",
       battery: "90%",
-      originalPrice: "R$ 5.190,00",
-      installmentPrice: "R$ 379,13",
+      originalPrice: "R$ 4.690,00",
+      installmentPrice: "R$ 379,14",
       pixPrice: "R$ 3.990",
-      details: "*pequeno detalhe na lateral",
-      image: iphone15Img,
-      realImages: [iphone15Real1, iphone15Real2],
+      details: "sem detalhes | acompanha capinha | Garantia Apple até 04/2026",
+      image: iphone16VTraseira,
+      realImages: [
+        iphone16VImgFrente,
+        iphone16VImgLaterald,
+        iphone16VImgLaterale,
+        iphone16VImgBaixo,
+        iphone16VImgCima,
+      ],
       category: "iPhones Seminovos",
+      specs:
+        'O iPhone 16 (2024) traz o processador A18 (3nm), 8 GB de RAM para Apple Intelligence, e câmeras de 48 MP, apresentando o novo "Controle da Câmera", botão de Ação e tela Super Retina XDR OLED de 6,1 polegadas. Possui bateria de 3561 mAh, conector USB-C, Wi-Fi 7 e estrutura em alumínio com Ceramic Shield.',
     },
     {
       id: 3,
-      model: "iPhone 14 Pro Max",
-      storage: "512GB",
-      color: "Preto",
-      battery: "81%",
-      originalPrice: "R$ 5.900,00",
-      installmentPrice: "R$ 465,60",
-      pixPrice: "R$ 4.900",
-      details: "*detalhes de capinha na borda",
-      image: iphone14ProMaxImg,
-      realImages: [iphone14ProMaxReal1, iphone14ProMaxReal2],
+      model: "iPhone 15 Pro Max",
+      storage: "256GB",
+      color: "Titânio Preto",
+      battery: "87%",
+      originalPrice: "R$ 4.990,00",
+      installmentPrice: "R$ 426,65",
+      pixPrice: "R$ 4.490",
+      details: "sem detalhes | acompanha caixa",
+      image: iphone15PMPTraseira,
+      realImages: [
+        iphone15PMPImgFrente,
+        iphone15PMPImgLaterald,
+        iphone15PMPImgLaterale,
+        iphone15PMPImgBaixo,
+        iphone15PMPImgCima,
+      ],
       category: "iPhones Seminovos",
+      specs:
+        'O iPhone 15 Pro Max é o topo de linha da Apple de 2023, destacando-se pela estrutura em titânio, processador A17 Pro de 3nm e câmera telefoto de 5x. Possui tela OLED de 6,7" (120Hz), 8GB de RAM, USB-C 3.0 e sistema de câmera tripla de 48MP, oferecendo alto desempenho e grande autonomia de bateria.',
     },
     {
       id: 4,
       model: "iPhone 14 Pro Max",
-      storage: "256GB",
-      color: "Roxo",
-      battery: "87%",
-      originalPrice: "R$ 5.300,00",
-      installmentPrice: "R$ 441,85",
-      pixPrice: "R$ 4.650",
-      details: "*detalhe na lateral",
-      image: iphone14ProMaxImg,
-      realImages: [iphone14ProMaxReal1, iphone14ProMaxReal2],
-      category: "iPhones Seminovos",
-    },
-    {
-      id: 5,
-      model: "iPhone 12 Pro",
       storage: "128GB",
-      color: "Dourado",
-      battery: "78%",
-      originalPrice: "R$ 2.700,00",
-      installmentPrice: "R$ 189,09",
-      pixPrice: "R$ 1.990",
-      details: "sem detalhes",
-      image: iphone12ProImg,
-      realImages: [iphone12ProReal1, iphone12ProReal2],
+      color: "Roxo",
+      battery: "83%",
+      originalPrice: "R$ 3.890,00",
+      installmentPrice: "R$ 341,13",
+      pixPrice: "R$ 3.590",
+      details: "sem detalhes de uso | acompanha capinha",
+      image: iphone14PMRTraseira,
+      realImages: [
+        iphone14PMRImgFrente,
+        iphone14PMRImgLaterald,
+        iphone14PMRImgLaterale,
+        iphone14PMRImgBaixo,
+        iphone14PMRImgCima,
+      ],
       category: "iPhones Seminovos",
+      specs:
+        "O iPhone 14 Pro Max possui uma tela de 6,7 polegadas Super Retina XDR OLED com ProMotion (120Hz) e Dynamic Island. É equipado com o chip A16 Bionic, 6 GB de RAM e câmera principal de 48 MP. Oferece armazenamento até 1 TB, resistência à água IP68, 5G e bateria com duração superior a um dia.",
     },
   ];
 
@@ -125,7 +167,7 @@ const IphonesSeminovos: React.FC = () => {
     const encodedMessage = encodeURIComponent(message);
     window.open(
       `https://wa.me/${whatsappNumber}?text=${encodedMessage}`,
-      "_blank"
+      "_blank",
     );
   };
 
@@ -172,7 +214,7 @@ const IphonesSeminovos: React.FC = () => {
                     {product.model} {product.storage}
                   </div>
                 </div>
-              ))
+              )),
             )}
           </div>
         </div>
