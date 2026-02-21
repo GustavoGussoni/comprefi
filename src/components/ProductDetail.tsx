@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import ImageLoader from "./ImageLoader";
 import FAQ from "./FAQ";
@@ -28,6 +28,24 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ product }) => {
   >("pix");
   const [enlargedImage, setEnlargedImage] = useState<string | null>(null);
 
+  // 🔒 SCROLL LOCK: Bloqueia scroll quando modal está aberto
+  useEffect(() => {
+    if (enlargedImage) {
+      // Bloquear scroll do body
+      document.body.style.overflow = "hidden";
+      // Scroll para o topo para garantir que modal apareça no viewport
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } else {
+      // Restaurar scroll
+      document.body.style.overflow = "unset";
+    }
+
+    // Cleanup: garantir que scroll seja restaurado ao desmontar
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [enlargedImage]);
+
   // Número de WhatsApp
   const whatsappNumber = "+5534999252590";
 
@@ -44,7 +62,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ product }) => {
     const encodedMessage = encodeURIComponent(message);
     window.open(
       `https://wa.me/${whatsappNumber}?text=${encodedMessage}`,
-      "_blank"
+      "_blank",
     );
   };
 
@@ -74,16 +92,6 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ product }) => {
       rating: 5,
     },
   ];
-
-  // const chipLabel = product.model.includes("M4")
-  //   ? "M4"
-  //   : product.model.includes("M3")
-  //   ? "M3"
-  //   : product.model.includes("M2")
-  //   ? "M2"
-  //   : product.model.includes("M1")
-  //   ? "M1"
-  //   : null;
 
   return (
     <div className="product-detail-container bg-black min-h-screen">
@@ -140,8 +148,8 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ product }) => {
                     parseInt(product.battery) > 85
                       ? "text-green-500"
                       : parseInt(product.battery) > 80
-                      ? "text-yellow-500"
-                      : "text-orange-500"
+                        ? "text-yellow-500"
+                        : "text-orange-500"
                   }`}
                 >
                   {product.battery}
@@ -252,14 +260,14 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ product }) => {
         </div>
 
         {/* Seção de Fotos Reais */}
-        {product.realImages && (
+        {product.realImages && product.realImages.length > 0 && (
           <div className="real-photos-section mb-16">
             <h2 className="text-2xl font-bold mb-6 text-white">Fotos Reais</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
               {product.realImages.map((img, index) => (
                 <div
                   key={index}
-                  className="bg-gray-900 rounded-lg overflow-hidden cursor-pointer transform transition-transform hover:scale-105"
+                  className="bg-gray-900 rounded-lg overflow-hidden cursor-pointer transform transition-transform md:hover:scale-105 active:scale-95"
                   onClick={() => setEnlargedImage(img)}
                 >
                   <ImageLoader
@@ -273,19 +281,21 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ product }) => {
           </div>
         )}
 
-        {/* Modal para visualização ampliada de imagens */}
+        {/* 🎯 MODAL CORRIGIDO: Scroll lock + posicionamento correto + sem scroll de fundo */}
         {enlargedImage && (
           <div
-            className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50 p-4"
+            className="fixed inset-0 bg-black bg-opacity-95 flex items-center justify-center z-50 p-4 overflow-hidden"
             onClick={() => setEnlargedImage(null)}
+            style={{ touchAction: "none" }}
           >
             <div
-              className="relative max-w-4xl max-h-[90vh] overflow-auto"
+              className="relative max-w-4xl w-full flex items-center justify-center"
               onClick={(e) => e.stopPropagation()}
             >
               <button
-                className="absolute top-4 right-4 bg-[#ff6100] rounded-full p-2 text-white"
+                className="absolute top-4 right-4 bg-[#ff6100] hover:bg-[#e55a00] rounded-full p-3 text-white z-10 transition-colors shadow-lg"
                 onClick={() => setEnlargedImage(null)}
+                aria-label="Fechar visualização de imagem"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -304,8 +314,8 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ product }) => {
               </button>
               <img
                 src={enlargedImage}
-                alt="Imagem ampliada"
-                className="max-w-full max-h-[85vh] object-contain"
+                alt="Imagem ampliada do produto"
+                className="max-w-full max-h-[85vh] object-contain rounded-lg shadow-2xl"
               />
             </div>
           </div>
