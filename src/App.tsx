@@ -39,9 +39,8 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
     "/agradecimento",
     "/iphones-seminovos",
   ];
-  const shouldHideHeader =
-    hideHeaderRoutes.includes(location.pathname) ||
-    location.pathname.startsWith("/produto/");
+  const shouldHideHeader = hideHeaderRoutes.includes(location.pathname);
+  // || location.pathname.startsWith("/produto/");
 
   return (
     <div className="app bg-black text-white min-h-screen flex flex-col">

@@ -12,10 +12,10 @@ interface ZoomableLightboxProps {
 /**
  * Lightbox fullscreen com:
  * - Carrossel Embla (swipe entre fotos)
- * - Pinch-to-zoom no mobile
+ * - Pinch-to-zoom suave no mobile
  * - Scroll-to-zoom no desktop
+ * - Double-click para zoom toggle (desktop)
  * - Drag para mover quando com zoom
- * - Double-tap/double-click para zoom toggle
  * - Botão de reset zoom
  */
 const ZoomableLightbox: React.FC<ZoomableLightboxProps> = ({
@@ -43,11 +43,15 @@ const ZoomableLightbox: React.FC<ZoomableLightboxProps> = ({
 
   // Refs para gestos de toque (pinch-to-zoom)
   const lastTouchDistRef = useRef(0);
-  const lastTouchCenterRef = useRef({ x: 0, y: 0 });
+  const isPinchingRef = useRef(false);
   const isDraggingRef = useRef(false);
   const dragStartRef = useRef({ x: 0, y: 0 });
-  const lastTapRef = useRef(0);
   const imageContainerRef = useRef<HTMLDivElement>(null);
+  const rafRef = useRef<number | null>(null);
+
+  // Target values para interpolação suave
+  const targetZoomRef = useRef(1);
+  const targetTranslateRef = useRef({ x: 0, y: 0 });
 
   // Sincronizar ref com state
   useEffect(() => {
@@ -65,6 +69,8 @@ const ZoomableLightbox: React.FC<ZoomableLightboxProps> = ({
     // Reset zoom ao mudar de slide
     setZoom(1);
     setTranslate({ x: 0, y: 0 });
+    targetZoomRef.current = 1;
+    targetTranslateRef.current = { x: 0, y: 0 };
   }, [lightboxApi]);
 
   useEffect(() => {
@@ -99,6 +105,7 @@ const ZoomableLightbox: React.FC<ZoomableLightboxProps> = ({
       document.body.style.top = "";
       document.body.style.width = "";
       window.scrollTo(0, scrollYRef.current);
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
     };
   }, []);
 
@@ -139,7 +146,7 @@ const ZoomableLightbox: React.FC<ZoomableLightboxProps> = ({
     });
   }, []);
 
-  // Double-click para toggle zoom (desktop)
+  // Double-click para toggle zoom (desktop only)
   const handleDoubleClick = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
     setZoom((z) => {
@@ -181,17 +188,16 @@ const ZoomableLightbox: React.FC<ZoomableLightboxProps> = ({
     isDraggingRef.current = false;
   }, []);
 
-  // Touch handlers para pinch-to-zoom e drag
+  // ===== TOUCH HANDLERS (PINCH-TO-ZOOM SUAVE) =====
+
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
     if (e.touches.length === 2) {
       // Pinch start
+      isPinchingRef.current = true;
       const dx = e.touches[0].clientX - e.touches[1].clientX;
       const dy = e.touches[0].clientY - e.touches[1].clientY;
       lastTouchDistRef.current = Math.sqrt(dx * dx + dy * dy);
-      lastTouchCenterRef.current = {
-        x: (e.touches[0].clientX + e.touches[1].clientX) / 2,
-        y: (e.touches[0].clientY + e.touches[1].clientY) / 2,
-      };
+      targetZoomRef.current = zoomRef.current;
     } else if (e.touches.length === 1 && zoomRef.current > 1.05) {
       // Single touch drag quando com zoom
       isDraggingRef.current = true;
@@ -200,27 +206,11 @@ const ZoomableLightbox: React.FC<ZoomableLightboxProps> = ({
         y: e.touches[0].clientY - translateRef.current.y,
       };
     }
-
-    // Double-tap detection
-    if (e.touches.length === 1) {
-      const now = Date.now();
-      if (now - lastTapRef.current < 300) {
-        // Double tap
-        setZoom((z) => {
-          if (z > 1.05) {
-            setTranslate({ x: 0, y: 0 });
-            return 1;
-          }
-          return 2.5;
-        });
-      }
-      lastTapRef.current = now;
-    }
   }, []);
 
   const handleTouchMove = useCallback((e: React.TouchEvent) => {
-    if (e.touches.length === 2) {
-      // Pinch move
+    if (e.touches.length === 2 && isPinchingRef.current) {
+      // Pinch move — atualizar zoom diretamente com o ratio
       e.preventDefault();
       const dx = e.touches[0].clientX - e.touches[1].clientX;
       const dy = e.touches[0].clientY - e.touches[1].clientY;
@@ -228,11 +218,19 @@ const ZoomableLightbox: React.FC<ZoomableLightboxProps> = ({
 
       if (lastTouchDistRef.current > 0) {
         const scale = dist / lastTouchDistRef.current;
-        setZoom((z) => {
-          const newZ = Math.max(1, Math.min(z * scale, 5));
-          if (newZ <= 1) setTranslate({ x: 0, y: 0 });
-          return newZ;
-        });
+        // Aplicar scale multiplicativo ao target
+        targetZoomRef.current = Math.max(
+          1,
+          Math.min(targetZoomRef.current * scale, 5),
+        );
+
+        // Aplicar diretamente (sem interpolação) para resposta imediata
+        const newZoom = targetZoomRef.current;
+        setZoom(newZoom);
+        if (newZoom <= 1) {
+          setTranslate({ x: 0, y: 0 });
+          targetTranslateRef.current = { x: 0, y: 0 };
+        }
       }
       lastTouchDistRef.current = dist;
     } else if (
@@ -242,21 +240,34 @@ const ZoomableLightbox: React.FC<ZoomableLightboxProps> = ({
     ) {
       // Drag quando com zoom
       e.preventDefault();
-      setTranslate({
+      const newTranslate = {
         x: e.touches[0].clientX - dragStartRef.current.x,
         y: e.touches[0].clientY - dragStartRef.current.y,
-      });
+      };
+      setTranslate(newTranslate);
+      targetTranslateRef.current = newTranslate;
     }
   }, []);
 
   const handleTouchEnd = useCallback(() => {
+    isPinchingRef.current = false;
     lastTouchDistRef.current = 0;
     isDraggingRef.current = false;
+
+    // Snap to 1x se zoom ficou muito perto de 1
+    if (zoomRef.current < 1.1) {
+      setZoom(1);
+      setTranslate({ x: 0, y: 0 });
+      targetZoomRef.current = 1;
+      targetTranslateRef.current = { x: 0, y: 0 };
+    }
   }, []);
 
   const resetZoom = useCallback(() => {
     setZoom(1);
     setTranslate({ x: 0, y: 0 });
+    targetZoomRef.current = 1;
+    targetTranslateRef.current = { x: 0, y: 0 };
   }, []);
 
   return createPortal(
@@ -343,7 +354,7 @@ const ZoomableLightbox: React.FC<ZoomableLightboxProps> = ({
           flex: 1,
           overflow: "hidden",
           position: "relative",
-          touchAction: zoom > 1.05 ? "none" : "pan-x",
+          touchAction: zoom > 1.05 ? "none" : "pan-x pinch-zoom",
         }}
         ref={lightboxRef}
       >
@@ -385,9 +396,11 @@ const ZoomableLightbox: React.FC<ZoomableLightboxProps> = ({
                     index === currentIndex
                       ? `scale(${zoom}) translate(${translate.x / zoom}px, ${translate.y / zoom}px)`
                       : "none",
-                  transition: isDraggingRef.current
-                    ? "none"
-                    : "transform 0.2s ease-out",
+                  transition:
+                    isPinchingRef.current || isDraggingRef.current
+                      ? "none"
+                      : "transform 0.25s ease-out",
+                  willChange: "transform",
                   userSelect: "none",
                   WebkitUserSelect: "none",
                 }}
@@ -482,11 +495,11 @@ const ZoomableLightbox: React.FC<ZoomableLightboxProps> = ({
         }}
       >
         {zoom > 1.05 ? (
-          <span>Arraste para mover • Toque duplo para resetar</span>
+          <span>Arraste para mover • Toque no botão "Resetar" para voltar</span>
         ) : (
           <>
             <span className="md:hidden">
-              Deslize para navegar • Toque duplo ou pinça para zoom
+              Deslize para navegar • Pinça para zoom
             </span>
             <span className="hidden md:inline">
               Scroll para zoom • Duplo clique para ampliar • Setas do teclado
