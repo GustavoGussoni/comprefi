@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { createPortal } from "react-dom";
+import useEmblaCarousel from "embla-carousel-react";
 import ImageLoader from "../components/ImageLoader";
 import FAQ from "../components/FAQ";
 import ProductCard from "../components/ProductCard";
@@ -43,6 +44,89 @@ import iphone14PMRImgLaterald from "../assets/new-images/semi/14-pm-r/14-pm-purp
 import iphone14PMRImgLaterale from "../assets/new-images/semi/14-pm-r/14-pm-purple-laterale.jpg";
 import iphone14PMRImgBaixo from "../assets/new-images/semi/14-pm-r/14-pm-purple-baixo.jpg";
 import iphone14PMRImgCima from "../assets/new-images/semi/14-pm-r/14-pm-purple-laterale.jpg";
+
+// Componente de carrossel de fotos reais por produto
+const ProductPhotoCarousel: React.FC<{
+  product: {
+    id: number;
+    model: string;
+    storage: string;
+    image: string;
+    realImages: string[];
+  };
+  onImageClick: (images: string[], index: number) => void;
+}> = ({ product, onImageClick }) => {
+  const allImages = [product.image, ...product.realImages];
+  const [carouselRef, carouselApi] = useEmblaCarousel({
+    loop: true,
+    align: "start",
+    slidesToScroll: 1,
+    containScroll: "trimSnaps",
+  });
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  const onSelect = useCallback(() => {
+    if (!carouselApi) return;
+    setCurrentIndex(carouselApi.selectedScrollSnap());
+  }, [carouselApi]);
+
+  useEffect(() => {
+    if (!carouselApi) return;
+    onSelect();
+    carouselApi.on("select", onSelect);
+    return () => {
+      carouselApi.off("select", onSelect);
+    };
+  }, [carouselApi, onSelect]);
+
+  return (
+    <div className="mb-8">
+      <div className="flex items-center justify-between mb-3">
+        <h3 className="text-lg font-semibold text-white">
+          {product.model} {product.storage}
+        </h3>
+        <span className="text-gray-400 text-sm">
+          {currentIndex + 1} / {allImages.length} fotos
+        </span>
+      </div>
+
+      {/* Carrossel horizontal */}
+      <div className="overflow-hidden rounded-lg" ref={carouselRef}>
+        <div className="flex">
+          {allImages.map((img, index) => (
+            <div
+              key={index}
+              className="flex-[0_0_75%] sm:flex-[0_0_45%] md:flex-[0_0_32%] min-w-0 pr-3 cursor-pointer"
+              onClick={() => onImageClick(allImages, index)}
+            >
+              <div className="rounded-lg overflow-hidden bg-gray-900">
+                <ImageLoader
+                  src={img}
+                  alt={`${product.model} - Foto ${index + 1}`}
+                  className="w-full h-auto object-cover aspect-[4/5]"
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Dots de navegação */}
+      <div className="flex justify-center gap-1.5 mt-3">
+        {allImages.map((_, index) => (
+          <button
+            key={index}
+            onClick={() => carouselApi?.scrollTo(index)}
+            className={`w-2 h-2 rounded-full transition-all ${
+              currentIndex === index ? "bg-[#ff6100] w-4" : "bg-gray-600"
+            }`}
+            aria-label={`Ir para foto ${index + 1}`}
+          />
+        ))}
+      </div>
+    </div>
+  );
+};
 
 const IphonesSeminovos: React.FC = () => {
   // Número de WhatsApp
@@ -146,29 +230,55 @@ const IphonesSeminovos: React.FC = () => {
     [key: number]: "pix" | "card";
   }>({});
 
-  // Estado para controlar a visualização ampliada de imagens
-  const [enlargedImage, setEnlargedImage] = useState<string | null>(null);
+  // Estado para lightbox
+  const [lightboxImages, setLightboxImages] = useState<string[] | null>(null);
+  const [lightboxIndex, setLightboxIndex] = useState<number>(0);
+  const [lightboxCurrent, setLightboxCurrent] = useState(0);
   const scrollYRef = useRef(0);
 
-  // Bloqueia scroll do body quando modal está aberto (compatível com iOS Safari)
+  // Embla para lightbox
+  const [lightboxRef, lightboxApi] = useEmblaCarousel({
+    loop: true,
+    startIndex: lightboxIndex,
+  });
+
+  // Atualizar contador do lightbox quando navega
+  const onLightboxSelect = useCallback(() => {
+    if (!lightboxApi) return;
+    setLightboxCurrent(lightboxApi.selectedScrollSnap());
+  }, [lightboxApi]);
+
   useEffect(() => {
-    if (enlargedImage) {
-      // Salvar posição atual do scroll
+    if (!lightboxApi) return;
+    onLightboxSelect();
+    lightboxApi.on("select", onLightboxSelect);
+    return () => {
+      lightboxApi.off("select", onLightboxSelect);
+    };
+  }, [lightboxApi, onLightboxSelect]);
+
+  // Sincronizar lightbox com o índice correto ao abrir
+  useEffect(() => {
+    if (lightboxApi && lightboxImages) {
+      lightboxApi.scrollTo(lightboxIndex, true);
+    }
+  }, [lightboxApi, lightboxImages, lightboxIndex]);
+
+  // Bloqueia scroll do body quando lightbox está aberto
+  useEffect(() => {
+    if (lightboxImages) {
       scrollYRef.current = window.scrollY;
-      // Bloquear scroll no html E body (necessário para iOS Safari)
       document.documentElement.style.overflow = "hidden";
       document.body.style.overflow = "hidden";
       document.body.style.position = "fixed";
       document.body.style.top = `-${scrollYRef.current}px`;
       document.body.style.width = "100%";
     } else {
-      // Restaurar estilos
       document.documentElement.style.overflow = "";
       document.body.style.overflow = "";
       document.body.style.position = "";
       document.body.style.top = "";
       document.body.style.width = "";
-      // Restaurar scroll para posição original
       window.scrollTo(0, scrollYRef.current);
     }
     return () => {
@@ -178,7 +288,34 @@ const IphonesSeminovos: React.FC = () => {
       document.body.style.top = "";
       document.body.style.width = "";
     };
-  }, [enlargedImage]);
+  }, [lightboxImages]);
+
+  // Fechar lightbox com Escape e navegar com setas
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setLightboxImages(null);
+      }
+      if (e.key === "ArrowLeft") lightboxApi?.scrollPrev();
+      if (e.key === "ArrowRight") lightboxApi?.scrollNext();
+    };
+    if (lightboxImages) {
+      window.addEventListener("keydown", handleKeyDown);
+      return () => window.removeEventListener("keydown", handleKeyDown);
+    }
+  }, [lightboxImages, lightboxApi]);
+
+  // Abrir lightbox
+  const openLightbox = (images: string[], index: number) => {
+    setLightboxImages(images);
+    setLightboxIndex(index);
+    setLightboxCurrent(index);
+  };
+
+  // Fechar lightbox
+  const closeLightbox = () => {
+    setLightboxImages(null);
+  };
 
   // Função para selecionar forma de pagamento
   const selectPaymentMethod = (productId: number, method: "pix" | "card") => {
@@ -200,6 +337,171 @@ const IphonesSeminovos: React.FC = () => {
     window.open(
       `https://wa.me/${whatsappNumber}?text=${encodedMessage}`,
       "_blank",
+    );
+  };
+
+  // Lightbox com Portal
+  const renderLightbox = () => {
+    if (!lightboxImages) return null;
+    return createPortal(
+      <div
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: "rgba(0, 0, 0, 0.97)",
+          zIndex: 99999,
+          display: "flex",
+          flexDirection: "column",
+          touchAction: "pan-x",
+        }}
+      >
+        {/* Header do lightbox */}
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            padding: "12px 16px",
+            flexShrink: 0,
+          }}
+        >
+          <span style={{ color: "#999", fontSize: "14px" }}>
+            {lightboxCurrent + 1} / {lightboxImages.length}
+          </span>
+          <button
+            style={{
+              backgroundColor: "#ff6100",
+              border: "none",
+              borderRadius: "50%",
+              width: "44px",
+              height: "44px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              cursor: "pointer",
+            }}
+            onClick={closeLightbox}
+            aria-label="Fechar"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="white"
+              strokeWidth={2}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
+        </div>
+
+        {/* Carrossel do lightbox */}
+        <div
+          style={{ flex: 1, overflow: "hidden", position: "relative" }}
+          ref={lightboxRef}
+        >
+          <div style={{ display: "flex", height: "100%" }}>
+            {lightboxImages.map((img, index) => (
+              <div
+                key={index}
+                style={{
+                  flex: "0 0 100%",
+                  minWidth: 0,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  padding: "16px",
+                }}
+              >
+                <img
+                  src={img}
+                  alt={`Foto ${index + 1}`}
+                  style={{
+                    maxWidth: "100%",
+                    maxHeight: "100%",
+                    objectFit: "contain",
+                    borderRadius: "8px",
+                  }}
+                />
+              </div>
+            ))}
+          </div>
+
+          {/* Setas de navegação (desktop) */}
+          <button
+            onClick={() => lightboxApi?.scrollPrev()}
+            className="hidden md:flex"
+            style={{
+              position: "absolute",
+              left: "8px",
+              top: "50%",
+              transform: "translateY(-50%)",
+              backgroundColor: "rgba(255, 97, 0, 0.8)",
+              border: "none",
+              borderRadius: "50%",
+              width: "44px",
+              height: "44px",
+              alignItems: "center",
+              justifyContent: "center",
+              cursor: "pointer",
+              color: "white",
+              fontSize: "24px",
+              fontWeight: "bold",
+            }}
+            aria-label="Anterior"
+          >
+            ‹
+          </button>
+          <button
+            onClick={() => lightboxApi?.scrollNext()}
+            className="hidden md:flex"
+            style={{
+              position: "absolute",
+              right: "8px",
+              top: "50%",
+              transform: "translateY(-50%)",
+              backgroundColor: "rgba(255, 97, 0, 0.8)",
+              border: "none",
+              borderRadius: "50%",
+              width: "44px",
+              height: "44px",
+              alignItems: "center",
+              justifyContent: "center",
+              cursor: "pointer",
+              color: "white",
+              fontSize: "24px",
+              fontWeight: "bold",
+            }}
+            aria-label="Próxima"
+          >
+            ›
+          </button>
+        </div>
+
+        {/* Hint de swipe no mobile */}
+        <div
+          className="md:hidden"
+          style={{
+            textAlign: "center",
+            padding: "8px",
+            color: "#666",
+            fontSize: "12px",
+            flexShrink: 0,
+          }}
+        >
+          Deslize para navegar entre as fotos
+        </div>
+      </div>,
+      document.body,
     );
   };
 
@@ -226,103 +528,20 @@ const IphonesSeminovos: React.FC = () => {
           ))}
         </div>
 
-        {/* Seção de Fotos Reais */}
+        {/* Seção de Fotos Reais - Carrossel por produto */}
         <div className="mt-16">
-          <h2 className="text-2xl font-bold mb-6 text-white">Fotos Reais</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {products.map((product) =>
-              product.realImages.map((img, imgIndex) => (
-                <div
-                  key={`${product.id}-${imgIndex}`}
-                  className="bg-gray-900 rounded-lg overflow-hidden cursor-pointer md:hover:scale-105 md:transition-transform"
-                  onClick={() => setEnlargedImage(img)}
-                >
-                  <ImageLoader
-                    src={img}
-                    alt={`${product.model} - Foto real ${imgIndex + 1}`}
-                    className="w-full h-auto object-cover"
-                  />
-                  <div className="p-2 text-center text-gray-400 text-sm">
-                    {product.model} {product.storage}
-                  </div>
-                </div>
-              )),
-            )}
-          </div>
+          <h2 className="text-2xl font-bold mb-8 text-white">Fotos Reais</h2>
+          {products.map((product) => (
+            <ProductPhotoCarousel
+              key={product.id}
+              product={product}
+              onImageClick={openLightbox}
+            />
+          ))}
         </div>
 
-        {/* Modal renderizado via Portal - FORA da árvore DOM do componente */}
-        {enlargedImage &&
-          createPortal(
-            <div
-              style={{
-                position: "fixed",
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                backgroundColor: "rgba(0, 0, 0, 0.95)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                zIndex: 99999,
-                padding: "16px",
-                touchAction: "none",
-              }}
-              onClick={() => setEnlargedImage(null)}
-            >
-              <button
-                style={{
-                  position: "absolute",
-                  top: "16px",
-                  right: "16px",
-                  backgroundColor: "#ff6100",
-                  border: "none",
-                  borderRadius: "50%",
-                  width: "44px",
-                  height: "44px",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  cursor: "pointer",
-                  zIndex: 100000,
-                }}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setEnlargedImage(null);
-                }}
-                aria-label="Fechar"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="white"
-                  strokeWidth={2}
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-              </button>
-              <img
-                src={enlargedImage}
-                alt="Imagem ampliada do produto"
-                onClick={(e) => e.stopPropagation()}
-                style={{
-                  maxWidth: "100%",
-                  maxHeight: "85vh",
-                  objectFit: "contain",
-                  borderRadius: "8px",
-                }}
-              />
-            </div>,
-            document.body,
-          )}
+        {/* Lightbox */}
+        {renderLightbox()}
 
         {/* Por que escolher a CompreFi */}
         <div className="mt-16">
