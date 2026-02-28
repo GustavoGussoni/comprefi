@@ -49,11 +49,15 @@ const Header: React.FC = () => {
       document.body.style.top = `-${scrollYRef.current}px`;
       document.body.style.width = "100%";
     } else {
+      const scrollY = scrollYRef.current;
       document.body.style.overflow = "";
       document.body.style.position = "";
       document.body.style.top = "";
       document.body.style.width = "";
-      window.scrollTo(0, scrollYRef.current);
+      if (scrollY > 0) {
+        window.scrollTo(0, scrollY);
+      }
+      scrollYRef.current = 0;
     }
 
     return () => {
@@ -61,6 +65,7 @@ const Header: React.FC = () => {
       document.body.style.position = "";
       document.body.style.top = "";
       document.body.style.width = "";
+      scrollYRef.current = 0;
     };
   }, [isMenuOpen]);
 
@@ -187,6 +192,7 @@ const Header: React.FC = () => {
           flexDirection: "column",
           overflowY: "auto",
           WebkitOverflowScrolling: "touch",
+          pointerEvents: isMenuOpen ? "auto" : "none",
         }}
       >
         {/* Drawer Header */}
