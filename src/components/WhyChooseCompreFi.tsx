@@ -1,11 +1,21 @@
 import React from "react";
+import { Check } from "lucide-react";
 
-interface WhyChooseCompreFiProps {
+interface WhyChooseSectionProps {
+  /** Categoria do produto (ex: "iPhones Seminovos", "iPhones Novos", "MacBooks") */
   category?: string;
+  /** Título customizado (sobrescreve o título automático baseado na categoria) */
+  title?: string;
+  /** Pontos customizados (sobrescreve os pontos automáticos baseados na categoria) */
+  items?: string[];
 }
 
-const WhyChooseCompreFi: React.FC<WhyChooseCompreFiProps> = ({ category }) => {
-  // Determinar o título e os pontos específicos com base na categoria
+const WhyChooseSection: React.FC<WhyChooseSectionProps> = ({
+  category,
+  title: customTitle,
+  items: customItems,
+}) => {
+  // Título e pontos padrão
   let title = "Por que escolher a CompreFi?";
   let points = [
     "Produtos originais com garantia oficial",
@@ -15,9 +25,9 @@ const WhyChooseCompreFi: React.FC<WhyChooseCompreFiProps> = ({ category }) => {
     "Atendimento personalizado por especialistas Apple",
   ];
 
-  // Personalizar pontos com base na categoria
+  // Personalizar com base na categoria
   if (category) {
-    if (category.includes("Seminovo")) {
+    if (category.toLowerCase().includes("seminov")) {
       title = `Por que comprar ${category} na CompreFi?`;
       points = [
         "Todos os aparelhos passam por rigorosa inspeção de qualidade",
@@ -26,7 +36,7 @@ const WhyChooseCompreFi: React.FC<WhyChooseCompreFiProps> = ({ category }) => {
         "Programa de indicações com desconto acumulativo",
         "Economia de até 40% em comparação com aparelhos novos",
       ];
-    } else if (category.includes("Novo")) {
+    } else if (category.toLowerCase().includes("nov")) {
       title = `Por que comprar ${category} na CompreFi?`;
       points = [
         "Produtos originais com 1 ano de garantia oficial Apple",
@@ -35,8 +45,14 @@ const WhyChooseCompreFi: React.FC<WhyChooseCompreFiProps> = ({ category }) => {
         "Economia significativa em comparação com lojas oficiais",
         "Atendimento personalizado por especialistas Apple",
       ];
+    } else {
+      title = `Por que comprar ${category} na CompreFi?`;
     }
   }
+
+  // Props customizadas sobrescrevem tudo
+  if (customTitle) title = customTitle;
+  if (customItems) points = customItems;
 
   return (
     <div className="max-w-4xl mx-auto bg-gray-900 rounded-lg p-6 border border-gray-800">
@@ -44,20 +60,10 @@ const WhyChooseCompreFi: React.FC<WhyChooseCompreFiProps> = ({ category }) => {
       <ul className="space-y-3 text-gray-300">
         {points.map((point, index) => (
           <li key={index} className="flex items-start">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6 mr-2 text-[#ff6100] flex-shrink-0"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M5 13l4 4L19 7"
-              />
-            </svg>
+            <Check
+              size={24}
+              className="mr-2 text-[#ff6100] flex-shrink-0 mt-0.5"
+            />
             <span>{point}</span>
           </li>
         ))}
@@ -66,4 +72,4 @@ const WhyChooseCompreFi: React.FC<WhyChooseCompreFiProps> = ({ category }) => {
   );
 };
 
-export default WhyChooseCompreFi;
+export default WhyChooseSection;

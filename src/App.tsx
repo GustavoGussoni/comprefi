@@ -9,12 +9,7 @@ import PageTransition from "./components/PageTransition";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import Home from "./pages/Home";
-import IphonesNovos from "./pages/IphonesNovos";
-import IphonesSeminovos from "./pages/IphonesSeminovos";
-import Macbooks from "./pages/Macbooks";
-import Ipads from "./pages/Ipads";
-import AppleWatch from "./pages/AppleWatch";
-import Acessorios from "./pages/Acessorios";
+import CategoryPage from "./pages/CategoryPage";
 import ProductPage from "./pages/ProductPage";
 import Captura from "./pages/Captura";
 import Economia from "./pages/Economia";
@@ -33,14 +28,10 @@ const ScrollToTop = () => {
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
   const location = useLocation();
-  const hideHeaderRoutes = [
-    "/economia",
-    "/teste-infalivel",
-    "/agradecimento",
-    // "/iphones-seminovos",
-  ];
-  const shouldHideHeader = hideHeaderRoutes.includes(location.pathname);
-  // || location.pathname.startsWith("/produto/");
+  const hideHeaderRoutes = ["/economia", "/teste-infalivel", "/agradecimento"];
+  const shouldHideHeader =
+    hideHeaderRoutes.includes(location.pathname) ||
+    location.pathname.startsWith("/produto/");
 
   return (
     <div className="app bg-black text-white min-h-screen flex flex-col">
@@ -67,11 +58,13 @@ function App() {
               </PageTransition>
             }
           />
+
+          {/* Rotas de categoria — todas usam CategoryPage genérica */}
           <Route
             path="/iphones-novos"
             element={
               <PageTransition>
-                <IphonesNovos />
+                <CategoryPage />
               </PageTransition>
             }
           />
@@ -79,7 +72,7 @@ function App() {
             path="/iphones-seminovos"
             element={
               <PageTransition>
-                <IphonesSeminovos />
+                <CategoryPage />
               </PageTransition>
             }
           />
@@ -87,7 +80,7 @@ function App() {
             path="/macbooks"
             element={
               <PageTransition>
-                <Macbooks />
+                <CategoryPage />
               </PageTransition>
             }
           />
@@ -95,7 +88,7 @@ function App() {
             path="/ipads"
             element={
               <PageTransition>
-                <Ipads />
+                <CategoryPage />
               </PageTransition>
             }
           />
@@ -103,7 +96,7 @@ function App() {
             path="/apple-watch"
             element={
               <PageTransition>
-                <AppleWatch />
+                <CategoryPage />
               </PageTransition>
             }
           />
@@ -111,10 +104,12 @@ function App() {
             path="/acessorios"
             element={
               <PageTransition>
-                <Acessorios />
+                <CategoryPage />
               </PageTransition>
             }
           />
+
+          {/* Rota de produto individual */}
           <Route
             path="/produto/:category/:id"
             element={
@@ -123,6 +118,8 @@ function App() {
               </PageTransition>
             }
           />
+
+          {/* Rotas especiais (funil, captura, etc.) */}
           <Route
             path="/teste-infalivel"
             element={
@@ -139,7 +136,6 @@ function App() {
               </PageTransition>
             }
           />
-
           <Route
             path="/agradecimento"
             element={
