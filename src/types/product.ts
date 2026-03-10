@@ -37,7 +37,7 @@ export interface GroupedProduct {
   colorsByStorage?: Record<string, string[]>;
 }
 
-// ---------- Produtos Flat (Seminovos, Macbooks, iPads, etc.) ----------
+// ---------- Produtos Flat (Seminovos, iPads, etc.) ----------
 
 /** Produto flat (um card = uma variante) */
 export interface FlatProduct {
@@ -75,10 +75,16 @@ export function isFlatProduct(product: Product): product is FlatProduct {
 
 // ---------- Configuração de Categoria ----------
 
-/** Seção dentro de uma categoria (ex: "Linha M4", "Linha M3") */
+/** Seção dentro de uma categoria flat (ex: por condição) */
 export interface CategorySection {
   title: string;
   products: FlatProduct[];
+}
+
+/** Seção dentro de uma categoria grouped (ex: "Linha M5", "Linha M4") */
+export interface GroupedCategorySection {
+  title: string;
+  products: GroupedProduct[];
 }
 
 /** Configuração de uma categoria no registry */
@@ -91,8 +97,10 @@ export interface CategoryConfig {
   products?: FlatProduct[];
   /** Produtos agrupados (quando type === "grouped") */
   groupedProducts?: GroupedProduct[];
-  /** Seções (quando a categoria tem sub-divisões, ex: Macbooks M4 / M3) */
+  /** Seções flat (quando a categoria flat tem sub-divisões) */
   sections?: CategorySection[];
+  /** Seções grouped (quando a categoria grouped tem sub-divisões, ex: Macbooks M5 / M4 / M3) */
+  groupedSections?: GroupedCategorySection[];
   /** Textos da seção "Por que comprar na CompreFi?" */
   whyChooseTitle?: string;
   whyChooseItems?: string[];

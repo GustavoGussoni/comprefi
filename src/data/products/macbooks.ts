@@ -1,468 +1,478 @@
-import { FlatProduct } from "../../types/product";
+import { GroupedProduct } from "../../types/product";
 
-export const macbooksProducts: FlatProduct[] = [
+// MacBook Pro Space Black
+import macProSpB from "../../assets/new-images/macbooks/pro-sp-b/macpro-sp-b.png";
+import macProSpB1 from "../../assets/new-images/macbooks/pro-sp-b/macpro-sp-b-1.png";
+import macProSpB2 from "../../assets/new-images/macbooks/pro-sp-b/macpro-sp-b-2.png";
+import macProSpB3 from "../../assets/new-images/macbooks/pro-sp-b/macpro-sp-b-3.png";
+
+// MacBook Pro Silver
+import macProSlv from "../../assets/new-images/macbooks/pro-slv/macpro-slv.png";
+import macProSlv1 from "../../assets/new-images/macbooks/pro-slv/macpro-slv-1.png";
+import macProSlv2 from "../../assets/new-images/macbooks/pro-slv/macpro-slv-2.png";
+import macProSlv3 from "../../assets/new-images/macbooks/pro-slv/macpro-slv-3.png";
+
+// Mac Studio Silver
+import macStudioSlv from "../../assets/new-images/macstudio/m4-max/macstudio-slv.png";
+import macStudioSlv1 from "../../assets/new-images/macstudio/m4-max/macstudio-slv-1.png";
+import macStudioSlv2 from "../../assets/new-images/macstudio/m4-max/macstudio-slv-2.png";
+import macStudioSlv3 from "../../assets/new-images/macstudio/m4-max/macstudio-slv-3.png";
+
+// Mac Mini Silver
+import macMiniSlv from "../../assets/new-images/macmini/m4/macmini-slv.png";
+import macMiniSlv1 from "../../assets/new-images/macmini/m4/macmini-slv-1.png";
+import macMiniSlv2 from "../../assets/new-images/macmini/m4/macmini-slv-2.png";
+
+// MacBook Air Silver
+import macAirSlv from "../../assets/new-images/macbooks/air-slv/macair-slv.png";
+import macAirSlv1 from "../../assets/new-images/macbooks/air-slv/macair-slv-1.png";
+import macAirSlv2 from "../../assets/new-images/macbooks/air-slv/macair-slv-2.png";
+import macAirSlv3 from "../../assets/new-images/macbooks/air-slv/macair-slv-3.png";
+
+// MacBook Air Midnight
+import macAirMid from "../../assets/new-images/macbooks/air-mdn/macair-mdn.png";
+import macAirMid1 from "../../assets/new-images/macbooks/air-mdn/macair-mdn-1.png";
+import macAirMid2 from "../../assets/new-images/macbooks/air-mdn/macair-mdn-2.png";
+import macAirMid3 from "../../assets/new-images/macbooks/air-mdn/macair-mdn-3.png";
+
+// MacBook Air Starlight
+import macAirSlght from "../../assets/new-images/macbooks/air-slght/macair-slght.png";
+import macAirSlght1 from "../../assets/new-images/macbooks/air-slght/macair-slght-1.png";
+import macAirSlght2 from "../../assets/new-images/macbooks/air-slght/macair-slght-2.png";
+import macAirSlght3 from "../../assets/new-images/macbooks/air-slght/macair-slght-3.png";
+
+// MacBook Air Skyblue
+import macAirSkyB from "../../assets/new-images/macbooks/air-skyb/macair-skyb.png";
+import macAirSkyB1 from "../../assets/new-images/macbooks/air-skyb/macair-skyb-1.png";
+import macAirSkyB2 from "../../assets/new-images/macbooks/air-skyb/macair-skyb-2.png";
+import macAirSkyB3 from "../../assets/new-images/macbooks/air-skyb/macair-skyb-3.png";
+
+
+
+export const macbooksProducts: GroupedProduct[] = [
   {
-    id: 26,
-    model: 'MacBook Pro 16" M4 Max',
-    storage: "(48GB RAM / 1TB SSD)",
-    color: "Prata, Preto-espacial",
-    battery: "100%",
-    originalPrice: "R$ 37.014,06",
-    installmentPrice: "12x R$ 3.151,00",
-    pixPrice: "R$ 32.712,00",
-    details: "aparelho novo",
-    image: "",
-    realImages: [],
+    slug: "mac-studio-m4-max-36gb",
+    model: "Mac Studio M4 Max 36GB",
     category: "Macbooks",
+    details: "aparelho novo",
+    battery: "100%",
     specs:
-      'Tela Liquid Retina XDR 16.2", Chip M4 Max (14/16-core CPU, 32/40-core GPU), 3x Thunderbolt 5, HDMI, SDXC, MagSafe 3, Wi-Fi 6E',
+      "Chip M4 Max (14/16-core CPU, 32/40-core GPU), 36 GB de memória unificada, Thunderbolt 5, HDMI, SDXC, Wi-Fi 6E. Desempenho profissional em formato compacto.",
+    storages: ["512GB"],
+    colors: [
+      {
+        name: "Silver",
+        hex: "#C0C0C0",
+        image: macStudioSlv,
+        gallery: [macStudioSlv1, macStudioSlv2, macStudioSlv3],
+      },
+    ],
+    pricing: {
+      "512GB-Silver": {
+        originalPrice: "R$ 20.786,95",
+        installmentPrice: "R$ 1.799,62",
+        pixPrice: "R$ 18.939,22",
+      },
+    },
   },
   {
-    id: 27,
-    model: 'MacBook Pro 16" M4 Max',
-    storage: "(36GB RAM / 1TB SSD)",
-    color: "Prata, Preto-espacial",
-    battery: "100%",
-    originalPrice: "R$ 35.063,34",
-    installmentPrice: "12x R$ 2.823,00",
-    pixPrice: "R$ 29.303,00",
-    details: "aparelho novo",
-    image: "",
-    realImages: [],
+    slug: "macbook-pro-16-m4-pro-24gb",
+    model: 'MacBook Pro 16" M4 Pro 24GB',
     category: "Macbooks",
+    details: "aparelho novo",
+    battery: "100%",
     specs:
-      'Tela Liquid Retina XDR 16.2", Chip M4 Max (14/16-core CPU, 32/40-core GPU), 3x Thunderbolt 5, HDMI, SDXC, MagSafe 3, Wi-Fi 6E',
+      'Tela Liquid Retina XDR 16.2", Chip M4 Pro (14-core CPU, 20-core GPU), 24 GB de memória unificada, 3x Thunderbolt 5, HDMI, SDXC, MagSafe 3, Wi-Fi 6E.',
+    storages: ["512GB"],
+    colors: [
+      {
+        name: "Space Black",
+        hex: "#1C1C1E",
+        image: macProSpB,
+        gallery: [macProSpB1, macProSpB2, macProSpB3],
+      },
+      {
+        name: "Silver",
+        hex: "#C0C0C0",
+        image: macProSlv,
+        gallery: [macProSlv1, macProSlv2, macProSlv3],
+      },
+    ],
+    pricing: {
+      "512GB-Space Black": {
+        originalPrice: "R$ 20.421,10",
+        installmentPrice: "R$ 1.767,95",
+        pixPrice: "R$ 18.605,89",
+      },
+      "512GB-Silver": {
+        originalPrice: "R$ 20.421,10",
+        installmentPrice: "R$ 1.767,95",
+        pixPrice: "R$ 18.605,89",
+      },
+    },
   },
   {
-    id: 28,
-    model: 'MacBook Pro 14" M4 Max',
-    storage: "(36GB RAM / 1TB SSD)",
-    color: "Prata, Preto-espacial",
-    battery: "100%",
-    originalPrice: "R$ 377,44",
-    installmentPrice: "12x R$ 031,00",
-    pixPrice: "R$ 326,00",
-    details: "aparelho novo",
-    image: "",
-    realImages: [],
+    slug: "macbook-pro-14-m4-24gb",
+    model: 'MacBook Pro 14" M4 24GB',
     category: "Macbooks",
+    details: "aparelho novo",
+    battery: "100%",
     specs:
-      'Tela Liquid Retina XDR 14.2", Chip M4 Max (14/16-core CPU, 32/40-core GPU), 3x Thunderbolt 5, HDMI, SDXC, MagSafe 3, Wi-Fi 6E',
+      'Tela Liquid Retina XDR 14.2", Chip M4 (10-core CPU, 10-core GPU), 24 GB de memória unificada, 3x Thunderbolt 4, HDMI, SDXC, MagSafe 3, Wi-Fi 6E.',
+    storages: ["1TB"],
+    colors: [
+      {
+        name: "Space Black",
+        hex: "#1C1C1E",
+        image: macProSpB,
+        gallery: [macProSpB1, macProSpB2, macProSpB3],
+      },
+    ],
+    pricing: {
+      "1TB-Space Black": {
+        originalPrice: "R$ 18.347,93",
+        installmentPrice: "R$ 1.588,46",
+        pixPrice: "R$ 16.717,00",
+      },
+    },
   },
   {
-    id: 29,
-    model: 'MacBook Pro 16" M4 Pro',
-    storage: "(48GB RAM / 512GB SSD)",
-    color: "Prata, Preto-espacial",
-    battery: "100%",
-    originalPrice: "R$ 363,27",
-    installmentPrice: "12x R$ 031,00",
-    pixPrice: "R$ 326,00",
-    details: "aparelho novo",
-    image: "",
-    realImages: [],
+    slug: "macbook-pro-14-m5-24gb",
+    model: 'MacBook Pro 14" M5 24GB',
     category: "Macbooks",
+    details: "aparelho novo",
+    battery: "100%",
     specs:
-      'Tela Liquid Retina XDR 16.2", Chip M4 Pro (14-core CPU, 20-core GPU), 3x Thunderbolt 5, HDMI, SDXC, MagSafe 3, Wi-Fi 6E',
+      'Tela Liquid Retina XDR 14.2", Chip M5 (próxima geração), 24 GB de memória unificada, Thunderbolt 5, HDMI, SDXC, MagSafe 3, Wi-Fi 7.',
+    storages: ["512GB"],
+    colors: [
+      {
+        name: "Space Black",
+        hex: "#1C1C1E",
+        image: macProSpB,
+        gallery: [macProSpB1, macProSpB2, macProSpB3],
+      },
+    ],
+    pricing: {
+      "512GB-Space Black": {
+        originalPrice: "R$ 17.494,27",
+        installmentPrice: "R$ 1.514,56",
+        pixPrice: "R$ 15.939,22",
+      },
+    },
   },
   {
-    id: 30,
-    model: 'MacBook Pro 16" M4 Pro',
-    storage: "(24GB RAM / 512GB SSD)",
-    color: "Prata, Preto-espacial",
-    battery: "100%",
-    originalPrice: "R$ 23.928,42",
-    installmentPrice: "12x R$ 1.985,00",
-    pixPrice: "R$ 20.610,00",
-    details: "aparelho novo",
-    image: "",
-    realImages: [],
+    slug: "macbook-pro-14-m4-pro-24gb",
+    model: 'MacBook Pro 14" M4 Pro 24GB',
     category: "Macbooks",
+    details: "aparelho novo",
+    battery: "100%",
     specs:
-      'Tela Liquid Retina XDR 16.2", Chip M4 Pro (14-core CPU, 20-core GPU), 3x Thunderbolt 5, HDMI, SDXC, MagSafe 3, Wi-Fi 6E',
+      'Tela Liquid Retina XDR 14.2", Chip M4 Pro (12/14-core CPU, 16/20-core GPU), 24 GB de memória unificada, 3x Thunderbolt 5, HDMI, SDXC, MagSafe 3, Wi-Fi 6E.',
+    storages: ["512GB"],
+    colors: [
+      {
+        name: "Space Black",
+        hex: "#1C1C1E",
+        image: macProSpB,
+        gallery: [macProSpB1, macProSpB2, macProSpB3],
+      },
+    ],
+    pricing: {
+      "512GB-Space Black": {
+        originalPrice: "R$ 15.969,88",
+        installmentPrice: "R$ 1.382,59",
+        pixPrice: "R$ 14.550,33",
+      },
+    },
   },
   {
-    id: 31,
-    model: 'MacBook Pro 14" M4',
-    storage: "(24GB RAM / 1TB SSD)",
-    color: "Prata, Preto-espacial",
-    battery: "100%",
-    originalPrice: "R$ 22.252,98",
-    installmentPrice: "12x R$ 1.832,00",
-    pixPrice: "R$ 19.019,00",
-    details: "aparelho novo",
-    image: "",
-    realImages: [],
+    slug: "macbook-pro-14-m5-16gb",
+    model: 'MacBook Pro 14" M5 16GB',
     category: "Macbooks",
+    details: "aparelho novo",
+    battery: "100%",
     specs:
-      'Tela Liquid Retina XDR 14.2", Chip M4 (10-core CPU, 10-core GPU), 3x Thunderbolt 4, HDMI, SDXC, MagSafe 3, Wi-Fi 6E',
+      'Tela Liquid Retina XDR 14.2", Chip M5 (próxima geração), 16 GB de memória unificada, Thunderbolt 5, HDMI, SDXC, MagSafe 3, Wi-Fi 7.',
+    storages: ["512GB", "1TB"],
+    colors: [
+      {
+        name: "Space Black",
+        hex: "#1C1C1E",
+        image: macProSpB,
+        gallery: [macProSpB1, macProSpB2, macProSpB3],
+      },
+    ],
+    pricing: {
+      "512GB-Space Black": {
+        originalPrice: "R$ 13.225,98",
+        installmentPrice: "R$ 1.145,03",
+        pixPrice: "R$ 12.050,33",
+      },
+      "1TB-Space Black": {
+        originalPrice: "R$ 15.055,24",
+        installmentPrice: "R$ 1.303,40",
+        pixPrice: "R$ 13.717,00",
+      },
+    },
   },
   {
-    id: 32,
-    model: 'MacBook Pro 14" M4 Pro',
-    storage: "(24GB RAM / 512GB SSD)",
-    color: "Prata, Preto-espacial",
-    battery: "100%",
-    originalPrice: "R$ 18.840,71",
-    installmentPrice: "12x R$ 1.602,00",
-    pixPrice: "R$ 16.632,00",
-    details: "aparelho novo",
-    image: "",
-    realImages: [],
+    slug: "macbook-air-15-m4-24gb",
+    model: 'MacBook Air 15" M4 24GB',
     category: "Macbooks",
+    details: "aparelho novo",
+    battery: "100%",
     specs:
-      'Tela Liquid Retina XDR 14.2", Chip M4 Pro (12/14-core CPU, 16/20-core GPU), 3x Thunderbolt 5, HDMI, SDXC, MagSafe 3, Wi-Fi 6E',
+      'Tela Liquid Retina 15.3", Chip M4 (10-core CPU, 10-core GPU), 24 GB de memória unificada, 2x Thunderbolt / USB 4, MagSafe 3, Wi-Fi 6E.',
+    storages: ["512GB"],
+    colors: [
+      {
+        name: "Midnight",
+        hex: "#1C1C2E",
+        image: macAirMid,
+        gallery: [macAirMid1, macAirMid2, macAirMid3],
+      },
+    ],
+    pricing: {
+      "512GB-Midnight": {
+        originalPrice: "R$ 12.982,07",
+        installmentPrice: "R$ 1.123,92",
+        pixPrice: "R$ 11.828,11",
+      },
+    },
   },
   {
-    id: 33,
-    model: 'MacBook Pro 14" M4',
-    storage: "(16GB RAM / 1TB SSD)",
-    color: "Prata, Preto-espacial",
-    battery: "100%",
-    originalPrice: "R$ 16.336,43",
-    installmentPrice: "12x R$ 1.394,00",
-    pixPrice: "R$ 14.473,00",
-    details: "aparelho novo",
-    image: "",
-    realImages: [],
+    slug: "macbook-air-15-m4-16gb",
+    model: 'MacBook Air 15" M4 16GB',
     category: "Macbooks",
+    details: "aparelho novo",
+    battery: "100%",
     specs:
-      'Tela Liquid Retina XDR 14.2", Chip M4 (10-core CPU, 10-core GPU), 3x Thunderbolt 4, HDMI, SDXC, MagSafe 3, Wi-Fi 6E',
+      'Tela Liquid Retina 15.3", Chip M4 (10-core CPU, 10-core GPU), 16 GB de memória unificada, 2x Thunderbolt / USB 4, MagSafe 3, Wi-Fi 6E.',
+    storages: ["256GB", "512GB"],
+    colors: [
+      {
+        name: "Midnight",
+        hex: "#1C1C2E",
+        image: macAirMid,
+        gallery: [macAirMid1, macAirMid2, macAirMid3],
+      },
+      {
+        name: "Starlight",
+        hex: "#F5E6D3",
+        image: macAirSlght,
+        gallery: [macAirSlght1, macAirSlght2, macAirSlght3],
+      },
+      {
+        name: "Silver",
+        hex: "#C0C0C0",
+        image: macAirSlv,
+        gallery: [macAirSlv1, macAirSlv2, macAirSlv3],
+      },
+      {
+        name: "Skyblue",
+        hex: "#87CEEB",
+        image: macAirSkyB,
+        gallery: [macAirSkyB1, macAirSkyB2, macAirSkyB3],
+      },
+    ],
+    colorsByStorage: {
+      "256GB": ["Silver", "Skyblue"],
+      "512GB": ["Midnight", "Starlight"],
+    },
+    pricing: {
+      "256GB-Silver": {
+        originalPrice: "R$ 9.567,44",
+        installmentPrice: "R$ 828,30",
+        pixPrice: "R$ 8.717,00",
+      },
+      "256GB-Skyblue": {
+        originalPrice: "R$ 9.567,44",
+        installmentPrice: "R$ 828,30",
+        pixPrice: "R$ 8.717,00",
+      },
+      "512GB-Midnight": {
+        originalPrice: "R$ 11.640,61",
+        installmentPrice: "R$ 1.007,78",
+        pixPrice: "R$ 10.605,89",
+      },
+      "512GB-Starlight": {
+        originalPrice: "R$ 11.640,61",
+        installmentPrice: "R$ 1.007,78",
+        pixPrice: "R$ 10.605,89",
+      },
+    },
   },
   {
-    id: 34,
-    model: 'MacBook Air 15" M4',
-    storage: "(16GB RAM / 512GB SSD)",
-    color: "Meia-noite, Estelar, Prateado, Azul-celeste",
-    battery: "100%",
-    originalPrice: "R$ 14.640,16",
-    installmentPrice: "12x R$ 1.181,00",
-    pixPrice: "R$ 12.257,00",
-    details: "aparelho novo",
-    image: "",
-    realImages: [],
+    slug: "macbook-air-13-m4-16gb",
+    model: 'MacBook Air 13" M4 16GB',
     category: "Macbooks",
+    details: "aparelho novo",
+    battery: "100%",
     specs:
-      'Tela Liquid Retina 15.3", Chip M4 (10-core CPU, 10-core GPU), 2x Thunderbolt / USB 4, MagSafe 3, Wi-Fi 6E',
+      'Tela Liquid Retina 13.6", Chip M4 (10-core CPU, 10-core GPU), 16 GB de memória unificada, 2x Thunderbolt / USB 4, MagSafe 3, Wi-Fi 6E.',
+    storages: ["256GB", "512GB"],
+    colors: [
+      {
+        name: "Midnight",
+        hex: "#1C1C2E",
+        image: macAirMid,
+        gallery: [macAirMid1, macAirMid2, macAirMid3],
+      },
+      {
+        name: "Silver",
+        hex: "#C0C0C0",
+        image: macAirSlv,
+        gallery: [macAirSlv1, macAirSlv2, macAirSlv3],
+      },
+      {
+        name: "Starlight",
+        hex: "#F5E6D3",
+        image: macAirSlght,
+        gallery: [macAirSlght1, macAirSlght2, macAirSlght3],
+      },
+      {
+        name: "Skyblue",
+        hex: "#87CEEB",
+        image: macAirSkyB,
+        gallery: [macAirSkyB1, macAirSkyB2, macAirSkyB3],
+      },
+    ],
+    colorsByStorage: {
+      "256GB": ["Skyblue", "Midnight", "Silver"],
+      "512GB": ["Midnight", "Silver", "Starlight", "Skyblue"],
+    },
+    pricing: {
+      "256GB-Skyblue": {
+        originalPrice: "R$ 8.104,02",
+        installmentPrice: "R$ 701,60",
+        pixPrice: "R$ 7.383,67",
+      },
+      "256GB-Midnight": {
+        originalPrice: "R$ 8.104,02",
+        installmentPrice: "R$ 701,60",
+        pixPrice: "R$ 7.383,67",
+      },
+      "256GB-Silver": {
+        originalPrice: "R$ 8.104,02",
+        installmentPrice: "R$ 701,60",
+        pixPrice: "R$ 7.383,67",
+      },
+      "512GB-Midnight": {
+        originalPrice: "R$ 9.555,24",
+        installmentPrice: "R$ 827,24",
+        pixPrice: "R$ 8.705,89",
+      },
+      "512GB-Silver": {
+        originalPrice: "R$ 9.555,24",
+        installmentPrice: "R$ 827,24",
+        pixPrice: "R$ 8.705,89",
+      },
+      "512GB-Starlight": {
+        originalPrice: "R$ 9.555,24",
+        installmentPrice: "R$ 827,24",
+        pixPrice: "R$ 8.705,89",
+      },
+      "512GB-Skyblue": {
+        originalPrice: "R$ 9.555,24",
+        installmentPrice: "R$ 827,24",
+        pixPrice: "R$ 8.705,89",
+      },
+    },
   },
   {
-    id: 35,
-    model: 'MacBook Air 13" M4',
-    storage: "(24GB RAM / 512GB SSD)",
-    color: "Meia-noite, Estelar, Prateado, Azul-celeste",
-    battery: "100%",
-    originalPrice: "R$ 14.660,78",
-    installmentPrice: "12x R$ 1.181,00",
-    pixPrice: "R$ 12.257,00",
-    details: "aparelho novo",
-    image: "",
-    realImages: [],
+    slug: "macbook-air-15-m3-8gb",
+    model: 'MacBook Air 15" M3 8GB',
     category: "Macbooks",
+    details: "aparelho novo",
+    battery: "100%",
     specs:
-      'Tela Liquid Retina 13.6", Chip M4 (10-core CPU, 10-core GPU), 2x Thunderbolt / USB 4, MagSafe 3, Wi-Fi 6E',
+      'Tela Liquid Retina 15.3", Chip M3 (8-core CPU, 10-core GPU), 8 GB de memória unificada, 2x Thunderbolt / USB 4, MagSafe 3, Wi-Fi 6E.',
+    storages: ["256GB", "512GB"],
+    colors: [
+      {
+        name: "Space Gray",
+        hex: "#4A4A4A",
+        image: "",
+        gallery: [],
+      },
+      {
+        name: "Midnight",
+        hex: "#1C1C2E",
+        image: macAirMid,
+        gallery: [macAirMid1, macAirMid2, macAirMid3],
+      },
+    ],
+    colorsByStorage: {
+      "256GB": ["Midnight"],
+      "512GB": ["Space Gray"],
+    },
+    pricing: {
+      "256GB-Midnight": {
+        originalPrice: "R$ 8.286,95",
+        installmentPrice: "R$ 717,44",
+        pixPrice: "R$ 7.550,33",
+      },
+      "512GB-Space Gray": {
+        originalPrice: "R$ 9.506,46",
+        installmentPrice: "R$ 823,02",
+        pixPrice: "R$ 8.661,44",
+      },
+    },
   },
   {
-    id: 36,
-    model: 'MacBook Pro 14" M4',
-    storage: "(16GB RAM / 512GB SSD)",
-    color: "Prata, Preto-espacial",
-    battery: "100%",
-    originalPrice: "R$ 14.199,56",
-    installmentPrice: "12x R$ 1.230,00",
-    pixPrice: "R$ 12.769,00",
-    details: "aparelho novo",
-    image: "",
-    realImages: [],
+    slug: "macbook-air-15-m3-16gb",
+    model: 'MacBook Air 15" M3 16GB',
     category: "Macbooks",
+    details: "aparelho novo",
+    battery: "100%",
     specs:
-      'Tela Liquid Retina XDR 14.2", Chip M4 (10-core CPU, 10-core GPU), 3x Thunderbolt 4, HDMI, SDXC, MagSafe 3, Wi-Fi 6E',
+      'Tela Liquid Retina 15.3", Chip M3 (8-core CPU, 10-core GPU), 16 GB de memória unificada, 2x Thunderbolt / USB 4, MagSafe 3, Wi-Fi 6E.',
+    storages: ["256GB"],
+    colors: [
+      {
+        name: "Midnight",
+        hex: "#1C1C2E",
+        image: macAirMid,
+        gallery: [macAirMid1, macAirMid2, macAirMid3],
+      },
+    ],
+    pricing: {
+      "256GB-Midnight": {
+        originalPrice: "R$ 8.469,88",
+        installmentPrice: "R$ 733,28",
+        pixPrice: "R$ 7.717,00",
+      },
+    },
   },
   {
-    id: 37,
-    model: "iMac M4 24",
-    storage: "(16GB RAM / 256GB SSD)",
-    color: "Azul, Verde, Rosa, Laranja, Roxo, Prateado",
-    battery: "100%",
-    originalPrice: "R$ 14.810,83",
-    installmentPrice: "12x R$ 1.246,00",
-    pixPrice: "R$ 12.939,00",
-    details: "aparelho novo",
-    image: "",
-    realImages: [],
-    category: "Imacs",
-    specs:
-      'Tela Retina 4.5K 24", Chip M4 (10-core CPU, 10-core GPU), 2x Thunderbolt / USB 4, Wi-Fi 6E',
-  },
-  {
-    id: 38,
-    model: 'MacBook Air 13" M4',
-    storage: "(16GB RAM / 512GB SSD)",
-    color: "Meia-noite, Estelar, Prateado, Azul-celeste",
-    battery: "100%",
-    originalPrice: "R$ 11.230,47",
-    installmentPrice: "12x R$ 983,00",
-    pixPrice: "R$ 10.201,00",
-    details: "aparelho novo",
-    image: "",
-    realImages: [],
+    slug: "mac-mini-m4-16gb",
+    model: "Mac Mini M4 16GB",
     category: "Macbooks",
-    specs:
-      'Tela Liquid Retina 13.6", Chip M4 (10-core CPU, 10-core GPU), 2x Thunderbolt / USB 4, MagSafe 3, Wi-Fi 6E',
-  },
-  {
-    id: 39,
-    model: 'MacBook Air 15" M4',
-    storage: "(16GB RAM / 256GB SSD)",
-    color: "Meia-noite, Estelar, Prateado, Azul-celeste",
-    battery: "100%",
-    originalPrice: "R$ 12.397,87",
-    installmentPrice: "12x R$ 1.027,00",
-    pixPrice: "R$ 10.666,00",
     details: "aparelho novo",
-    image: "",
-    realImages: [],
-    category: "Macbooks",
-    specs:
-      'Tela Liquid Retina 15.3", Chip M4 (10-core CPU, 10-core GPU), 2x Thunderbolt / USB 4, MagSafe 3, Wi-Fi 6E',
-  },
-  {
-    id: 40,
-    model: 'MacBook Air 13" M4',
-    storage: "(16GB RAM / 256GB SSD)",
-    color: "Meia-noite, Estelar, Prateado, Azul-celeste",
     battery: "100%",
-    originalPrice: "R$ 9.289,76",
-    installmentPrice: "12x R$ 797,00",
-    pixPrice: "R$ 8.269,00",
-    details: "aparelho novo",
-    image: "",
-    realImages: [],
-    category: "Macbooks",
     specs:
-      'Tela Liquid Retina 13.6", Chip M4 (10-core CPU, 10-core GPU), 2x Thunderbolt / USB 4, MagSafe 3, Wi-Fi 6E',
-  },
-  {
-    id: 41,
-    model: "Mac Mini M4",
-    storage: "(16GB RAM / 512GB SSD)",
-    color: "Prateado",
-    battery: "100%",
-    originalPrice: "R$ 9.250,49",
-    installmentPrice: "12x R$ 781,00",
-    pixPrice: "R$ 8.110,00",
-    details: "aparelho novo",
-    image: "",
-    realImages: [],
-    category: "Mac Minis",
-    specs:
-      "Chip M4 (10-core CPU, 10-core GPU), 2x USB-C (frente), 3x Thunderbolt 4 (trás), HDMI, Gigabit Ethernet, Wi-Fi 6E",
-  },
-  {
-    id: 42,
-    model: "Mac Mini M4",
-    storage: "(16GB RAM / 256GB SSD)",
-    color: "Prateado",
-    battery: "100%",
-    originalPrice: "R$ 7.318,77",
-    installmentPrice: "12x R$ 606,00",
-    pixPrice: "R$ 6.291,00",
-    details: "aparelho novo",
-    image: "",
-    realImages: [],
-    category: "Mac Minis",
-    specs:
-      "Chip M4 (10-core CPU, 10-core GPU), 2x USB-C (frente), 3x Thunderbolt 4 (trás), HDMI, Gigabit Ethernet, Wi-Fi 6E",
-  },
-  {
-    id: 43,
-    model: 'MacBook Pro 16" M3 Max',
-    storage: "(48GB RAM / 1TB SSD)",
-    color: "Prata, Preto-espacial",
-    battery: "100%",
-    originalPrice: "R$ 31.287,85",
-    installmentPrice: "12x R$ 2.713,00",
-    pixPrice: "R$ 28.166,00",
-    details: "aparelho novo",
-    image: "",
-    realImages: [],
-    category: "Macbooks",
-    specs:
-      'Tela Liquid Retina XDR 16.2", Chip M3 Max (14/16-core CPU, 30/40-core GPU), 3x Thunderbolt 4, HDMI, SDXC, MagSafe 3, Wi-Fi 6E',
-  },
-  {
-    id: 44,
-    model: 'MacBook Pro 14" M3 Pro',
-    storage: "(18GB RAM / 512GB SSD)",
-    color: "Prata, Preto-espacial",
-    battery: "100%",
-    originalPrice: "R$ 16.323,30",
-    installmentPrice: "12x R$ 1.329,00",
-    pixPrice: "R$ 13.791,00",
-    details: "aparelho novo",
-    image: "",
-    realImages: [],
-    category: "Macbooks",
-    specs:
-      'Tela Liquid Retina XDR 14.2", Chip M3 Pro (11/12-core CPU, 14/18-core GPU), 3x Thunderbolt 4, HDMI, SDXC, MagSafe 3, Wi-Fi 6E',
-  },
-  {
-    id: 45,
-    model: 'MacBook Pro 14" M3',
-    storage: "(8GB RAM / 512GB SSD)",
-    color: "Prata, Cinza-espacial",
-    battery: "100%",
-    originalPrice: "R$ 12.218,92",
-    installmentPrice: "12x R$ 1.027,00",
-    pixPrice: "R$ 10.666,00",
-    details: "aparelho novo",
-    image: "",
-    realImages: [],
-    category: "Macbooks",
-    specs:
-      'Tela Liquid Retina XDR 14.2", Chip M3 (8-core CPU, 10-core GPU), 2x Thunderbolt / USB 4, HDMI, SDXC, MagSafe 3, Wi-Fi 6E',
-  },
-  {
-    id: 46,
-    model: 'MacBook Air 15" M3',
-    storage: "(8GB RAM / 512GB SSD)",
-    color: "Prateado, Estelar, Cinza-espacial, Meia-noite",
-    battery: "100%",
-    originalPrice: "R$ 12.044,58",
-    installmentPrice: "12x R$ 995,00",
-    pixPrice: "R$ 10.326,00",
-    details: "aparelho novo",
-    image: "",
-    realImages: [],
-    category: "Macbooks",
-    specs:
-      'Tela Liquid Retina 15.3", Chip M3 (8-core CPU, 10-core GPU), 2x Thunderbolt / USB 4, MagSafe 3, Wi-Fi 6E',
-  },
-  {
-    id: 47,
-    model: 'MacBook Air 13" M3',
-    storage: "(16GB RAM / 512GB SSD)",
-    color: "Prateado, Estelar, Cinza-espacial, Meia-noite",
-    battery: "100%",
-    originalPrice: "R$ 11.006,85",
-    installmentPrice: "12x R$ 929,00",
-    pixPrice: "R$ 9.644,00",
-    details: "aparelho novo",
-    image: "",
-    realImages: [],
-    category: "Macbooks",
-    specs:
-      'Tela Liquid Retina 13.6", Chip M3 (8-core CPU, 8/10-core GPU), 2x Thunderbolt / USB 4, MagSafe 3, Wi-Fi 6E',
-  },
-  {
-    id: 48,
-    model: 'MacBook Air 15" M3',
-    storage: "(16GB RAM / 256GB SSD)",
-    color: "Prateado, Estelar, Cinza-espacial, Meia-noite",
-    battery: "100%",
-    originalPrice: "R$ 10.836,69",
-    installmentPrice: "12x R$ 929,00",
-    pixPrice: "R$ 9.644,00",
-    details: "aparelho novo",
-    image: "",
-    realImages: [],
-    category: "Macbooks",
-    specs:
-      'Tela Liquid Retina 15.3", Chip M3 (8-core CPU, 10-core GPU), 2x Thunderbolt / USB 4, MagSafe 3, Wi-Fi 6E',
-  },
-  {
-    id: 49,
-    model: 'MacBook Air 13" M3',
-    storage: "(16GB RAM / 256GB SSD)",
-    color: "Prateado, Estelar, Cinza-espacial, Meia-noite",
-    battery: "100%",
-    originalPrice: "R$ 9.188,53",
-    installmentPrice: "12x R$ 759,00",
-    pixPrice: "R$ 7.882,00",
-    details: "aparelho novo",
-    image: "",
-    realImages: [],
-    category: "Macbooks",
-    specs:
-      'Tela Liquid Retina 13.6", Chip M3 (8-core CPU, 8/10-core GPU), 2x Thunderbolt / USB 4, MagSafe 3, Wi-Fi 6E',
-  },
-  {
-    id: 50,
-    model: 'MacBook Air 13" M2',
-    storage: "(8GB RAM / 512GB SSD)",
-    color: "Prateado, Estelar, Cinza-espacial, Meia-noite",
-    battery: "100%",
-    originalPrice: "R$ 8.765,32",
-    installmentPrice: "12x R$ 743,00",
-    pixPrice: "R$ 7.712,00",
-    details: "aparelho novo",
-    image: "",
-    realImages: [],
-    category: "Macbooks",
-    specs:
-      'Tela Liquid Retina 13.6", Chip M2 (8-core CPU, 8/10-core GPU), 2x Thunderbolt / USB 4, MagSafe 3, Wi-Fi 6',
-  },
-  {
-    id: 51,
-    model: 'MacBook Air 13" M3',
-    storage: "(8GB RAM / 256GB SSD)",
-    color: "Prateado, Estelar, Cinza-espacial, Meia-noite",
-    battery: "100%",
-    originalPrice: "R$ 8.946,02",
-    installmentPrice: "12x R$ 743,00",
-    pixPrice: "R$ 7.712,00",
-    details: "aparelho novo",
-    image: "",
-    realImages: [],
-    category: "Macbooks",
-    specs:
-      'Tela Liquid Retina 13.6", Chip M3 (8-core CPU, 8/10-core GPU), 2x Thunderbolt / USB 4, MagSafe 3, Wi-Fi 6E',
-  },
-  {
-    id: 52,
-    model: 'MacBook Air 13" M2',
-    storage: "(16GB RAM / 256GB SSD)",
-    color: "Prateado, Estelar, Cinza-espacial, Meia-noite",
-    battery: "100%",
-    originalPrice: "R$ 8.406,42",
-    installmentPrice: "12x R$ 683,00",
-    pixPrice: "R$ 7.087,00",
-    details: "aparelho novo",
-    image: "",
-    realImages: [],
-    category: "Macbooks",
-    specs:
-      'Tela Liquid Retina 13.6", Chip M2 (8-core CPU, 8/10-core GPU), 2x Thunderbolt / USB 4, MagSafe 3, Wi-Fi 6',
-  },
-  {
-    id: 53,
-    model: 'MacBook Air 13" M2',
-    storage: "(8GB RAM / 256GB SSD)",
-    color: "Prateado, Estelar, Cinza-espacial, Meia-noite",
-    battery: "100%",
-    originalPrice: "R$ 8.195,76",
-    installmentPrice: "12x R$ 661,00",
-    pixPrice: "R$ 6.860,00",
-    details: "aparelho novo",
-    image: "",
-    realImages: [],
-    category: "Macbooks",
-    specs:
-      'Tela Liquid Retina 13.6", Chip M2 (8-core CPU, 8/10-core GPU), 2x Thunderbolt / USB 4, MagSafe 3, Wi-Fi 6',
-  },
-  {
-    id: 54,
-    model: "MacBook Air M1",
-    storage: "(8GB RAM / 256GB SSD)",
-    color: "Dourado, Prateado, Cinza-espacial",
-    battery: "100%",
-    originalPrice: "R$ 6.306,84",
-    installmentPrice: "12x R$ 522,00",
-    pixPrice: "R$ 5.416,00",
-    details: "aparelho novo",
-    image: "",
-    realImages: [],
-    category: "Macbooks",
-    specs:
-      'Tela Retina 13.3", Chip M1 (8-core CPU, 7/8-core GPU), 2x Thunderbolt / USB 4, Wi-Fi 6',
+      "Chip M4 (10-core CPU, 10-core GPU), 16 GB de memória unificada, 2x USB-C (frente), 3x Thunderbolt 4 (trás), HDMI, Gigabit Ethernet, Wi-Fi 6E.",
+    storages: ["256GB", "512GB"],
+    colors: [
+      {
+        name: "Silver",
+        hex: "#C0C0C0",
+        image: macMiniSlv,
+        gallery: [macMiniSlv1, macMiniSlv2],
+      },
+    ],
+    pricing: {
+      "256GB-Silver": {
+        originalPrice: "R$ 4.994,27",
+        installmentPrice: "R$ 432,38",
+        pixPrice: "R$ 4.550,33",
+      },
+      "512GB-Silver": {
+        originalPrice: "R$ 7.311,34",
+        installmentPrice: "R$ 632,98",
+        pixPrice: "R$ 6.661,44",
+      },
+    },
   },
 ];

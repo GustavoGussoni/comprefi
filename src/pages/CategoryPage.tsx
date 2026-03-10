@@ -206,15 +206,34 @@ const CategoryPage: React.FC = () => {
         </p>
 
         {/* Conteúdo por tipo */}
+
+        {/* Grouped sem seções (ex: iPhones Novos) */}
         {config.type === "grouped" &&
+          !config.groupedSections &&
           config.groupedProducts &&
           renderGroupedGrid(config.groupedProducts)}
 
+        {/* Grouped com seções (ex: MacBooks M5 / M4 / M3) */}
+        {config.type === "grouped" && config.groupedSections && (
+          <>
+            {config.groupedSections.map((section, idx) => (
+              <div key={idx} className={idx > 0 ? "mt-12" : ""}>
+                <h2 className="text-2xl font-bold mb-6 text-white border-b border-gray-800 pb-2">
+                  {section.title}
+                </h2>
+                {renderGroupedGrid(section.products)}
+              </div>
+            ))}
+          </>
+        )}
+
+        {/* Flat sem seções */}
         {config.type === "flat" &&
           !config.sections &&
           config.products &&
           renderFlatGrid(config.products)}
 
+        {/* Flat com seções */}
         {config.type === "flat" && config.sections && (
           <>
             {config.sections.map((section, idx) => (

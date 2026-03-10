@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { Phone } from "lucide-react";
+import { Phone, Bell } from "lucide-react";
 import ImageLoader from "./ImageLoader";
 import {
   FlatProduct,
@@ -30,7 +30,7 @@ interface ProductCardProps {
 }
 
 // ============================================
-// Card para Produto Flat (Seminovos, Macbooks, iPads, etc.)
+// Card para Produto Flat (Seminovos, iPads, etc.)
 // ============================================
 
 const FlatProductCard: React.FC<{
@@ -187,7 +187,7 @@ const FlatProductCard: React.FC<{
 };
 
 // ============================================
-// Card para Produto Agrupado (iPhones Novos)
+// Card para Produto Agrupado (iPhones Novos, MacBooks)
 // ============================================
 
 const GroupedProductCard: React.FC<{ product: GroupedProduct }> = ({
@@ -212,14 +212,15 @@ const GroupedProductCard: React.FC<{ product: GroupedProduct }> = ({
   const currentColor = availableColors[safeColorIndex];
 
   // Buscar preço da variante selecionada
-  const variantPrice = getVariantPrice(
-    product.pricing,
-    currentStorage,
-    currentColor.name,
-  );
+  const variantPrice = currentColor
+    ? getVariantPrice(product.pricing, currentStorage, currentColor.name)
+    : null;
 
   // Preço mais baixo (para fallback)
   const lowestPrice = getLowestPrice(product.pricing);
+
+  // Verificar se a variante está indisponível (sem preço)
+  const isUnavailable = !variantPrice;
 
   // Resetar cor quando muda storage e a cor atual não está disponível
   const handleStorageChange = (idx: number) => {
@@ -238,65 +239,93 @@ const GroupedProductCard: React.FC<{ product: GroupedProduct }> = ({
   };
 
   const handleBuy = () => {
-    if (!variantPrice) return;
+    if (!currentColor) return;
+
+    if (isUnavailable) {
+      // Abre WhatsApp com mensagem de interesse / avise-me
+      const msg = `Olá! Tenho interesse no ${product.model} ${currentStorage} ${currentColor.name}. Podem me avisar quando estiver disponível?`;
+      openWhatsApp(msg);
+      return;
+    }
+
     const msg = buildWhatsAppMessageGrouped(
       product.model,
       currentStorage,
       currentColor.name,
       paymentMethod,
-      variantPrice.pixPrice,
-      variantPrice.installmentPrice,
+      variantPrice!.pixPrice,
+      variantPrice!.installmentPrice,
     );
     openWhatsApp(msg);
   };
 
+  // Determinar o slug da categoria para a URL
+  const categorySlug = product.category.toLowerCase().replace(/\s+/g, "-");
+
   return (
-    <div className="bg-gray-900 rounded-lg overflow-hidden border border-gray-800 transition-all duration-300 hover:shadow-lg hover:shadow-black/20">
+    <div
+      className={`bg-gray-900 rounded-lg overflow-hidden border transition-all duration-300 hover:shadow-lg hover:shadow-black/20 ${
+        isUnavailable ? "border-gray-700 opacity-75" : "border-gray-800"
+      }`}
+    >
       <div className="p-4">
         {/* Imagem do produto */}
-        <Link
-          to={`/produto/iphones-novos/${product.slug}?storage=${encodeURIComponent(currentStorage)}&color=${encodeURIComponent(currentColor.name)}`}
-          className="block mb-3"
-        >
-          <div className="w-full h-48 rounded-lg overflow-hidden">
-            <ImageLoader
-              src={currentColor.image}
-              alt={`${product.model} ${currentColor.name}`}
-              className="w-full h-full"
-            />
-          </div>
-        </Link>
+        {currentColor && (
+          <Link
+            to={`/produto/${categorySlug}/${product.slug}?storage=${encodeURIComponent(currentStorage)}&color=${encodeURIComponent(currentColor.name)}`}
+            className="block mb-3"
+          >
+            <div className="w-full h-48 rounded-lg overflow-hidden relative">
+              <ImageLoader
+                src={currentColor.image}
+                alt={`${product.model} ${currentColor.name}`}
+                className="w-full h-full"
+              />
+              {isUnavailable && (
+                <div className="absolute inset-0 bg-black/40 flex items-center justify-center rounded-lg">
+                  <span className="bg-gray-800 text-gray-300 px-3 py-1 rounded-full text-xs font-medium border border-gray-600">
+                    Indisponível
+                  </span>
+                </div>
+              )}
+            </div>
+          </Link>
+        )}
 
         {/* Info */}
         <Link
-          to={`/produto/iphones-novos/${product.slug}?storage=${encodeURIComponent(currentStorage)}&color=${encodeURIComponent(currentColor.name)}`}
+          to={`/produto/${categorySlug}/${product.slug}?storage=${encodeURIComponent(currentStorage)}&color=${encodeURIComponent(currentColor?.name || "")}`}
           className="block"
         >
           <h3 className="text-lg font-bold mb-1 text-white">{product.model}</h3>
         </Link>
 
         {/* Seletor de cor — só mostra cores disponíveis para o storage */}
-        <div className="flex items-center gap-2 mb-3">
-          <span className="text-gray-400 text-xs">Cor:</span>
-          <div className="flex gap-1.5">
-            {availableColors.map((color, idx) => (
-              <button
-                key={color.name}
-                title={color.name}
-                className={`w-6 h-6 rounded-full border-2 transition-all ${
-                  idx === safeColorIndex
-                    ? "border-[#ff6100] scale-110"
-                    : "border-gray-600 hover:border-gray-400"
-                }`}
-                style={{ backgroundColor: color.hex }}
-                onClick={() => setSelectedColor(idx)}
-              />
-            ))}
+        {availableColors.length > 0 && (
+          <div className="flex items-center gap-2 mb-3">
+            <span className="text-gray-400 text-xs">Cor:</span>
+            <div className="flex gap-1.5">
+              {availableColors.map((color, idx) => (
+                <button
+                  key={color.name}
+                  title={color.name}
+                  className={`w-6 h-6 rounded-full border-2 transition-all ${
+                    idx === safeColorIndex
+                      ? "border-[#ff6100] scale-110"
+                      : "border-gray-600 hover:border-gray-400"
+                  }`}
+                  style={{ backgroundColor: color.hex }}
+                  onClick={() => setSelectedColor(idx)}
+                />
+              ))}
+            </div>
+            {currentColor && (
+              <span className="text-gray-300 text-xs ml-1">
+                {currentColor.name}
+              </span>
+            )}
           </div>
-          <span className="text-gray-300 text-xs ml-1">
-            {currentColor.name}
-          </span>
-        </div>
+        )}
 
         {/* Seletor de storage */}
         <div className="flex gap-1 mb-3">
@@ -315,29 +344,29 @@ const GroupedProductCard: React.FC<{ product: GroupedProduct }> = ({
           ))}
         </div>
 
-        {/* Preço */}
+        {/* Preço ou Indisponível */}
         <div className="flex flex-col mb-2">
-          {variantPrice ? (
+          {isUnavailable ? (
+            <div className="text-gray-400 text-sm py-1">
+              Indisponível no momento
+            </div>
+          ) : (
             <>
-              {variantPrice.originalPrice && (
+              {variantPrice!.originalPrice && (
                 <div className="text-gray-400 line-through text-xs">
-                  De {variantPrice.originalPrice}
+                  De {variantPrice!.originalPrice}
                 </div>
               )}
               <div className="flex justify-between items-end">
                 <div className="text-white text-sm font-medium">
-                  12x {variantPrice.installmentPrice}
+                  12x {variantPrice!.installmentPrice}
                 </div>
                 <div className="text-[#ff6100] font-medium text-sm">
-                  {variantPrice.pixPrice}{" "}
+                  {variantPrice!.pixPrice}{" "}
                   <span className="text-xs">no PIX</span>
                 </div>
               </div>
             </>
-          ) : (
-            <div className="text-[#ff6100] font-medium text-sm">
-              a partir de {lowestPrice} <span className="text-xs">no PIX</span>
-            </div>
           )}
         </div>
 
@@ -352,38 +381,50 @@ const GroupedProductCard: React.FC<{ product: GroupedProduct }> = ({
           </div>
         </div>
 
-        {/* Pagamento */}
-        <div className="flex space-x-1 mb-2">
+        {/* Pagamento ou Avise-me */}
+        {isUnavailable ? (
           <button
-            className={`flex-1 py-1 rounded-md text-xs transition-colors ${
-              paymentMethod === "pix"
-                ? "bg-[#ff610061] text-white"
-                : "bg-gray-800 text-gray-300"
-            }`}
-            onClick={() => setPaymentMethod("pix")}
+            className="w-full bg-gray-700 hover:bg-gray-600 text-white py-1.5 text-sm rounded-md transition-colors flex items-center justify-center"
+            onClick={handleBuy}
           >
-            PIX
+            <Bell size={16} className="mr-1" />
+            Avise-me quando chegar
           </button>
-          <button
-            className={`flex-1 py-1 rounded-md text-xs transition-colors ${
-              paymentMethod === "card"
-                ? "bg-[#ff610061] text-white"
-                : "bg-gray-800 text-gray-300"
-            }`}
-            onClick={() => setPaymentMethod("card")}
-          >
-            Cartão
-          </button>
-        </div>
+        ) : (
+          <>
+            <div className="flex space-x-1 mb-2">
+              <button
+                className={`flex-1 py-1 rounded-md text-xs transition-colors ${
+                  paymentMethod === "pix"
+                    ? "bg-[#ff610061] text-white"
+                    : "bg-gray-800 text-gray-300"
+                }`}
+                onClick={() => setPaymentMethod("pix")}
+              >
+                PIX
+              </button>
+              <button
+                className={`flex-1 py-1 rounded-md text-xs transition-colors ${
+                  paymentMethod === "card"
+                    ? "bg-[#ff610061] text-white"
+                    : "bg-gray-800 text-gray-300"
+                }`}
+                onClick={() => setPaymentMethod("card")}
+              >
+                Cartão
+              </button>
+            </div>
 
-        {/* Botão comprar */}
-        <button
-          className="w-full bg-[#ff6100] hover:bg-[#e55a00] text-white py-1.5 text-sm rounded-md transition-colors flex items-center justify-center"
-          onClick={handleBuy}
-        >
-          <Phone size={16} className="mr-1" />
-          Comprar
-        </button>
+            {/* Botão comprar */}
+            <button
+              className="w-full bg-[#ff6100] hover:bg-[#e55a00] text-white py-1.5 text-sm rounded-md transition-colors flex items-center justify-center"
+              onClick={handleBuy}
+            >
+              <Phone size={16} className="mr-1" />
+              Comprar
+            </button>
+          </>
+        )}
       </div>
     </div>
   );

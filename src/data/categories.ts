@@ -16,18 +16,17 @@ import { ipadsProducts } from "./products/ipads";
 import { appleWatchProducts } from "./products/apple-watch";
 import { acessoriosProducts } from "./products/acessorios";
 
-// ---- Macbooks: separar em seções M4 e M3/M2/M1 ----
+// ---- Macbooks: separar em seções M5, M4 e M3/M2/M1 ----
+const macbooksM5 = macbooksProducts.filter((p) => p.model.includes("M5"));
 const macbooksM4 = macbooksProducts.filter(
   (p) =>
-    p.model.includes("M4") ||
-    p.model.includes("iMac M4") ||
-    p.model.includes("Mac Mini M4"),
+    p.model.includes("M4") &&
+    !p.model.includes("M5"),
 );
 const macbooksM3Older = macbooksProducts.filter(
   (p) =>
     !p.model.includes("M4") &&
-    !p.model.includes("iMac M4") &&
-    !p.model.includes("Mac Mini M4"),
+    !p.model.includes("M5"),
 );
 
 // ============================================
@@ -65,10 +64,11 @@ export const categoryRegistry: Record<string, CategoryConfig> = {
     title: "MacBooks, iMacs e Mac Minis",
     subtitle: SUBTITLE_NEW,
     slug: "macbooks",
-    type: "flat",
-    sections: [
-      { title: "Linha M4", products: macbooksM4 },
-      { title: "Linha M3 / M2 / M1", products: macbooksM3Older },
+    type: "grouped",
+    groupedSections: [
+      ...(macbooksM5.length > 0 ? [{ title: "Linha M5", products: macbooksM5 }] : []),
+      ...(macbooksM4.length > 0 ? [{ title: "Linha M4", products: macbooksM4 }] : []),
+      ...(macbooksM3Older.length > 0 ? [{ title: "Linha M3 / M2 / M1", products: macbooksM3Older }] : []),
     ],
     whyChooseTitle: "Por que comprar na CompreFi?",
     whyChooseItems: DEFAULT_WHY_CHOOSE_ITEMS,
@@ -151,9 +151,19 @@ export function findGroupedProductBySlug(slug: string): {
 } | null {
   for (const key of Object.keys(categoryRegistry)) {
     const config = categoryRegistry[key];
-    if (config.type === "grouped" && config.groupedProducts) {
-      const found = config.groupedProducts.find((p) => p.slug === slug);
-      if (found) return { product: found, category: config };
+    if (config.type === "grouped") {
+      // Buscar nos groupedProducts diretos
+      if (config.groupedProducts) {
+        const found = config.groupedProducts.find((p) => p.slug === slug);
+        if (found) return { product: found, category: config };
+      }
+      // Buscar nas groupedSections
+      if (config.groupedSections) {
+        for (const section of config.groupedSections) {
+          const found = section.products.find((p) => p.slug === slug);
+          if (found) return { product: found, category: config };
+        }
+      }
     }
   }
   return null;
