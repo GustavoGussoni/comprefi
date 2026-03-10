@@ -7,7 +7,6 @@ import {
   GroupedProduct,
   isGroupedProduct,
   getVariantPrice,
-  getLowestPrice,
 } from "../types/product";
 import {
   buildWhatsAppMessageFlat,
@@ -217,7 +216,7 @@ const GroupedProductCard: React.FC<{ product: GroupedProduct }> = ({
     : null;
 
   // Preço mais baixo (para fallback)
-  const lowestPrice = getLowestPrice(product.pricing);
+  // const lowestPrice = getLowestPrice(product.pricing);
 
   // Verificar se a variante está indisponível (sem preço)
   const isUnavailable = !variantPrice;
