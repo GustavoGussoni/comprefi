@@ -274,7 +274,7 @@ const GroupedProductCard: React.FC<{ product: GroupedProduct }> = ({
             to={`/produto/${categorySlug}/${product.slug}?storage=${encodeURIComponent(currentStorage)}&color=${encodeURIComponent(currentColor.name)}`}
             className="block mb-3"
           >
-            <div className="w-full h-48 rounded-lg overflow-hidden relative">
+            <div className="w-full rounded-lg overflow-hidden relative">
               <ImageLoader
                 src={currentColor.image}
                 alt={`${product.model} ${currentColor.name}`}

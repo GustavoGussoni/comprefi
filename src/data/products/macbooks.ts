@@ -47,6 +47,11 @@ import macAirSkyB1 from "../../assets/new-images/macbooks/air-skyb/macair-skyb-1
 import macAirSkyB2 from "../../assets/new-images/macbooks/air-skyb/macair-skyb-2.png";
 import macAirSkyB3 from "../../assets/new-images/macbooks/air-skyb/macair-skyb-3.png";
 
+// MacBook Air M3 Space Gray
+import macAirM3SpG from "../../assets/new-images/macbooks/air-m3-sp-g/macair-m3-sp-g.png";
+import macAirM3SpG1 from "../../assets/new-images/macbooks/air-m3-sp-g/macair-m3-sp-g-1.png";
+import macAirM3SpG2 from "../../assets/new-images/macbooks/air-m3-sp-g/macair-m3-sp-g-2.png";
+import macAirM3SpG3 from "../../assets/new-images/macbooks/air-m3-sp-g/macair-m3-sp-g-3.png";
 
 
 export const macbooksProducts: GroupedProduct[] = [
@@ -393,8 +398,8 @@ export const macbooksProducts: GroupedProduct[] = [
       {
         name: "Space Gray",
         hex: "#4A4A4A",
-        image: "",
-        gallery: [],
+        image: macAirM3SpG,
+        gallery: [macAirM3SpG1, macAirM3SpG2, macAirM3SpG3],
       },
       {
         name: "Midnight",
