@@ -38,6 +38,11 @@ const iPadsBase = ipadsProducts.filter(
     !p.model.includes("iPad Air"),
 );
 
+// ---- Apple Watch: separar em seções Ultra, Series e SE ----
+const watchUltra = appleWatchProducts.filter((p) => p.model.includes("Ultra"));
+const watchSeries = appleWatchProducts.filter((p) => p.model.includes("Series"));
+const watchSE = appleWatchProducts.filter((p) => p.model.includes("SE"));
+
 // ============================================
 // Registry
 // ============================================
@@ -101,8 +106,12 @@ export const categoryRegistry: Record<string, CategoryConfig> = {
     title: "Apple Watch",
     subtitle: SUBTITLE_NEW,
     slug: "apple-watch",
-    type: "flat",
-    products: appleWatchProducts,
+    type: "grouped",
+    groupedSections: [
+      ...(watchUltra.length > 0 ? [{ title: "Ultra", products: watchUltra }] : []),
+      ...(watchSeries.length > 0 ? [{ title: "Series", products: watchSeries }] : []),
+      ...(watchSE.length > 0 ? [{ title: "SE", products: watchSE }] : []),
+    ],
     whyChooseTitle: "Por que comprar na CompreFi?",
     whyChooseItems: DEFAULT_WHY_CHOOSE_ITEMS,
   },
