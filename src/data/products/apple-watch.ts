@@ -45,8 +45,8 @@ import se3StarlightSport2 from "../../assets/new-images/watch/se-3/starlight-spo
 // ============================================
 
 const ultraWatch3Ocean: GroupedProduct = {
-  slug: "apple-watch-ultra-3-ocean",
-  model: "Apple Watch Ultra 3 Ocean",
+  slug: "apple-watch-ultra-3-ocean-band",
+  model: "Apple Watch Ultra 3 Ocean Band",
   specs: "Chip S11 SiP, Tela Retina Sempre Ativa LTPO OLED (até 4000 nits), GPS de precisão e dupla frequência, Botão de Ação, Sirene, Profundímetro, Sensor de temperatura da água, Oxigênio no Sangue, ECG, Sensor cardíaco óptico, Detecção de Queda/Acidente, Resistência à água 100m, Certificação MIL-STD 810H, Mergulho recreativo até 40m, Wi-Fi 6E, Bluetooth 5.3",
   category: "apple-watch",
   details: "aparelho novo",
