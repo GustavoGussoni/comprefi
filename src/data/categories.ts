@@ -29,6 +29,15 @@ const macbooksM3Older = macbooksProducts.filter(
     !p.model.includes("M5"),
 );
 
+// ---- iPads: separar em seções iPad Pro, iPad Air e iPad ----
+const iPadsPro = ipadsProducts.filter((p) => p.model.includes("iPad Pro"));
+const iPadsAir = ipadsProducts.filter((p) => p.model.includes("iPad Air"));
+const iPadsBase = ipadsProducts.filter(
+  (p) =>
+    !p.model.includes("iPad Pro") &&
+    !p.model.includes("iPad Air"),
+);
+
 // ============================================
 // Registry
 // ============================================
@@ -78,8 +87,12 @@ export const categoryRegistry: Record<string, CategoryConfig> = {
     title: "iPads",
     subtitle: SUBTITLE_NEW,
     slug: "ipads",
-    type: "flat",
-    products: ipadsProducts,
+    type: "grouped",
+    groupedSections: [
+      ...(iPadsPro.length > 0 ? [{ title: "iPad Pro", products: iPadsPro }] : []),
+      ...(iPadsAir.length > 0 ? [{ title: "iPad Air", products: iPadsAir }] : []),
+      ...(iPadsBase.length > 0 ? [{ title: "iPad", products: iPadsBase }] : []),
+    ],
     whyChooseTitle: "Por que comprar iPads na CompreFi?",
     whyChooseItems: DEFAULT_WHY_CHOOSE_ITEMS,
   },
