@@ -45,7 +45,7 @@ export const iphonesSeminovosProducts: FlatProduct[] = [
     installmentPrice: "R$ 398,14",
     pixPrice: "R$ 4.190",
     details:
-      "sem detalhes | acompanha caixa e capinha | Garantia Apple até 04/2026",
+      "sem detalhes | acompanha caixa e capinha",
     image: iphone16BTraseira,
     realImages: [
       iphone16ImgFrente,
@@ -67,7 +67,7 @@ export const iphonesSeminovosProducts: FlatProduct[] = [
     originalPrice: "R$ 4.690,00",
     installmentPrice: "R$ 379,14",
     pixPrice: "R$ 3.990",
-    details: "sem detalhes | acompanha capinha | Garantia Apple até 04/2026",
+    details: "sem detalhes | acompanha capinha",
     image: iphone16VTraseira,
     realImages: [
       iphone16VImgFrente,

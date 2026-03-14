@@ -210,13 +210,14 @@ const GroupedProductCard: React.FC<{ product: GroupedProduct }> = ({
     selectedColor >= availableColors.length ? 0 : selectedColor;
   const currentColor = availableColors[safeColorIndex];
 
+  // Determinar a imagem: imageByStorage tem prioridade sobre a cor
+  const displayImage =
+    product.imageByStorage?.[currentStorage] ?? currentColor?.image;
+
   // Buscar preço da variante selecionada
   const variantPrice = currentColor
     ? getVariantPrice(product.pricing, currentStorage, currentColor.name)
     : null;
-
-  // Preço mais baixo (para fallback)
-  // const lowestPrice = getLowestPrice(product.pricing);
 
   // Verificar se a variante está indisponível (sem preço)
   const isUnavailable = !variantPrice;
@@ -269,15 +270,15 @@ const GroupedProductCard: React.FC<{ product: GroupedProduct }> = ({
     >
       <div className="p-4">
         {/* Imagem do produto */}
-        {currentColor && (
+        {displayImage && (
           <Link
-            to={`/produto/${categorySlug}/${product.slug}?storage=${encodeURIComponent(currentStorage)}&color=${encodeURIComponent(currentColor.name)}`}
+            to={`/produto/${categorySlug}/${product.slug}?storage=${encodeURIComponent(currentStorage)}&color=${encodeURIComponent(currentColor?.name || "")}`}
             className="block mb-3"
           >
             <div className="w-full rounded-lg overflow-hidden relative">
               <ImageLoader
-                src={currentColor.image}
-                alt={`${product.model} ${currentColor.name}`}
+                src={displayImage}
+                alt={`${product.model} ${currentColor?.name || ""}`}
                 className="w-full h-full"
               />
               {isUnavailable && (
@@ -296,10 +297,12 @@ const GroupedProductCard: React.FC<{ product: GroupedProduct }> = ({
           to={`/produto/${categorySlug}/${product.slug}?storage=${encodeURIComponent(currentStorage)}&color=${encodeURIComponent(currentColor?.name || "")}`}
           className="block"
         >
-          <h3 className="text-lg font-bold mb-1 text-white">{product.model}</h3>
+          <h3 className="text-lg font-bold mb-1 text-white min-h-[56px] flex items-start">
+            {product.model}
+          </h3>
         </Link>
 
-        {/* Seletor de cor — só mostra cores disponíveis para o storage */}
+        {/* Seletor de cor */}
         {availableColors.length > 0 && (
           <div className="flex items-center gap-2 mb-3">
             <span className="text-gray-400 text-xs">Cor:</span>

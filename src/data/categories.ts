@@ -43,6 +43,25 @@ const watchUltra = appleWatchProducts.filter((p) => p.model.includes("Ultra"));
 const watchSeries = appleWatchProducts.filter((p) => p.model.includes("Series"));
 const watchSE = appleWatchProducts.filter((p) => p.model.includes("SE"));
 
+// ---- Acessórios: separar em seções ----
+const acessoriosAudio = acessoriosProducts.filter((p) =>
+  p.model.includes("AirPods"),
+);
+const acessoriosTecladoMouse = acessoriosProducts.filter((p) =>
+  p.model.includes("Magic Keyboard") || p.model.includes("Magic Mouse"),
+);
+const acessoriosPencil = acessoriosProducts.filter((p) =>
+  p.model.includes("Pencil"),
+);
+const acessoriosAirTag = acessoriosProducts.filter((p) =>
+  p.model.includes("AirTag"),
+);
+const acessoriosCabosCarregadores = acessoriosProducts.filter((p) =>
+  p.model.includes("Adaptador") ||
+  p.model.includes("Carregador") ||
+  p.model.includes("Cabo"),
+);
+
 // ============================================
 // Registry
 // ============================================
@@ -120,8 +139,14 @@ export const categoryRegistry: Record<string, CategoryConfig> = {
     title: "Acessórios Apple",
     subtitle: SUBTITLE_NEW,
     slug: "acessorios",
-    type: "flat",
-    products: acessoriosProducts,
+    type: "grouped",
+    groupedSections: [
+      ...(acessoriosAudio.length > 0 ? [{ title: "Áudio", products: acessoriosAudio }] : []),
+      ...(acessoriosTecladoMouse.length > 0 ? [{ title: "Teclados e Mouse", products: acessoriosTecladoMouse }] : []),
+      ...(acessoriosPencil.length > 0 ? [{ title: "Apple Pencil", products: acessoriosPencil }] : []),
+      ...(acessoriosAirTag.length > 0 ? [{ title: "AirTag", products: acessoriosAirTag }] : []),
+      ...(acessoriosCabosCarregadores.length > 0 ? [{ title: "Cabos e Carregadores", products: acessoriosCabosCarregadores }] : []),
+    ],
     whyChooseTitle: "Por que comprar na CompreFi?",
     whyChooseItems: DEFAULT_WHY_CHOOSE_ITEMS,
   },

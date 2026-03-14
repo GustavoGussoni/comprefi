@@ -35,6 +35,7 @@ export interface GroupedProduct {
   pricing: PricingMap;
   /** Cores disponíveis por storage (se alguma cor não está disponível em algum storage) */
   colorsByStorage?: Record<string, string[]>;
+  imageByStorage?: Record<string, string>;
 }
 
 // ---------- Produtos Flat (Seminovos, iPads, etc.) ----------
