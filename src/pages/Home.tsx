@@ -19,7 +19,7 @@ const Home: React.FC<HomeProps> = ({ isMobile }) => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setBannerSrc(locsBannerStatic); // troca pela imagem estática
-    }, 7000);
+    }, 5000);
 
     return () => clearTimeout(timer);
   }, []);
