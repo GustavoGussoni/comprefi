@@ -30,7 +30,7 @@ const Home: React.FC<HomeProps> = ({ isMobile }) => {
           const timer = setTimeout(() => {
             setBannerSrc(locsBannerStatic); // volta para estático
             setHasPlayed(true);
-          }, 6500);
+          }, 6000);
 
           return () => clearTimeout(timer);
         }
