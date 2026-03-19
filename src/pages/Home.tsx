@@ -24,7 +24,7 @@ const Home: React.FC<HomeProps> = ({ isMobile }) => {
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          setBannerSrc(locsBanner); // troca para o GIF
+          setBannerSrc(`${locsBanner}?t=${Date.now()}`); // troca para o GIF
           observer.disconnect(); // para de observar
 
           const timer = setTimeout(() => {
