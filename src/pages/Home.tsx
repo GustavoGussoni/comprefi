@@ -405,13 +405,19 @@ const Home: React.FC<HomeProps> = ({ isMobile }) => {
           </div>
         </div>
       </section>
+
+      {/* FAQ */}
+      <section className="faq-section pt-16 px-4">
+        <FAQ />
+      </section>
+
       {/* Por que escolher a CompreFi */}
       <section className="why-choose-section py-16 px-4">
         <WhyChooseCompreFi />
       </section>
 
       {/* Módulo de Categorias */}
-      <section className="categories-section py-16 px-4 bg-gray-900">
+      <section className="categories-section py-16 px-4">
         <h2 className="text-3xl md:text-4xl font-bold mb-12 text-center text-white">
           Nossos Produtos
         </h2>
@@ -448,11 +454,6 @@ const Home: React.FC<HomeProps> = ({ isMobile }) => {
             description="Complementos originais para seus dispositivos Apple"
           />
         </div>
-      </section>
-
-      {/* FAQ */}
-      <section className="faq-section pt-16 px-4">
-        <FAQ />
       </section>
     </div>
   );

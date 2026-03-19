@@ -18,11 +18,9 @@ const WhyChooseSection: React.FC<WhyChooseSectionProps> = ({
   // Título e pontos padrão
   let title = "Por que escolher a CompreFi?";
   let points = [
-    "Produtos originais com garantia oficial",
     "Suporte vitalício para todos os produtos adquiridos",
     "Programa de indicações com desconto acumulativo",
-    "Economia significativa em comparação com lojas oficiais",
-    "Atendimento personalizado por especialistas Apple",
+    "Entrega presencial na porta da sua casa",
   ];
 
   // Personalizar com base na categoria
@@ -43,7 +41,7 @@ const WhyChooseSection: React.FC<WhyChooseSectionProps> = ({
         "Suporte vitalício para todos os produtos adquiridos",
         "Programa de indicações com desconto acumulativo",
         "Economia significativa em comparação com lojas oficiais",
-        "Atendimento personalizado por especialistas Apple",
+        "Entrega presencial na porta da sua casa",
       ];
     } else {
       title = `Por que comprar ${category} na CompreFi?`;
