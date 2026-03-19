@@ -96,7 +96,7 @@ const Home: React.FC<HomeProps> = ({ isMobile }) => {
           <div className="space-y-6 text-lg text-gray-200 leading-relaxed">
             <p>
               Em 2022, eu perdi a grande maioria dos meus bens em uma aventura
-              no mercado financeiro, e agora me via com 500 reais pra sobreviver
+              no mercado financeiro e agora me via com 500 reais pra sobreviver
               por mês, até o final do ano.
             </p>
 
@@ -252,8 +252,8 @@ const Home: React.FC<HomeProps> = ({ isMobile }) => {
             Ao mesmo tempo, eu já sabia que ela precisava do iPhone novo pra
             trabalhar, porque durante a nossa conversa eu deixei ela confortável
             o bastante pra me contar que tirava várias fotos e gravava vários
-            vídeos, todos os dias. Além de fotografar e gravar, ela também
-            editava os vídeos por horas, e depois de encontrar o ponto perfeito,
+            vídeos todos os dias. Além de fotografar e gravar, ela também
+            editava os vídeos por horas e depois de encontrar o ponto perfeito,
             ela postava no Instagram.
           </p>
 
@@ -272,7 +272,7 @@ const Home: React.FC<HomeProps> = ({ isMobile }) => {
             tempo pra ajudar ela a configurar a câmera nova. Ela ficou
             pensativa, e disse que mesmo assim preferia pagar mais barato. Eu
             entendi o ponto dela, e perguntei se eles também iriam até a casa
-            dela pra entregar no horário que ela escolhesse, e se eles ajudariam
+            dela pra entregar no horário que ela escolhesse e se eles ajudariam
             ela com a transferência dos arquivos, e esperariam lá, tomando um
             cafezinho com ela, até que terminasse. Ela respondeu que não, que
             teria que ir até a loja deles e que teria que ficar esperando lá até
@@ -307,11 +307,11 @@ const Home: React.FC<HomeProps> = ({ isMobile }) => {
             Ela preferiu comprar com a gente e pagou mais caro porque entendeu
             que além do atendimento 100% personalizado, das condições exclusivas
             em acessórios originais, brindes, e suporte eterno, a gente também
-            oferece confiança, segurança, e agilidade.
+            oferece tranquilidade.
           </p>
 
           <p>
-            Então não, não teve o desconto, e nem vai ter. Mas eu te garanto que
+            Então não, não teve o desconto e nem vai ter. Mas eu te garanto que
             você não vai se arrepender.<br></br> Pra comprar Mac, iPad, ou
             iPhone: Manda mensagem pro Gussoni.
           </p>
