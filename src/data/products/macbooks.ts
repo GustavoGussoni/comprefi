@@ -53,7 +53,6 @@ import macAirM3SpG1 from "../../assets/new-images/macbooks/air-m3-sp-g/macair-m3
 import macAirM3SpG2 from "../../assets/new-images/macbooks/air-m3-sp-g/macair-m3-sp-g-2.png";
 import macAirM3SpG3 from "../../assets/new-images/macbooks/air-m3-sp-g/macair-m3-sp-g-3.png";
 
-
 export const macbooksProducts: GroupedProduct[] = [
   {
     slug: "mac-studio-m4-max-36gb",
@@ -74,9 +73,9 @@ export const macbooksProducts: GroupedProduct[] = [
     ],
     pricing: {
       "512GB-Silver": {
-        originalPrice: "R$ 20.786,95",
+        originalPrice: "R$ 20.786,00",
         installmentPrice: "R$ 1.799,62",
-        pixPrice: "R$ 18.939,22",
+        pixPrice: "R$ 18.939,00",
       },
     },
   },
@@ -105,14 +104,14 @@ export const macbooksProducts: GroupedProduct[] = [
     ],
     pricing: {
       "512GB-Space Black": {
-        originalPrice: "R$ 20.421,10",
-        installmentPrice: "R$ 1.767,95",
-        pixPrice: "R$ 18.605,89",
+        originalPrice: "R$ 20.299,00",
+        installmentPrice: "R$ 1.757,00",
+        pixPrice: "R$ 18.495,00",
       },
       "512GB-Silver": {
-        originalPrice: "R$ 20.421,10",
-        installmentPrice: "R$ 1.767,95",
-        pixPrice: "R$ 18.605,89",
+        originalPrice: "R$ 20.299,00",
+        installmentPrice: "R$ 1.757,00",
+        pixPrice: "R$ 18.495,00",
       },
     },
   },
@@ -135,9 +134,9 @@ export const macbooksProducts: GroupedProduct[] = [
     ],
     pricing: {
       "1TB-Space Black": {
-        originalPrice: "R$ 18.347,93",
-        installmentPrice: "R$ 1.588,46",
-        pixPrice: "R$ 16.717,00",
+        originalPrice: "R$ 18.775,00",
+        installmentPrice: "R$ 1.625,42",
+        pixPrice: "R$ 17.106,00",
       },
     },
   },
@@ -160,9 +159,9 @@ export const macbooksProducts: GroupedProduct[] = [
     ],
     pricing: {
       "512GB-Space Black": {
-        originalPrice: "R$ 17.494,27",
+        originalPrice: "R$ 17.494,00",
         installmentPrice: "R$ 1.514,56",
-        pixPrice: "R$ 15.939,22",
+        pixPrice: "R$ 15.939,00",
       },
     },
   },
@@ -185,9 +184,9 @@ export const macbooksProducts: GroupedProduct[] = [
     ],
     pricing: {
       "512GB-Space Black": {
-        originalPrice: "R$ 15.969,88",
+        originalPrice: "R$ 15.970,00",
         installmentPrice: "R$ 1.382,59",
-        pixPrice: "R$ 14.550,33",
+        pixPrice: "R$ 14.550,00",
       },
     },
   },
@@ -210,42 +209,18 @@ export const macbooksProducts: GroupedProduct[] = [
     ],
     pricing: {
       "512GB-Space Black": {
-        originalPrice: "R$ 13.225,98",
-        installmentPrice: "R$ 1.145,03",
-        pixPrice: "R$ 12.050,33",
+        originalPrice: "R$ 13.287,00",
+        installmentPrice: "R$ 1.150,31",
+        pixPrice: "R$ 12.106,00",
       },
       "1TB-Space Black": {
-        originalPrice: "R$ 15.055,24",
-        installmentPrice: "R$ 1.303,40",
-        pixPrice: "R$ 13.717,00",
+        originalPrice: "R$ 14.933,00",
+        installmentPrice: "R$ 1.292,84",
+        pixPrice: "R$ 13.606,00",
       },
     },
   },
-  {
-    slug: "macbook-air-15-m4-24gb",
-    model: 'MacBook Air 15" M4 24GB',
-    category: "Macbooks",
-    details: "aparelho novo",
-    battery: "100%",
-    specs:
-      'Tela Liquid Retina 15.3", Chip M4 (10-core CPU, 10-core GPU), 24 GB de memória unificada, 2x Thunderbolt / USB 4, MagSafe 3, Wi-Fi 6E.',
-    storages: ["512GB"],
-    colors: [
-      {
-        name: "Midnight",
-        hex: "#1C1C2E",
-        image: macAirMid,
-        gallery: [macAirMid1, macAirMid2, macAirMid3],
-      },
-    ],
-    pricing: {
-      "512GB-Midnight": {
-        originalPrice: "R$ 12.982,07",
-        installmentPrice: "R$ 1.123,92",
-        pixPrice: "R$ 11.828,11",
-      },
-    },
-  },
+  // MacBook Air 15" M4 24GB — removido (zerado na planilha)
   {
     slug: "macbook-air-15-m4-16gb",
     model: 'MacBook Air 15" M4 16GB',
@@ -263,12 +238,6 @@ export const macbooksProducts: GroupedProduct[] = [
         gallery: [macAirMid1, macAirMid2, macAirMid3],
       },
       {
-        name: "Starlight",
-        hex: "#F5E6D3",
-        image: macAirSlght,
-        gallery: [macAirSlght1, macAirSlght2, macAirSlght3],
-      },
-      {
         name: "Silver",
         hex: "#C0C0C0",
         image: macAirSlv,
@@ -282,29 +251,29 @@ export const macbooksProducts: GroupedProduct[] = [
       },
     ],
     colorsByStorage: {
-      "256GB": ["Silver", "Skyblue"],
-      "512GB": ["Midnight", "Starlight"],
+      "256GB": ["Midnight", "Silver", "Skyblue"],
+      "512GB": ["Midnight"],
     },
     pricing: {
+      "256GB-Midnight": {
+        originalPrice: "R$ 10.665,00",
+        installmentPrice: "R$ 923,32",
+        pixPrice: "R$ 9.717,00",
+      },
       "256GB-Silver": {
-        originalPrice: "R$ 9.567,44",
-        installmentPrice: "R$ 828,30",
-        pixPrice: "R$ 8.717,00",
+        originalPrice: "R$ 10.665,00",
+        installmentPrice: "R$ 923,32",
+        pixPrice: "R$ 9.717,00",
       },
       "256GB-Skyblue": {
-        originalPrice: "R$ 9.567,44",
-        installmentPrice: "R$ 828,30",
-        pixPrice: "R$ 8.717,00",
+        originalPrice: "R$ 10.665,00",
+        installmentPrice: "R$ 923,32",
+        pixPrice: "R$ 9.717,00",
       },
       "512GB-Midnight": {
-        originalPrice: "R$ 11.640,61",
-        installmentPrice: "R$ 1.007,78",
-        pixPrice: "R$ 10.605,89",
-      },
-      "512GB-Starlight": {
-        originalPrice: "R$ 11.640,61",
-        installmentPrice: "R$ 1.007,78",
-        pixPrice: "R$ 10.605,89",
+        originalPrice: "R$ 11.885,00",
+        installmentPrice: "R$ 1.028,90",
+        pixPrice: "R$ 10.828,00",
       },
     },
   },
@@ -344,44 +313,44 @@ export const macbooksProducts: GroupedProduct[] = [
       },
     ],
     colorsByStorage: {
-      "256GB": ["Skyblue", "Midnight", "Silver"],
-      "512GB": ["Midnight", "Silver", "Starlight", "Skyblue"],
+      "256GB": ["Skyblue", "Midnight", "Silver", "Starlight"],
+      "512GB": ["Silver", "Starlight", "Skyblue"],
     },
     pricing: {
       "256GB-Skyblue": {
-        originalPrice: "R$ 8.104,02",
+        originalPrice: "R$ 8.104,00",
         installmentPrice: "R$ 701,60",
-        pixPrice: "R$ 7.383,67",
+        pixPrice: "R$ 7.384,00",
       },
       "256GB-Midnight": {
-        originalPrice: "R$ 8.104,02",
+        originalPrice: "R$ 8.104,00",
         installmentPrice: "R$ 701,60",
-        pixPrice: "R$ 7.383,67",
+        pixPrice: "R$ 7.384,00",
       },
       "256GB-Silver": {
-        originalPrice: "R$ 8.104,02",
-        installmentPrice: "R$ 701,60",
-        pixPrice: "R$ 7.383,67",
+        originalPrice: "R$ 8.165,00",
+        installmentPrice: "R$ 706,88",
+        pixPrice: "R$ 7.439,00",
       },
-      "512GB-Midnight": {
-        originalPrice: "R$ 9.555,24",
-        installmentPrice: "R$ 827,24",
-        pixPrice: "R$ 8.705,89",
+      "256GB-Starlight": {
+        originalPrice: "R$ 8.104,00",
+        installmentPrice: "R$ 701,60",
+        pixPrice: "R$ 7.384,00",
       },
       "512GB-Silver": {
-        originalPrice: "R$ 9.555,24",
-        installmentPrice: "R$ 827,24",
-        pixPrice: "R$ 8.705,89",
+        originalPrice: "R$ 9.689,00",
+        installmentPrice: "R$ 838,86",
+        pixPrice: "R$ 8.828,00",
       },
       "512GB-Starlight": {
-        originalPrice: "R$ 9.555,24",
-        installmentPrice: "R$ 827,24",
-        pixPrice: "R$ 8.705,89",
+        originalPrice: "R$ 9.689,00",
+        installmentPrice: "R$ 838,86",
+        pixPrice: "R$ 8.828,00",
       },
       "512GB-Skyblue": {
-        originalPrice: "R$ 9.555,24",
-        installmentPrice: "R$ 827,24",
-        pixPrice: "R$ 8.705,89",
+        originalPrice: "R$ 9.689,00",
+        installmentPrice: "R$ 838,86",
+        pixPrice: "R$ 8.828,00",
       },
     },
   },
@@ -393,7 +362,7 @@ export const macbooksProducts: GroupedProduct[] = [
     battery: "100%",
     specs:
       'Tela Liquid Retina 15.3", Chip M3 (8-core CPU, 10-core GPU), 8 GB de memória unificada, 2x Thunderbolt / USB 4, MagSafe 3, Wi-Fi 6E.',
-    storages: ["256GB", "512GB"],
+    storages: ["512GB"],
     colors: [
       {
         name: "Space Gray",
@@ -401,27 +370,13 @@ export const macbooksProducts: GroupedProduct[] = [
         image: macAirM3SpG,
         gallery: [macAirM3SpG1, macAirM3SpG2, macAirM3SpG3],
       },
-      {
-        name: "Midnight",
-        hex: "#1C1C2E",
-        image: macAirMid,
-        gallery: [macAirMid1, macAirMid2, macAirMid3],
-      },
     ],
-    colorsByStorage: {
-      "256GB": ["Midnight"],
-      "512GB": ["Space Gray"],
-    },
+    // 256GB-Midnight removido (zerado na planilha)
     pricing: {
-      "256GB-Midnight": {
-        originalPrice: "R$ 8.286,95",
-        installmentPrice: "R$ 717,44",
-        pixPrice: "R$ 7.550,33",
-      },
       "512GB-Space Gray": {
-        originalPrice: "R$ 9.506,46",
-        installmentPrice: "R$ 823,02",
-        pixPrice: "R$ 8.661,44",
+        originalPrice: "R$ 9.567,00",
+        installmentPrice: "R$ 828,30",
+        pixPrice: "R$ 8.717,00",
       },
     },
   },
@@ -444,9 +399,9 @@ export const macbooksProducts: GroupedProduct[] = [
     ],
     pricing: {
       "256GB-Midnight": {
-        originalPrice: "R$ 8.469,88",
-        installmentPrice: "R$ 733,28",
-        pixPrice: "R$ 7.717,00",
+        originalPrice: "R$ 8.592,00",
+        installmentPrice: "R$ 743,83",
+        pixPrice: "R$ 7.828,00",
       },
     },
   },
@@ -469,14 +424,14 @@ export const macbooksProducts: GroupedProduct[] = [
     ],
     pricing: {
       "256GB-Silver": {
-        originalPrice: "R$ 4.994,27",
+        originalPrice: "R$ 4.994,00",
         installmentPrice: "R$ 432,38",
-        pixPrice: "R$ 4.550,33",
+        pixPrice: "R$ 4.550,00",
       },
       "512GB-Silver": {
-        originalPrice: "R$ 7.311,34",
-        installmentPrice: "R$ 632,98",
-        pixPrice: "R$ 6.661,44",
+        originalPrice: "R$ 7.494,00",
+        installmentPrice: "R$ 648,81",
+        pixPrice: "R$ 6.828,00",
       },
     },
   },

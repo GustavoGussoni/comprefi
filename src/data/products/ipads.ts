@@ -72,9 +72,9 @@ const iPadProM5_13_Celular: GroupedProduct = {
     "1TB": ["Space Black"],
   },
   pricing: {
-    "1TB-Space Black": { originalPrice: "R$ 18.187,92", pixPrice: "R$ 16.369,13", installmentPrice: "R$ 1.555,41" },
-    "512GB-Space Black": { originalPrice: "R$ 15.410,14", pixPrice: "R$ 13.869,13", installmentPrice: "R$ 1.317,86" },
-    "256GB-Space Black": { originalPrice: "R$ 12.771,25", pixPrice: "R$ 11.494,13", installmentPrice: "R$ 1.092,18" },
+    "1TB-Space Black": { originalPrice: "R$ 18.188,00", pixPrice: "R$ 16.369,00", installmentPrice: "R$ 1.555,00" },
+    "512GB-Space Black": { originalPrice: "R$ 15.410,00", pixPrice: "R$ 13.869,00", installmentPrice: "R$ 1.318,00" },
+    "256GB-Space Black": { originalPrice: "R$ 13.049,00", pixPrice: "R$ 11.744,00", installmentPrice: "R$ 1.116,00" },
   },
 };
 
@@ -95,9 +95,9 @@ const iPadProM5_13_Wifi: GroupedProduct = {
     "512GB": ["Space Black", "Silver"],
   },
   pricing: {
-    "512GB-Space Black": { originalPrice: "R$ 14.021,25", pixPrice: "R$ 12.619,13", installmentPrice: "R$ 1.199,08" },
-    "512GB-Silver": { originalPrice: "R$ 14.021,25", pixPrice: "R$ 12.619,13", installmentPrice: "R$ 1.199,08" },
-    "256GB-Space Black": { originalPrice: "R$ 12.424,03", pixPrice: "R$ 11.181,63", installmentPrice: "R$ 1.062,49" },
+    "512GB-Space Black": { originalPrice: "R$ 14.021,00", pixPrice: "R$ 12.619,00", installmentPrice: "R$ 1.199,00" },
+    "512GB-Silver": { originalPrice: "R$ 14.021,00", pixPrice: "R$ 12.619,00", installmentPrice: "R$ 1.199,00" },
+    "256GB-Space Black": { originalPrice: "R$ 12.424,00", pixPrice: "R$ 11.182,00", installmentPrice: "R$ 1.062,00" },
   },
 };
 
@@ -114,8 +114,8 @@ const iPadProM5_11_Wifi: GroupedProduct = {
     { name: "Silver", hex: "#e3e4e5", image: iPadProSilver, gallery: [iPadProSilver1, iPadProSilver2] },
   ],
   pricing: {
-    "256GB-Space Black": { originalPrice: "R$ 8.812,92", pixPrice: "R$ 7.931,63", installmentPrice: "R$ 753,67" },
-    "256GB-Silver": { originalPrice: "R$ 8.812,92", pixPrice: "R$ 7.931,63", installmentPrice: "R$ 753,67" },
+    "256GB-Space Black": { originalPrice: "R$ 8.813,00", pixPrice: "R$ 7.932,00", installmentPrice: "R$ 754,00" },
+    "256GB-Silver": { originalPrice: "R$ 8.813,00", pixPrice: "R$ 7.932,00", installmentPrice: "R$ 754,00" },
   },
 };
 
@@ -139,7 +139,7 @@ const iPadProM4_13_Wifi: GroupedProduct = {
     "256GB": ["Space Black"],
   },
   pricing: {
-    "256GB-Space Black": { originalPrice: "R$ 10.660,40", pixPrice: "R$ 9.406,24", installmentPrice: "R$ 893,79" },
+    "256GB-Space Black": { originalPrice: "R$ 10.660,00", pixPrice: "R$ 9.406,00", installmentPrice: "R$ 894,00" },
   },
 };
 
@@ -155,11 +155,9 @@ const iPadProM4_11_Wifi: GroupedProduct = {
     { name: "Space Black", hex: "#1d1d1f", image: iPadProSpB, gallery: [iPadProSpB1, iPadProSpB2] },
     { name: "Silver", hex: "#e3e4e5", image: iPadProSilver, gallery: [iPadProSilver1, iPadProSilver2] },
   ],
-  colorsByStorage: {
-    "256GB": ["Space Black"],
-  },
   pricing: {
-    "256GB-Space Black": { originalPrice: "R$ 8.127,07", pixPrice: "R$ 7.170,94", installmentPrice: "R$ 681,39" },
+    "256GB-Space Black": { originalPrice: "R$ 7.994,00", pixPrice: "R$ 7.053,00", installmentPrice: "R$ 670,00" },
+    "256GB-Silver": { originalPrice: "R$ 7.994,00", pixPrice: "R$ 7.053,00", installmentPrice: "R$ 670,00" },
   },
 };
 
@@ -185,7 +183,7 @@ const iPadAirM3_13_Celular: GroupedProduct = {
     "128GB": ["Roxo"],
   },
   pricing: {
-    "128GB-Roxo": { originalPrice: "R$ 8.927,07", pixPrice: "R$ 7.876,82", installmentPrice: "R$ 748,46" },
+    "128GB-Roxo": { originalPrice: "R$ 8.927,00", pixPrice: "R$ 7.877,00", installmentPrice: "R$ 748,00" },
   },
 };
 
@@ -204,10 +202,10 @@ const iPadAirM3_13_Wifi: GroupedProduct = {
     { name: "Azul", hex: "#5b7fa6", image: iPadAirBlue, gallery: [iPadAirBlue1, iPadAirBlue2] },
   ],
   pricing: {
-    "128GB-Starlight": { originalPrice: "R$ 7.460,40", pixPrice: "R$ 6.582,71", installmentPrice: "R$ 625,49" },
-    "128GB-Space Gray": { originalPrice: "R$ 7.460,40", pixPrice: "R$ 6.582,71", installmentPrice: "R$ 625,49" },
-    "128GB-Roxo": { originalPrice: "R$ 7.260,40", pixPrice: "R$ 6.406,24", installmentPrice: "R$ 608,73" },
-    "128GB-Azul": { originalPrice: "R$ 7.260,40", pixPrice: "R$ 6.406,24", installmentPrice: "R$ 608,73" },
+    "128GB-Starlight": { originalPrice: "R$ 7.460,00", pixPrice: "R$ 6.583,00", installmentPrice: "R$ 625,00" },
+    "128GB-Space Gray": { originalPrice: "R$ 7.460,00", pixPrice: "R$ 6.583,00", installmentPrice: "R$ 625,00" },
+    "128GB-Roxo": { originalPrice: "R$ 7.260,00", pixPrice: "R$ 6.406,00", installmentPrice: "R$ 609,00" },
+    "128GB-Azul": { originalPrice: "R$ 7.260,00", pixPrice: "R$ 6.406,00", installmentPrice: "R$ 609,00" },
   },
 };
 
@@ -230,9 +228,9 @@ const iPadAirM3_11_Celular: GroupedProduct = {
     "256GB": ["Starlight", "Azul"],
   },
   pricing: {
-    "256GB-Starlight": { originalPrice: "R$ 8.793,73", pixPrice: "R$ 7.759,18", installmentPrice: "R$ 737,28" },
-    "256GB-Azul": { originalPrice: "R$ 8.793,73", pixPrice: "R$ 7.759,18", installmentPrice: "R$ 737,28" },
-    "128GB-Space Gray": { originalPrice: "R$ 7.593,73", pixPrice: "R$ 6.700,35", installmentPrice: "R$ 636,67" },
+    "256GB-Starlight": { originalPrice: "R$ 8.794,00", pixPrice: "R$ 7.759,00", installmentPrice: "R$ 737,00" },
+    "256GB-Azul": { originalPrice: "R$ 8.794,00", pixPrice: "R$ 7.759,00", installmentPrice: "R$ 737,00" },
+    "128GB-Space Gray": { originalPrice: "R$ 7.594,00", pixPrice: "R$ 6.700,00", installmentPrice: "R$ 637,00" },
   },
 };
 
@@ -250,14 +248,18 @@ const iPadAirM3_11_Wifi: GroupedProduct = {
     { name: "Roxo", hex: "#b8a9c9", image: iPadAirPurple, gallery: [iPadAirPurple1, iPadAirPurple2] },
     { name: "Azul", hex: "#5b7fa6", image: iPadAirBlue, gallery: [iPadAirBlue1, iPadAirBlue2] },
   ],
+  colorsByStorage: {
+    "128GB": ["Starlight", "Space Gray", "Roxo", "Azul"],
+    "256GB": ["Starlight", "Azul", "Roxo"],
+  },
   pricing: {
-    "256GB-Starlight": { originalPrice: "R$ 7.393,73", pixPrice: "R$ 6.523,88", installmentPrice: "R$ 619,91" },
-    "256GB-Azul": { originalPrice: "R$ 7.393,73", pixPrice: "R$ 6.523,88", installmentPrice: "R$ 619,91" },
-    "256GB-Roxo": { originalPrice: "R$ 7.393,73", pixPrice: "R$ 6.523,88", installmentPrice: "R$ 619,91" },
-    "128GB-Starlight": { originalPrice: "R$ 5.727,07", pixPrice: "R$ 5.053,29", installmentPrice: "R$ 480,17" },
-    "128GB-Space Gray": { originalPrice: "R$ 5.393,73", pixPrice: "R$ 4.759,18", installmentPrice: "R$ 452,22" },
-    "128GB-Roxo": { originalPrice: "R$ 5.393,73", pixPrice: "R$ 4.759,18", installmentPrice: "R$ 452,22" },
-    "128GB-Azul": { originalPrice: "R$ 5.393,73", pixPrice: "R$ 4.759,18", installmentPrice: "R$ 452,22" },
+    "256GB-Starlight": { originalPrice: "R$ 6.594,00", pixPrice: "R$ 5.818,00", installmentPrice: "R$ 553,00" },
+    "256GB-Azul": { originalPrice: "R$ 6.594,00", pixPrice: "R$ 5.818,00", installmentPrice: "R$ 553,00" },
+    "256GB-Roxo": { originalPrice: "R$ 6.594,00", pixPrice: "R$ 5.818,00", installmentPrice: "R$ 553,00" },
+    "128GB-Starlight": { originalPrice: "R$ 5.594,00", pixPrice: "R$ 4.936,00", installmentPrice: "R$ 469,00" },
+    "128GB-Space Gray": { originalPrice: "R$ 5.394,00", pixPrice: "R$ 4.759,00", installmentPrice: "R$ 452,00" },
+    "128GB-Roxo": { originalPrice: "R$ 5.260,00", pixPrice: "R$ 4.642,00", installmentPrice: "R$ 441,00" },
+    "128GB-Azul": { originalPrice: "R$ 5.260,00", pixPrice: "R$ 4.642,00", installmentPrice: "R$ 441,00" },
   },
 };
 
@@ -284,13 +286,13 @@ const iPad11_Wifi: GroupedProduct = {
     "256GB": ["Prata", "Azul", "Rosa"],
   },
   pricing: {
-    "256GB-Prata": { originalPrice: "R$ 4.460,40", pixPrice: "R$ 3.935,65", installmentPrice: "R$ 373,97" },
-    "256GB-Azul": { originalPrice: "R$ 4.460,40", pixPrice: "R$ 3.935,65", installmentPrice: "R$ 373,97" },
-    "256GB-Rosa": { originalPrice: "R$ 4.460,40", pixPrice: "R$ 3.935,65", installmentPrice: "R$ 373,97" },
-    "128GB-Prata": { originalPrice: "R$ 3.193,73", pixPrice: "R$ 2.818,00", installmentPrice: "R$ 267,77" },
-    "128GB-Amarelo": { originalPrice: "R$ 3.100,40", pixPrice: "R$ 2.735,65", installmentPrice: "R$ 259,94" },
-    "128GB-Azul": { originalPrice: "R$ 3.100,40", pixPrice: "R$ 2.735,65", installmentPrice: "R$ 259,94" },
-    "128GB-Rosa": { originalPrice: "R$ 3.100,40", pixPrice: "R$ 2.735,65", installmentPrice: "R$ 259,94" },
+    "256GB-Prata": { originalPrice: "R$ 4.460,00", pixPrice: "R$ 3.936,00", installmentPrice: "R$ 374,00" },
+    "256GB-Azul": { originalPrice: "R$ 4.460,00", pixPrice: "R$ 3.936,00", installmentPrice: "R$ 374,00" },
+    "256GB-Rosa": { originalPrice: "R$ 4.460,00", pixPrice: "R$ 3.936,00", installmentPrice: "R$ 374,00" },
+    "128GB-Prata": { originalPrice: "R$ 3.260,00", pixPrice: "R$ 2.877,00", installmentPrice: "R$ 273,00" },
+    "128GB-Amarelo": { originalPrice: "R$ 3.260,00", pixPrice: "R$ 2.877,00", installmentPrice: "R$ 273,00" },
+    "128GB-Azul": { originalPrice: "R$ 3.260,00", pixPrice: "R$ 2.877,00", installmentPrice: "R$ 273,00" },
+    "128GB-Rosa": { originalPrice: "R$ 3.260,00", pixPrice: "R$ 2.877,00", installmentPrice: "R$ 273,00" },
   },
 };
 
@@ -313,10 +315,10 @@ const iPad10_Wifi: GroupedProduct = {
     { name: "Amarelo", hex: "#f5e6a3", image: iPadA16Yellow, gallery: [iPadA16Yellow1, iPadA16Yellow2] },
   ],
   pricing: {
-    "256GB-Prata": { originalPrice: "R$ 3.660,40", pixPrice: "R$ 3.229,76", installmentPrice: "R$ 306,90" },
-    "256GB-Azul": { originalPrice: "R$ 3.660,40", pixPrice: "R$ 3.229,76", installmentPrice: "R$ 306,90" },
-    "256GB-Rosa": { originalPrice: "R$ 3.660,40", pixPrice: "R$ 3.229,76", installmentPrice: "R$ 306,90" },
-    "256GB-Amarelo": { originalPrice: "R$ 3.660,40", pixPrice: "R$ 3.229,76", installmentPrice: "R$ 306,90" },
+    "256GB-Prata": { originalPrice: "R$ 3.860,00", pixPrice: "R$ 3.406,00", installmentPrice: "R$ 324,00" },
+    "256GB-Azul": { originalPrice: "R$ 3.860,00", pixPrice: "R$ 3.406,00", installmentPrice: "R$ 324,00" },
+    "256GB-Rosa": { originalPrice: "R$ 3.860,00", pixPrice: "R$ 3.406,00", installmentPrice: "R$ 324,00" },
+    "256GB-Amarelo": { originalPrice: "R$ 3.860,00", pixPrice: "R$ 3.406,00", installmentPrice: "R$ 324,00" },
   },
 };
 

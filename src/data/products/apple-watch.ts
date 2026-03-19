@@ -43,10 +43,9 @@ import se3StarlightSport2 from "../../assets/new-images/watch/se-3/starlight-spo
 // ============================================
 // Apple Watch Ultra 3
 // ============================================
-
 const ultraWatch3Ocean: GroupedProduct = {
-  slug: "apple-watch-ultra-3-ocean-band",
-  model: "Apple Watch Ultra 3 Ocean Band",
+  slug: "apple-watch-ultra-3-ocean",
+  model: "Apple Watch Ultra 3 Ocean",
   specs: "Chip S11 SiP, Tela Retina Sempre Ativa LTPO OLED (até 4000 nits), GPS de precisão e dupla frequência, Botão de Ação, Sirene, Profundímetro, Sensor de temperatura da água, Oxigênio no Sangue, ECG, Sensor cardíaco óptico, Detecção de Queda/Acidente, Resistência à água 100m, Certificação MIL-STD 810H, Mergulho recreativo até 40m, Wi-Fi 6E, Bluetooth 5.3",
   category: "apple-watch",
   details: "aparelho novo",
@@ -54,11 +53,11 @@ const ultraWatch3Ocean: GroupedProduct = {
   storages: ["49mm"],
   colors: [
     { name: "Natural", hex: "#c4b5a0", image: ultra3NaturalOcean, gallery: [ultra3NaturalOcean1, ultra3NaturalOcean2] },
-    { name: "Black", hex: "#1d1d1f", image: ultra3BlackOcean, gallery: [ultra3BlackOcean1, ultra3BlackOcean2] },
+    { name: "Preto", hex: "#1d1d1f", image: ultra3BlackOcean, gallery: [ultra3BlackOcean1, ultra3BlackOcean2] },
   ],
   pricing: {
-    "49mm-Natural": { originalPrice: "R$ 6.468,33", pixPrice: "R$ 5.733,30", installmentPrice: "R$ 544,78" },
-    "49mm-Black": { originalPrice: "R$ 5.827,31", pixPrice: "R$ 5.165,11", installmentPrice: "R$ 490,79" },
+    "49mm-Natural": { originalPrice: "R$ 6.661,00", pixPrice: "R$ 5.904,00", installmentPrice: "R$ 561,00" },
+    "49mm-Preto": { originalPrice: "R$ 5.956,00", pixPrice: "R$ 5.279,00", installmentPrice: "R$ 502,00" },
   },
 };
 
@@ -75,20 +74,20 @@ const series11SportBand: GroupedProduct = {
   battery: "100%",
   storages: ["42mm", "46mm"],
   colors: [
-    { name: "Jet Black", hex: "#1d1d1f", image: series11BlackSport, gallery: [series11BlackSport1, series11BlackSport2] },
+    { name: "Preto", hex: "#1d1d1f", image: series11BlackSport, gallery: [series11BlackSport1, series11BlackSport2] },
     { name: "Space Gray", hex: "#86868b", image: series11SpaceGraySport, gallery: [series11SpaceGraySport1, series11SpaceGraySport2] },
     { name: "Silver", hex: "#e3e4e5", image: series11SilverSport, gallery: [series11SilverSport1, series11SilverSport2] },
     { name: "Rose", hex: "#e8c4b8", image: series11RoseGoldSport, gallery: [series11RoseGoldSport1, series11RoseGoldSport2] },
   ],
   pricing: {
-    "46mm-Jet Black": { originalPrice: "R$ 3.451,81", pixPrice: "R$ 2.994,34", installmentPrice: "R$ 284,52" },
-    "46mm-Space Gray": { originalPrice: "R$ 3.451,81", pixPrice: "R$ 2.994,34", installmentPrice: "R$ 284,52" },
-    "46mm-Silver": { originalPrice: "R$ 3.451,81", pixPrice: "R$ 2.994,34", installmentPrice: "R$ 284,52" },
-    "46mm-Rose": { originalPrice: "R$ 3.451,81", pixPrice: "R$ 2.994,34", installmentPrice: "R$ 284,52" },
-    "42mm-Jet Black": { originalPrice: "R$ 3.257,36", pixPrice: "R$ 2.825,66", installmentPrice: "R$ 268,50" },
-    "42mm-Space Gray": { originalPrice: "R$ 3.257,36", pixPrice: "R$ 2.825,66", installmentPrice: "R$ 268,50" },
-    "42mm-Silver": { originalPrice: "R$ 3.257,36", pixPrice: "R$ 2.825,66", installmentPrice: "R$ 268,50" },
-    "42mm-Rose": { originalPrice: "R$ 3.257,36", pixPrice: "R$ 2.825,66", installmentPrice: "R$ 268,50" },
+    "46mm-Preto": { originalPrice: "R$ 3.452,00", pixPrice: "R$ 2.994,00", installmentPrice: "R$ 285,00" },
+    "46mm-Space Gray": { originalPrice: "R$ 3.452,00", pixPrice: "R$ 2.994,00", installmentPrice: "R$ 285,00" },
+    "46mm-Silver": { originalPrice: "R$ 3.452,00", pixPrice: "R$ 2.994,00", installmentPrice: "R$ 285,00" },
+    "46mm-Rose": { originalPrice: "R$ 3.452,00", pixPrice: "R$ 2.994,00", installmentPrice: "R$ 285,00" },
+    "42mm-Preto": { originalPrice: "R$ 3.257,00", pixPrice: "R$ 2.826,00", installmentPrice: "R$ 269,00" },
+    "42mm-Space Gray": { originalPrice: "R$ 3.257,00", pixPrice: "R$ 2.826,00", installmentPrice: "R$ 269,00" },
+    "42mm-Silver": { originalPrice: "R$ 3.257,00", pixPrice: "R$ 2.826,00", installmentPrice: "R$ 269,00" },
+    "42mm-Rose": { originalPrice: "R$ 3.257,00", pixPrice: "R$ 2.826,00", installmentPrice: "R$ 269,00" },
   },
 };
 
@@ -113,9 +112,9 @@ const se3SportBand: GroupedProduct = {
     "44mm": ["Midnight"],
   },
   pricing: {
-    "44mm-Midnight": { originalPrice: "R$ 2.896,25", pixPrice: "R$ 2.512,41", installmentPrice: "R$ 238,73" },
-    "40mm-Midnight": { originalPrice: "R$ 2.769,86", pixPrice: "R$ 2.402,77", installmentPrice: "R$ 228,31" },
-    "40mm-Starlight": { originalPrice: "R$ 2.769,86", pixPrice: "R$ 2.402,77", installmentPrice: "R$ 228,31" },
+    "44mm-Midnight": { originalPrice: "R$ 2.896,00", pixPrice: "R$ 2.512,00", installmentPrice: "R$ 239,00" },
+    "40mm-Midnight": { originalPrice: "R$ 2.770,00", pixPrice: "R$ 2.403,00", installmentPrice: "R$ 228,00" },
+    "40mm-Starlight": { originalPrice: "R$ 2.770,00", pixPrice: "R$ 2.403,00", installmentPrice: "R$ 228,00" },
   },
 };
 
