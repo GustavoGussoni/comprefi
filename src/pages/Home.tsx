@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import FAQ from "../components/FAQ";
 import WhyChooseCompreFi from "../components/WhyChooseCompreFi";
@@ -7,22 +7,22 @@ import WhyChooseCompreFi from "../components/WhyChooseCompreFi";
 import desktopBanner from "../assets/images/IMG_2816_desktop.png";
 import mobileBanner from "../assets/images/IMG_2791.png";
 import locsBanner from "../assets/images/MAPA-BRASIL-LOCAIS-DE-ENTREGA.gif";
-// import locsBannerStatic from "../assets/images/mapa-static.png";
+import locsBannerStatic from "../assets/images/mapa-static.png";
 
 interface HomeProps {
   isMobile: boolean;
 }
 
 const Home: React.FC<HomeProps> = ({ isMobile }) => {
-  // const [bannerSrc, setBannerSrc] = useState(locsBanner); // começa com GIF
+  const [bannerSrc, setBannerSrc] = useState(locsBanner); // começa com GIF
 
-  // useEffect(() => {
-  //   const timer = setTimeout(() => {
-  //     setBannerSrc(locsBannerStatic); // troca pela imagem estática
-  //   }, 7000);
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setBannerSrc(locsBannerStatic); // troca pela imagem estática
+    }, 7000);
 
-  //   return () => clearTimeout(timer);
-  // }, []);
+    return () => clearTimeout(timer);
+  }, []);
   return (
     <div className="home-container">
       {/* Parábola - Padrão de Interrupção (Russell Brunson)
@@ -321,7 +321,7 @@ const Home: React.FC<HomeProps> = ({ isMobile }) => {
       {/* Banner Locais */}
       <section className="banner-locs max-w-4xl w-full mx-auto py-16 px-4">
         <img
-          src={locsBanner}
+          src={bannerSrc}
           alt="CompreFi - Produtos Apple Premium"
           className="w-full h-auto object-cover max-w-4xl"
         />
