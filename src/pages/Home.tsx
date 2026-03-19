@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import FAQ from "../components/FAQ";
 import WhyChooseCompreFi from "../components/WhyChooseCompreFi";
@@ -14,15 +14,36 @@ interface HomeProps {
 }
 
 const Home: React.FC<HomeProps> = ({ isMobile }) => {
-  const [bannerSrc, setBannerSrc] = useState(locsBanner); // começa com GIF
+  const [bannerSrc, setBannerSrc] = useState(locsBannerStatic); // começa estático
+  const [hasPlayed, setHasPlayed] = useState(false);
+  const bannerRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setBannerSrc(locsBannerStatic); // troca pela imagem estática
-    }, 5000);
+    if (hasPlayed) return; // só roda uma vez
 
-    return () => clearTimeout(timer);
-  }, []);
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setBannerSrc(locsBanner); // troca para o GIF
+          observer.disconnect(); // para de observar
+
+          const timer = setTimeout(() => {
+            setBannerSrc(locsBannerStatic); // volta para estático
+            setHasPlayed(true);
+          }, 5500);
+
+          return () => clearTimeout(timer);
+        }
+      },
+      { threshold: 0.05 }, // dispara quando 5% do banner está visível
+    );
+
+    if (bannerRef.current) {
+      observer.observe(bannerRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, [hasPlayed]);
   return (
     <div className="home-container">
       {/* Parábola - Padrão de Interrupção (Russell Brunson)
@@ -168,7 +189,7 @@ const Home: React.FC<HomeProps> = ({ isMobile }) => {
       </section>
 
       {/* Banner Principal */}
-      <section className="banner-section w-full">
+      <section ref={bannerRef} className="banner-section w-full">
         <img
           src={isMobile ? mobileBanner : desktopBanner}
           alt="CompreFi - Produtos Apple Premium"
