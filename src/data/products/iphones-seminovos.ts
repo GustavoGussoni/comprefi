@@ -87,8 +87,8 @@ export const iphonesSeminovosProducts: FlatProduct[] = [
     color: "Titânio Preto",
     battery: "87%",
     originalPrice: "R$ 4.990,00",
-    installmentPrice: "R$ 426,65",
-    pixPrice: "R$ 4.490",
+    installmentPrice: "R$ 436,65",
+    pixPrice: "R$ 4.590",
     details: "sem detalhes | acompanha caixa",
     image: iphone15PMPTraseira,
     realImages: [
