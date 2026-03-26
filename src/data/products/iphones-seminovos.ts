@@ -3,7 +3,7 @@ import { FlatProduct } from "../../types/product";
 // Imagens capa
 // import iphone16BTraseira from "../../assets/new-images/semi/16b/16-white-traseira.jpg";
 // import iphone16VTraseira from "../../assets/new-images/semi/16v/16-green-traseira.jpg";
-import iphone15PMPTraseira from "../../assets/new-images/semi/15-pm-p/15-pm-black-traseira.jpg";
+// import iphone15PMPTraseira from "../../assets/new-images/semi/15-pm-p/15-pm-black-traseira.jpg";
 import iphone14PMRTraseira from "../../assets/new-images/semi/14-pm-r/14-pm-purple-traseira.jpg";
 
 // 16 branco
@@ -21,11 +21,11 @@ import iphone14PMRTraseira from "../../assets/new-images/semi/14-pm-r/14-pm-purp
 // import iphone16VImgCima from "../../assets/new-images/semi/16v/16-green-cima.jpg";
 
 // 15 Pro Max preto
-import iphone15PMPImgFrente from "../../assets/new-images/semi/15-pm-p/15-pm-black-frente.jpg";
-import iphone15PMPImgLaterald from "../../assets/new-images/semi/15-pm-p/15-pm-black-laterald.jpg";
-import iphone15PMPImgLaterale from "../../assets/new-images/semi/15-pm-p/15-pm-black-laterale.jpg";
-import iphone15PMPImgBaixo from "../../assets/new-images/semi/15-pm-p/15-pm-black-baixo.jpg";
-import iphone15PMPImgCima from "../../assets/new-images/semi/15-pm-p/15-pm-black-cima.jpg";
+// import iphone15PMPImgFrente from "../../assets/new-images/semi/15-pm-p/15-pm-black-frente.jpg";
+// import iphone15PMPImgLaterald from "../../assets/new-images/semi/15-pm-p/15-pm-black-laterald.jpg";
+// import iphone15PMPImgLaterale from "../../assets/new-images/semi/15-pm-p/15-pm-black-laterale.jpg";
+// import iphone15PMPImgBaixo from "../../assets/new-images/semi/15-pm-p/15-pm-black-baixo.jpg";
+// import iphone15PMPImgCima from "../../assets/new-images/semi/15-pm-p/15-pm-black-cima.jpg";
 
 // 14 Pro Max roxo
 import iphone14PMRImgFrente from "../../assets/new-images/semi/14-pm-r/14-pm-purple-frente.jpg";
@@ -80,28 +80,28 @@ export const iphonesSeminovosProducts: FlatProduct[] = [
   //   specs:
   //     'O iPhone 16 (2024) traz o processador A18 (3nm), 8 GB de RAM para Apple Intelligence, e câmeras de 48 MP, apresentando o novo "Controle da Câmera", botão de Ação e tela Super Retina XDR OLED de 6,1 polegadas. Possui bateria de 3561 mAh, conector USB-C, Wi-Fi 7 e estrutura em alumínio com Ceramic Shield.',
   // },
-  {
-    id: 3,
-    model: "iPhone 15 Pro Max",
-    storage: "256GB",
-    color: "Titânio Preto",
-    battery: "87%",
-    originalPrice: "R$ 4.990,00",
-    installmentPrice: "R$ 436,65",
-    pixPrice: "R$ 4.590",
-    details: "sem detalhes | acompanha caixa",
-    image: iphone15PMPTraseira,
-    realImages: [
-      iphone15PMPImgFrente,
-      iphone15PMPImgLaterald,
-      iphone15PMPImgLaterale,
-      iphone15PMPImgBaixo,
-      iphone15PMPImgCima,
-    ],
-    category: "iPhones Seminovos",
-    specs:
-      'O iPhone 15 Pro Max é o topo de linha da Apple de 2023, destacando-se pela estrutura em titânio, processador A17 Pro de 3nm e câmera telefoto de 5x. Possui tela OLED de 6,7" (120Hz), 8GB de RAM, USB-C 3.0 e sistema de câmera tripla de 48MP, oferecendo alto desempenho e grande autonomia de bateria.',
-  },
+  // {
+  //   id: 3,
+  //   model: "iPhone 15 Pro Max",
+  //   storage: "256GB",
+  //   color: "Titânio Preto",
+  //   battery: "87%",
+  //   originalPrice: "R$ 4.990,00",
+  //   installmentPrice: "R$ 436,65",
+  //   pixPrice: "R$ 4.590",
+  //   details: "sem detalhes | acompanha caixa",
+  //   image: iphone15PMPTraseira,
+  //   realImages: [
+  //     iphone15PMPImgFrente,
+  //     iphone15PMPImgLaterald,
+  //     iphone15PMPImgLaterale,
+  //     iphone15PMPImgBaixo,
+  //     iphone15PMPImgCima,
+  //   ],
+  //   category: "iPhones Seminovos",
+  //   specs:
+  //     'O iPhone 15 Pro Max é o topo de linha da Apple de 2023, destacando-se pela estrutura em titânio, processador A17 Pro de 3nm e câmera telefoto de 5x. Possui tela OLED de 6,7" (120Hz), 8GB de RAM, USB-C 3.0 e sistema de câmera tripla de 48MP, oferecendo alto desempenho e grande autonomia de bateria.',
+  // },
   {
     id: 4,
     model: "iPhone 14 Pro Max",
