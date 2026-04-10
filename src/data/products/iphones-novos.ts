@@ -46,6 +46,17 @@ import iphone17LTraseira from "../../assets/new-images/iphones-novos/17/17-lavan
 import iphone17L2 from "../../assets/new-images/iphones-novos/17/17-lavanda-2.png";
 import iphone17L3 from "../../assets/new-images/iphones-novos/17/17-lavanda-3.png";
 
+// 17e
+import iphone17ePTraseira from "../../assets/new-images/iphones-novos/17-e/17-e-preto-traseira.png";
+import iphone17eP2 from "../../assets/new-images/iphones-novos/17-e/17-e-preto-2.png";
+import iphone17eP3 from "../../assets/new-images/iphones-novos/17-e/17-e-preto-3.png";
+import iphone17eBTraseira from "../../assets/new-images/iphones-novos/17-e/17-e-branco-traseira.png";
+import iphone17eB2 from "../../assets/new-images/iphones-novos/17-e/17-e-branco-2.png";
+import iphone17eB3 from "../../assets/new-images/iphones-novos/17-e/17-e-branco-3.png";
+import iphone17eRTraseira from "../../assets/new-images/iphones-novos/17-e/17-e-rosa-traseira.png";
+import iphone17eR2 from "../../assets/new-images/iphones-novos/17-e/17-e-rosa-2.png";
+import iphone17eR3 from "../../assets/new-images/iphones-novos/17-e/17-e-rosa-3.png";
+
 // 16
 import iphone16PTraseiraNovo from "../../assets/new-images/iphones-novos/16/16-preto-traseira.png";
 import iphone16P2 from "../../assets/new-images/iphones-novos/16/16-preto-2.png";
@@ -111,64 +122,64 @@ export const iphonesNovosProducts: GroupedProduct[] = [
     },
     pricing: {
       "256GB-Prata": {
-        originalPrice: "R$ 9.700,00",
-        installmentPrice: "R$ 852,00",
-        pixPrice: "R$ 8.962,00",
+        originalPrice: "R$ 9.469,00",
+        installmentPrice: "R$ 830,84",
+        pixPrice: "R$ 8.743",
       },
       "256GB-Azul": {
-        originalPrice: "R$ 9.583,00",
-        installmentPrice: "R$ 841,00",
-        pixPrice: "R$ 8.854,00",
+        originalPrice: "R$ 9.529,00",
+        installmentPrice: "R$ 836,11",
+        pixPrice: "R$ 8.798",
       },
       "256GB-Laranja": {
-        originalPrice: "R$ 9.465,00",
-        installmentPrice: "R$ 831,00",
-        pixPrice: "R$ 8.745,00",
+        originalPrice: "R$ 9.299,00",
+        installmentPrice: "R$ 810,19",
+        pixPrice: "R$ 8.532",
       },
       "512GB-Prata": {
-        originalPrice: "R$ 12.524,00",
-        installmentPrice: "R$ 1.099,00",
-        pixPrice: "R$ 11.571,00",
+        originalPrice: "R$ 11.582,00",
+        installmentPrice: "R$ 1.016,75",
+        pixPrice: "R$ 10.698",
       },
       "512GB-Azul": {
-        originalPrice: "R$ 12.406,00",
-        installmentPrice: "R$ 1.089,00",
-        pixPrice: "R$ 11.462,00",
+        originalPrice: "R$ 11.229,00",
+        installmentPrice: "R$ 985,77",
+        pixPrice: "R$ 10.374",
       },
       "512GB-Laranja": {
-        originalPrice: "R$ 11.406,00",
-        installmentPrice: "R$ 1.001,00",
-        pixPrice: "R$ 10.538,00",
+        originalPrice: "R$ 11.111,00",
+        installmentPrice: "R$ 975,44",
+        pixPrice: "R$ 10.265,00",
       },
       "1TB-Prata": {
-        originalPrice: "R$ 13.818,00",
-        installmentPrice: "R$ 1.213,00",
-        pixPrice: "R$ 12.767,00",
+        originalPrice: "R$ 12.747,00",
+        installmentPrice: "R$ 1.119,11",
+        pixPrice: "R$ 11.778",
       },
       "1TB-Azul": {
-        originalPrice: "R$ 13.583,00",
-        installmentPrice: "R$ 1.192,00",
-        pixPrice: "R$ 12.549,00",
+        originalPrice: "R$ 12.583,00",
+        installmentPrice: "R$ 1.104,65",
+        pixPrice: "R$ 11.625",
       },
       "1TB-Laranja": {
-        originalPrice: "R$ 12.994,00",
-        installmentPrice: "R$ 1.140,80",
-        pixPrice: "R$ 12.006,00",
+        originalPrice: "R$ 12.583,00",
+        installmentPrice: "R$ 1.104,65",
+        pixPrice: "R$ 11.625",
       },
       "2TB-Prata": {
-        originalPrice: "R$ 15.406,00",
-        installmentPrice: "R$ 1.353,00",
-        pixPrice: "R$ 14.234,00",
+        originalPrice: "R$ 15.230,00",
+        installmentPrice: "R$ 1.337,04",
+        pixPrice: "R$ 14.071",
       },
       "2TB-Azul": {
-        originalPrice: "R$ 15.230,00",
-        installmentPrice: "R$ 1.337,00",
-        pixPrice: "R$ 14.071,00",
+        originalPrice: "R$ 15.112,00",
+        installmentPrice: "R$ 1.326,71",
+        pixPrice: "R$ 13.962",
       },
       "2TB-Laranja": {
-        originalPrice: "R$ 15.230,00",
-        installmentPrice: "R$ 1.337,00",
-        pixPrice: "R$ 14.071,00",
+        originalPrice: "R$ 15.112,00",
+        installmentPrice: "R$ 1.326,71",
+        pixPrice: "R$ 13.962",
       },
     },
   },
@@ -203,39 +214,54 @@ export const iphonesNovosProducts: GroupedProduct[] = [
     ],
     colorsByStorage: {
       "256GB": ["Prata", "Azul", "Laranja"],
-      "512GB": ["Prata", "Laranja"],
-      "1TB": ["Laranja"],
+      "512GB": ["Prata", "Azul", "Laranja"],
+      "1TB": ["Prata", "Azul", "Laranja"],
     },
     pricing: {
       "256GB-Prata": {
-        originalPrice: "R$ 8.642,00",
-        installmentPrice: "R$ 759,00",
-        pixPrice: "R$ 7.984,00",
+        originalPrice: "R$ 8.618,00",
+        installmentPrice: "R$ 756,58",
+        pixPrice: "R$ 7.962",
       },
       "256GB-Azul": {
-        originalPrice: "R$ 8.524,00",
-        installmentPrice: "R$ 768,98",
-        pixPrice: "R$ 7.875,00",
+        originalPrice: "R$ 8.583,00",
+        installmentPrice: "R$ 753,48",
+        pixPrice: "R$ 7.930",
       },
       "256GB-Laranja": {
-        originalPrice: "R$ 8.630,00",
-        installmentPrice: "R$ 758,00",
-        pixPrice: "R$ 7.973,00",
+        originalPrice: "R$ 8.583,00",
+        installmentPrice: "R$ 753,48",
+        pixPrice: "R$ 7.930",
       },
       "512GB-Prata": {
-        originalPrice: "R$ 11.112,00",
-        installmentPrice: "R$ 976,00",
-        pixPrice: "R$ 10.267,00",
+        originalPrice: "R$ 10.649,00",
+        installmentPrice: "R$ 934,13",
+        pixPrice: "R$ 9.831",
+      },
+      "512GB-Azul": {
+        originalPrice: "R$ 10.649,00",
+        installmentPrice: "R$ 934,13",
+        pixPrice: "R$ 9.831",
       },
       "512GB-Laranja": {
-        originalPrice: "R$ 10.994,00",
-        installmentPrice: "R$ 965,22",
-        pixPrice: "R$ 10.158,00",
+        originalPrice: "R$ 10.649,00",
+        installmentPrice: "R$ 934,13",
+        pixPrice: "R$ 9.831",
+      },
+      "1TB-Prata": {
+        originalPrice: "R$ 12.899,00",
+        installmentPrice: "R$ 1.125,31",
+        pixPrice: "R$ 11.843",
+      },
+      "1TB-Azul": {
+        originalPrice: "R$ 12.899,00",
+        installmentPrice: "R$ 1.125,31",
+        pixPrice: "R$ 11.843",
       },
       "1TB-Laranja": {
-        originalPrice: "R$ 13.112,00",
-        installmentPrice: "R$ 1.151,00",
-        pixPrice: "R$ 12.114,00",
+        originalPrice: "R$ 12.899,00",
+        installmentPrice: "R$ 1.125,31",
+        pixPrice: "R$ 11.843",
       },
     },
   },
@@ -280,34 +306,34 @@ export const iphonesNovosProducts: GroupedProduct[] = [
     },
     pricing: {
       "256GB-Preto": {
-        originalPrice: "R$ 6.524,00",
-        installmentPrice: "R$ 573,90",
-        pixPrice: "R$ 6.028,00",
+        originalPrice: "R$ 6.640,00",
+        installmentPrice: "R$ 582,96",
+        pixPrice: "R$ 6.135",
       },
       "256GB-Branco": {
-        originalPrice: "R$ 6.406,00",
-        installmentPrice: "R$ 562,57",
-        pixPrice: "R$ 5.919,00",
+        originalPrice: "R$ 6.523,00",
+        installmentPrice: "R$ 572,64",
+        pixPrice: "R$ 6.026",
       },
       "256GB-Dourado": {
-        originalPrice: "R$ 6.406,00",
-        installmentPrice: "R$ 562,57",
-        pixPrice: "R$ 5.919,00",
+        originalPrice: "R$ 6.523,00",
+        installmentPrice: "R$ 572,64",
+        pixPrice: "R$ 6.026",
       },
       "256GB-Azul": {
-        originalPrice: "R$ 6.465,00",
-        installmentPrice: "R$ 567,57",
-        pixPrice: "R$ 5.973,00",
+        originalPrice: "R$ 6.523,00",
+        installmentPrice: "R$ 572,64",
+        pixPrice: "R$ 6.026",
       },
       "512GB-Branco": {
         originalPrice: "R$ 8.289,00",
         installmentPrice: "R$ 728,00",
-        pixPrice: "R$ 7.658,00",
+        pixPrice: "R$ 7.658",
       },
       "512GB-Dourado": {
         originalPrice: "R$ 8.289,00",
         installmentPrice: "R$ 728,00",
-        pixPrice: "R$ 7.658,00",
+        pixPrice: "R$ 7.658",
       },
     },
   },
@@ -359,31 +385,78 @@ export const iphonesNovosProducts: GroupedProduct[] = [
     // },
     pricing: {
       "256GB-Lavanda": {
-        originalPrice: "R$ 6.171,00",
-        installmentPrice: "R$ 541,25",
-        pixPrice: "R$ 5.701,00",
+        originalPrice: "R$ 5.759,00",
+        installmentPrice: "R$ 505,60",
+        pixPrice: "R$ 5.321",
       },
       "256GB-Branco": {
-        originalPrice: "R$ 6.112,00",
-        installmentPrice: "R$ 537,00",
-        pixPrice: "R$ 5.647,00",
+        originalPrice: "R$ 5.759,00",
+        installmentPrice: "R$ 505,60",
+        pixPrice: "R$ 5.321",
       },
       "256GB-Preto": {
-        originalPrice: "R$ 6.112,00",
-        installmentPrice: "R$ 537,00",
-        pixPrice: "R$ 5.647,00",
+        originalPrice: "R$ 5.759,00",
+        installmentPrice: "R$ 505,60",
+        pixPrice: "R$ 5.321",
       },
       "256GB-Salvia": {
-        originalPrice: "R$ 5.994,00",
-        installmentPrice: "R$ 526,00",
-        pixPrice: "R$ 5.538,00",
+        originalPrice: "R$ 5.759,00",
+        installmentPrice: "R$ 505,60",
+        pixPrice: "R$ 5.321",
       },
       "256GB-Azul": {
-        originalPrice: "R$ 5.994,00",
-        installmentPrice: "R$ 526,00",
-        pixPrice: "R$ 5.538,00",
+        originalPrice: "R$ 5.759,00",
+        installmentPrice: "R$ 505,60",
+        pixPrice: "R$ 5.321",
       },
       // "512GB": indisponível no momento
+    },
+  },
+  {
+    slug: "iphone-17e",
+    model: "iPhone 17e",
+    category: "iPhones Novos",
+    details: "aparelho novo",
+    battery: "100%",
+    specs:
+      "iPhone 17e conta com tela Super Retina XDR OLED de 6,1 polegadas com True Tone e Wide Color (P3). Equipado com chip A19 de 6 núcleos e câmera Fusion de 48 MP (f/1.6) com estabilização óptica, além de câmera frontal TrueDepth de 12 MP. Design em alumínio com Ceramic Shield 2, Face ID, MagSafe 15W e conector USB-C.",
+    storages: ["256GB"],
+    colors: [
+      {
+        name: "Branco",
+        hex: "#F5F5F0",
+        image: iphone17eBTraseira,
+        gallery: [iphone17eB2, iphone17eB3],
+      },
+      {
+        name: "Preto",
+        hex: "#1C1C1E",
+        image: iphone17ePTraseira,
+        gallery: [iphone17eP2, iphone17eP3],
+      },
+      {
+        name: "Rose",
+        hex: "#E8B4B8",
+        image: iphone17eRTraseira,
+        gallery: [iphone17eR2, iphone17eR3],
+      },
+    ],
+    pricing: {
+      "256GB-Branco": {
+        originalPrice: "R$ 4.599,00",
+        installmentPrice: "R$ 381,66",
+        pixPrice: "R$ 4.021",
+      },
+      "256GB-Preto": {
+        originalPrice: "R$ 4.599,00",
+        installmentPrice: "R$ 381,66",
+        pixPrice: "R$ 4.021",
+      },
+      "256GB-Rose": {
+        originalPrice: "R$ 4.599,00",
+        installmentPrice: "R$ 381,66",
+        pixPrice: "R$ 4.021",
+      },
     },
   },
   {
@@ -434,9 +507,9 @@ export const iphonesNovosProducts: GroupedProduct[] = [
     // },
     pricing: {
       "128GB": {
-        originalPrice: "R$ 5.465,00",
-        installmentPrice: "R$ 475,78",
-        pixPrice: "R$ 4.995,00",
+        originalPrice: "R$ 5.179,00",
+        installmentPrice: "R$ 453,96",
+        pixPrice: "R$ 4.775",
       },
       // "256GB": indisponível no momento
     },
@@ -468,9 +541,9 @@ export const iphonesNovosProducts: GroupedProduct[] = [
     ],
     pricing: {
       "128GB": {
-        originalPrice: "R$ 4.550,00",
+        originalPrice: "R$ 4.559,00",
         installmentPrice: "R$ 395,00",
-        pixPrice: "R$ 4.158,00",
+        pixPrice: "R$ 4.153,00",
       },
     },
   },
