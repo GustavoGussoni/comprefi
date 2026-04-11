@@ -14,6 +14,9 @@ import ProductPage from "./pages/ProductPage";
 import Captura from "./pages/Captura";
 import Economia from "./pages/Economia";
 import Agradecimento from "./pages/Agradecimento";
+import TradeFunnel from "./pages/TradeFunnel";
+import CalculationPage from "./pages/CalculationPage";
+import ResultPage from "./pages/ResultPage";
 
 // Componente para detectar mudanças de rota e rolar para o topo
 const ScrollToTop = () => {
@@ -28,7 +31,14 @@ const ScrollToTop = () => {
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
   const location = useLocation();
-  const hideHeaderRoutes = ["/economia", "/teste-infalivel", "/agradecimento"];
+  const hideHeaderRoutes = [
+    "/economia",
+    "/teste-infalivel",
+    "/agradecimento",
+    "/trocar-de-iphone",
+    "/calculo-troca",
+    "/resultado-troca",
+  ];
   const shouldHideHeader = hideHeaderRoutes.includes(location.pathname);
 
   // || location.pathname.startsWith("/produto/");
@@ -144,6 +154,10 @@ function App() {
               </PageTransition>
             }
           />
+          {/* Rotas do Funil de Troca */}
+          <Route path="/trocar-de-iphone" element={<TradeFunnel />} />
+          <Route path="/calculo-troca" element={<CalculationPage />} />
+          <Route path="/resultado-troca" element={<ResultPage />} />
         </Routes>
       </Layout>
     </Router>
