@@ -4,10 +4,10 @@ import FAQ from "../components/FAQ";
 import WhyChooseCompreFi from "../components/WhyChooseCompreFi";
 
 // Imagens
-import desktopBanner from "../assets/images/IMG_2816_desktop.png";
-import mobileBanner from "../assets/images/IMG_2791.png";
+import desktopBanner from "../assets/images/IMG_2816_desktop.webp";
+import mobileBanner from "../assets/images/IMG_2791.webp";
 import locsBanner from "../assets/images/MAPA-BRASIL-LOCAIS-DE-ENTREGA.gif";
-import locsBannerStatic from "../assets/images/mapa-static.png";
+import locsBannerStatic from "../assets/images/mapa-static.webp";
 
 interface HomeProps {
   isMobile: boolean;

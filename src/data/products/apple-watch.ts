@@ -1,44 +1,44 @@
 import { GroupedProduct } from "../../types/product";
 
 // Apple Watch Ultra 3 Black Ocean
-import ultra3BlackOcean from "../../assets/new-images/watch/ultra-3-black/black-ocean-band/ultra-3-black-ocean.png";
-import ultra3BlackOcean1 from "../../assets/new-images/watch/ultra-3-black/black-ocean-band/ultra-3-black-ocean-1.png";
-import ultra3BlackOcean2 from "../../assets/new-images/watch/ultra-3-black/black-ocean-band/ultra-3-black-ocean-2.png";
+import ultra3BlackOcean from "../../assets/new-images/watch/ultra-3-black/black-ocean-band/ultra-3-black-ocean.webp";
+import ultra3BlackOcean1 from "../../assets/new-images/watch/ultra-3-black/black-ocean-band/ultra-3-black-ocean-1.webp";
+import ultra3BlackOcean2 from "../../assets/new-images/watch/ultra-3-black/black-ocean-band/ultra-3-black-ocean-2.webp";
 
 // Apple Watch Ultra 3 Natural Ocean
-import ultra3NaturalOcean from "../../assets/new-images/watch/ultra-3-natural/black-ocean-band/ultra-3-nat-ocean.png";
-import ultra3NaturalOcean1 from "../../assets/new-images/watch/ultra-3-natural/black-ocean-band/ultra-3-nat-ocean-1.png";
-import ultra3NaturalOcean2 from "../../assets/new-images/watch/ultra-3-black/black-ocean-band/ultra-3-black-ocean-2.png";
+import ultra3NaturalOcean from "../../assets/new-images/watch/ultra-3-natural/black-ocean-band/ultra-3-nat-ocean.webp";
+import ultra3NaturalOcean1 from "../../assets/new-images/watch/ultra-3-natural/black-ocean-band/ultra-3-nat-ocean-1.webp";
+import ultra3NaturalOcean2 from "../../assets/new-images/watch/ultra-3-black/black-ocean-band/ultra-3-black-ocean-2.webp";
 
 // Apple Watch Series 11 Black
-import series11BlackSport from "../../assets/new-images/watch/series-11/black-sport-band/series-11-black-sport.png";
-import series11BlackSport1 from "../../assets/new-images/watch/series-11/black-sport-band/series-11-black-sport-1.png";
-import series11BlackSport2 from "../../assets/new-images/watch/series-11/black-sport-band/series-11-black-sport-2.png";
+import series11BlackSport from "../../assets/new-images/watch/series-11/black-sport-band/series-11-black-sport.webp";
+import series11BlackSport1 from "../../assets/new-images/watch/series-11/black-sport-band/series-11-black-sport-1.webp";
+import series11BlackSport2 from "../../assets/new-images/watch/series-11/black-sport-band/series-11-black-sport-2.webp";
 
 // Apple Watch Series 11 Rose
-import series11RoseGoldSport from "../../assets/new-images/watch/series-11/rose-gold-sport-band/series-11-rose-gold-sport.png";
-import series11RoseGoldSport1 from "../../assets/new-images/watch/series-11/rose-gold-sport-band/series-11-rose-gold-sport-1.png";
-import series11RoseGoldSport2 from "../../assets/new-images/watch/series-11/rose-gold-sport-band/series-11-rose-gold-sport-2.png";
+import series11RoseGoldSport from "../../assets/new-images/watch/series-11/rose-gold-sport-band/series-11-rose-gold-sport.webp";
+import series11RoseGoldSport1 from "../../assets/new-images/watch/series-11/rose-gold-sport-band/series-11-rose-gold-sport-1.webp";
+import series11RoseGoldSport2 from "../../assets/new-images/watch/series-11/rose-gold-sport-band/series-11-rose-gold-sport-2.webp";
 
 // Apple Watch Series 11 Silver
-import series11SilverSport from "../../assets/new-images/watch/series-11/silver-sport-band/series-11-silver-sport.png";
-import series11SilverSport1 from "../../assets/new-images/watch/series-11/silver-sport-band/series-11-silver-sport-1.png";
-import series11SilverSport2 from "../../assets/new-images/watch/series-11/silver-sport-band/series-11-silver-sport-2.png";
+import series11SilverSport from "../../assets/new-images/watch/series-11/silver-sport-band/series-11-silver-sport.webp";
+import series11SilverSport1 from "../../assets/new-images/watch/series-11/silver-sport-band/series-11-silver-sport-1.webp";
+import series11SilverSport2 from "../../assets/new-images/watch/series-11/silver-sport-band/series-11-silver-sport-2.webp";
 
 // Apple Watch Series 11 Space Gray
-import series11SpaceGraySport from "../../assets/new-images/watch/series-11/space-gray-sport-band/series-11-space-gray-sport.png";
-import series11SpaceGraySport1 from "../../assets/new-images/watch/series-11/space-gray-sport-band/series-11-space-gray-sport-1.png";
-import series11SpaceGraySport2 from "../../assets/new-images/watch/series-11/space-gray-sport-band/series-11-space-gray-sport-2.png";
+import series11SpaceGraySport from "../../assets/new-images/watch/series-11/space-gray-sport-band/series-11-space-gray-sport.webp";
+import series11SpaceGraySport1 from "../../assets/new-images/watch/series-11/space-gray-sport-band/series-11-space-gray-sport-1.webp";
+import series11SpaceGraySport2 from "../../assets/new-images/watch/series-11/space-gray-sport-band/series-11-space-gray-sport-2.webp";
 
 // Apple Watch SE 3 Midnight
-import se3MidnightSport from "../../assets/new-images/watch/se-3/midnight-sport-band/se-3-midnight-sport.png";
-import se3MidnightSport1 from "../../assets/new-images/watch/se-3/midnight-sport-band/se-3-midnight-sport-1.png";
-import se3MidnightSport2 from "../../assets/new-images/watch/se-3/midnight-sport-band/se-3-midnight-sport-2.png";
+import se3MidnightSport from "../../assets/new-images/watch/se-3/midnight-sport-band/se-3-midnight-sport.webp";
+import se3MidnightSport1 from "../../assets/new-images/watch/se-3/midnight-sport-band/se-3-midnight-sport-1.webp";
+import se3MidnightSport2 from "../../assets/new-images/watch/se-3/midnight-sport-band/se-3-midnight-sport-2.webp";
 
 // Apple Watch SE 3 Starlight
-import se3StarlightSport from "../../assets/new-images/watch/se-3/starlight-sport-band/se-3-starlight-sport.png";
-import se3StarlightSport1 from "../../assets/new-images/watch/se-3/starlight-sport-band/se-3-starlight-sport-1.png";
-import se3StarlightSport2 from "../../assets/new-images/watch/se-3/starlight-sport-band/se-3-starlight-sport-2.png";
+import se3StarlightSport from "../../assets/new-images/watch/se-3/starlight-sport-band/se-3-starlight-sport.webp";
+import se3StarlightSport1 from "../../assets/new-images/watch/se-3/starlight-sport-band/se-3-starlight-sport-1.webp";
+import se3StarlightSport2 from "../../assets/new-images/watch/se-3/starlight-sport-band/se-3-starlight-sport-2.webp";
 
 // ============================================
 // Apple Watch Ultra 3

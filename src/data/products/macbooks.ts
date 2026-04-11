@@ -1,57 +1,57 @@
 import { GroupedProduct } from "../../types/product";
 
 // MacBook Pro Space Black
-import macProSpB from "../../assets/new-images/macbooks/pro-sp-b/macpro-sp-b.png";
-import macProSpB1 from "../../assets/new-images/macbooks/pro-sp-b/macpro-sp-b-1.png";
-import macProSpB2 from "../../assets/new-images/macbooks/pro-sp-b/macpro-sp-b-2.png";
-import macProSpB3 from "../../assets/new-images/macbooks/pro-sp-b/macpro-sp-b-3.png";
+import macProSpB from "../../assets/new-images/macbooks/pro-sp-b/macpro-sp-b.webp";
+import macProSpB1 from "../../assets/new-images/macbooks/pro-sp-b/macpro-sp-b-1.webp";
+import macProSpB2 from "../../assets/new-images/macbooks/pro-sp-b/macpro-sp-b-2.webp";
+import macProSpB3 from "../../assets/new-images/macbooks/pro-sp-b/macpro-sp-b-3.webp";
 
 // MacBook Pro Silver
-import macProSlv from "../../assets/new-images/macbooks/pro-slv/macpro-slv.png";
-import macProSlv1 from "../../assets/new-images/macbooks/pro-slv/macpro-slv-1.png";
-import macProSlv2 from "../../assets/new-images/macbooks/pro-slv/macpro-slv-2.png";
-import macProSlv3 from "../../assets/new-images/macbooks/pro-slv/macpro-slv-3.png";
+import macProSlv from "../../assets/new-images/macbooks/pro-slv/macpro-slv.webp";
+import macProSlv1 from "../../assets/new-images/macbooks/pro-slv/macpro-slv-1.webp";
+import macProSlv2 from "../../assets/new-images/macbooks/pro-slv/macpro-slv-2.webp";
+import macProSlv3 from "../../assets/new-images/macbooks/pro-slv/macpro-slv-3.webp";
 
 // Mac Studio Silver
-import macStudioSlv from "../../assets/new-images/macstudio/m4-max/macstudio-slv.png";
-import macStudioSlv1 from "../../assets/new-images/macstudio/m4-max/macstudio-slv-1.png";
-import macStudioSlv2 from "../../assets/new-images/macstudio/m4-max/macstudio-slv-2.png";
-import macStudioSlv3 from "../../assets/new-images/macstudio/m4-max/macstudio-slv-3.png";
+import macStudioSlv from "../../assets/new-images/macstudio/m4-max/macstudio-slv.webp";
+import macStudioSlv1 from "../../assets/new-images/macstudio/m4-max/macstudio-slv-1.webp";
+import macStudioSlv2 from "../../assets/new-images/macstudio/m4-max/macstudio-slv-2.webp";
+import macStudioSlv3 from "../../assets/new-images/macstudio/m4-max/macstudio-slv-3.webp";
 
 // Mac Mini Silver
-import macMiniSlv from "../../assets/new-images/macmini/m4/macmini-slv.png";
-import macMiniSlv1 from "../../assets/new-images/macmini/m4/macmini-slv-1.png";
-import macMiniSlv2 from "../../assets/new-images/macmini/m4/macmini-slv-2.png";
+import macMiniSlv from "../../assets/new-images/macmini/m4/macmini-slv.webp";
+import macMiniSlv1 from "../../assets/new-images/macmini/m4/macmini-slv-1.webp";
+import macMiniSlv2 from "../../assets/new-images/macmini/m4/macmini-slv-2.webp";
 
 // MacBook Air Silver
-import macAirSlv from "../../assets/new-images/macbooks/air-slv/macair-slv.png";
-import macAirSlv1 from "../../assets/new-images/macbooks/air-slv/macair-slv-1.png";
-import macAirSlv2 from "../../assets/new-images/macbooks/air-slv/macair-slv-2.png";
-import macAirSlv3 from "../../assets/new-images/macbooks/air-slv/macair-slv-3.png";
+import macAirSlv from "../../assets/new-images/macbooks/air-slv/macair-slv.webp";
+import macAirSlv1 from "../../assets/new-images/macbooks/air-slv/macair-slv-1.webp";
+import macAirSlv2 from "../../assets/new-images/macbooks/air-slv/macair-slv-2.webp";
+import macAirSlv3 from "../../assets/new-images/macbooks/air-slv/macair-slv-3.webp";
 
 // MacBook Air Midnight
-import macAirMid from "../../assets/new-images/macbooks/air-mdn/macair-mdn.png";
-import macAirMid1 from "../../assets/new-images/macbooks/air-mdn/macair-mdn-1.png";
-import macAirMid2 from "../../assets/new-images/macbooks/air-mdn/macair-mdn-2.png";
-import macAirMid3 from "../../assets/new-images/macbooks/air-mdn/macair-mdn-3.png";
+import macAirMid from "../../assets/new-images/macbooks/air-mdn/macair-mdn.webp";
+import macAirMid1 from "../../assets/new-images/macbooks/air-mdn/macair-mdn-1.webp";
+import macAirMid2 from "../../assets/new-images/macbooks/air-mdn/macair-mdn-2.webp";
+import macAirMid3 from "../../assets/new-images/macbooks/air-mdn/macair-mdn-3.webp";
 
 // MacBook Air Starlight
-import macAirSlght from "../../assets/new-images/macbooks/air-slght/macair-slght.png";
-import macAirSlght1 from "../../assets/new-images/macbooks/air-slght/macair-slght-1.png";
-import macAirSlght2 from "../../assets/new-images/macbooks/air-slght/macair-slght-2.png";
-import macAirSlght3 from "../../assets/new-images/macbooks/air-slght/macair-slght-3.png";
+import macAirSlght from "../../assets/new-images/macbooks/air-slght/macair-slght.webp";
+import macAirSlght1 from "../../assets/new-images/macbooks/air-slght/macair-slght-1.webp";
+import macAirSlght2 from "../../assets/new-images/macbooks/air-slght/macair-slght-2.webp";
+import macAirSlght3 from "../../assets/new-images/macbooks/air-slght/macair-slght-3.webp";
 
 // MacBook Air Skyblue
-import macAirSkyB from "../../assets/new-images/macbooks/air-skyb/macair-skyb.png";
-import macAirSkyB1 from "../../assets/new-images/macbooks/air-skyb/macair-skyb-1.png";
-import macAirSkyB2 from "../../assets/new-images/macbooks/air-skyb/macair-skyb-2.png";
-import macAirSkyB3 from "../../assets/new-images/macbooks/air-skyb/macair-skyb-3.png";
+import macAirSkyB from "../../assets/new-images/macbooks/air-skyb/macair-skyb.webp";
+import macAirSkyB1 from "../../assets/new-images/macbooks/air-skyb/macair-skyb-1.webp";
+import macAirSkyB2 from "../../assets/new-images/macbooks/air-skyb/macair-skyb-2.webp";
+import macAirSkyB3 from "../../assets/new-images/macbooks/air-skyb/macair-skyb-3.webp";
 
 // MacBook Air M3 Space Gray
-import macAirM3SpG from "../../assets/new-images/macbooks/air-m3-sp-g/macair-m3-sp-g.png";
-import macAirM3SpG1 from "../../assets/new-images/macbooks/air-m3-sp-g/macair-m3-sp-g-1.png";
-import macAirM3SpG2 from "../../assets/new-images/macbooks/air-m3-sp-g/macair-m3-sp-g-2.png";
-import macAirM3SpG3 from "../../assets/new-images/macbooks/air-m3-sp-g/macair-m3-sp-g-3.png";
+import macAirM3SpG from "../../assets/new-images/macbooks/air-m3-sp-g/macair-m3-sp-g.webp";
+import macAirM3SpG1 from "../../assets/new-images/macbooks/air-m3-sp-g/macair-m3-sp-g-1.webp";
+import macAirM3SpG2 from "../../assets/new-images/macbooks/air-m3-sp-g/macair-m3-sp-g-2.webp";
+import macAirM3SpG3 from "../../assets/new-images/macbooks/air-m3-sp-g/macair-m3-sp-g-3.webp";
 
 export const macbooksProducts: GroupedProduct[] = [
   {

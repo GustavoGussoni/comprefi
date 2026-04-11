@@ -6,83 +6,83 @@ import iphone17PML1 from "../../assets/new-images/iphones-novos/17-pm-l/iphone-1
 import iphone17PML3 from "../../assets/new-images/iphones-novos/17-pm-l/iphone-17-pro-finish-select-202509-6-9inch-cosmicorange_AV3.webp";
 
 // 17 Pro Max - Azul
-import iphone17PMATraseira from "../../assets/new-images/iphones-novos/17-pm-a/17-pm-azul-traseira.png";
-import iphone17PMA2 from "../../assets/new-images/iphones-novos/17-pm-a/17-pm-azul-2.png";
-import iphone17PMA3 from "../../assets/new-images/iphones-novos/17-pm-a/17-pm-azul-3.png";
+import iphone17PMATraseira from "../../assets/new-images/iphones-novos/17-pm-a/17-pm-azul-traseira.webp";
+import iphone17PMA2 from "../../assets/new-images/iphones-novos/17-pm-a/17-pm-azul-2.webp";
+import iphone17PMA3 from "../../assets/new-images/iphones-novos/17-pm-a/17-pm-azul-3.webp";
 
 // 17 Pro Max - Prata
-import iphone17PMPTraseira from "../../assets/new-images/iphones-novos/17-pm-p/17-pm-prata-traseira.png";
-import iphone17PMP2 from "../../assets/new-images/iphones-novos/17-pm-p/17-pm-prata-2.png";
-import iphone17PMP3 from "../../assets/new-images/iphones-novos/17-pm-p/17-pm-prata-3.png";
+import iphone17PMPTraseira from "../../assets/new-images/iphones-novos/17-pm-p/17-pm-prata-traseira.webp";
+import iphone17PMP2 from "../../assets/new-images/iphones-novos/17-pm-p/17-pm-prata-2.webp";
+import iphone17PMP3 from "../../assets/new-images/iphones-novos/17-pm-p/17-pm-prata-3.webp";
 
 // Air
-import iphoneAirPTraseira from "../../assets/new-images/iphones-novos/17-air/17-air-preto-traseira.png";
-import iphoneAirP2 from "../../assets/new-images/iphones-novos/17-air/17-air-preto-2.png";
-import iphoneAirP3 from "../../assets/new-images/iphones-novos/17-air/17-air-preto-3.png";
-import iphoneAirBTraseira from "../../assets/new-images/iphones-novos/17-air/17-air-branco-traseira.png";
-import iphoneAirB2 from "../../assets/new-images/iphones-novos/17-air/17-air-branco-2.png";
-import iphoneAirB3 from "../../assets/new-images/iphones-novos/17-air/17-air-branco-3.png";
-import iphoneAirDTraseira from "../../assets/new-images/iphones-novos/17-air/17-air-dourado-traseira.png";
-import iphoneAirD2 from "../../assets/new-images/iphones-novos/17-air/17-air-dourado-2.png";
-import iphoneAirD3 from "../../assets/new-images/iphones-novos/17-air/17-air-dourado-3.png";
-import iphoneAirATraseira from "../../assets/new-images/iphones-novos/17-air/17-air-azul-traseira.png";
-import iphoneAirA2 from "../../assets/new-images/iphones-novos/17-air/17-air-azul-2.png";
-import iphoneAirA3 from "../../assets/new-images/iphones-novos/17-air/17-air-azul-3.png";
+import iphoneAirPTraseira from "../../assets/new-images/iphones-novos/17-air/17-air-preto-traseira.webp";
+import iphoneAirP2 from "../../assets/new-images/iphones-novos/17-air/17-air-preto-2.webp";
+import iphoneAirP3 from "../../assets/new-images/iphones-novos/17-air/17-air-preto-3.webp";
+import iphoneAirBTraseira from "../../assets/new-images/iphones-novos/17-air/17-air-branco-traseira.webp";
+import iphoneAirB2 from "../../assets/new-images/iphones-novos/17-air/17-air-branco-2.webp";
+import iphoneAirB3 from "../../assets/new-images/iphones-novos/17-air/17-air-branco-3.webp";
+import iphoneAirDTraseira from "../../assets/new-images/iphones-novos/17-air/17-air-dourado-traseira.webp";
+import iphoneAirD2 from "../../assets/new-images/iphones-novos/17-air/17-air-dourado-2.webp";
+import iphoneAirD3 from "../../assets/new-images/iphones-novos/17-air/17-air-dourado-3.webp";
+import iphoneAirATraseira from "../../assets/new-images/iphones-novos/17-air/17-air-azul-traseira.webp";
+import iphoneAirA2 from "../../assets/new-images/iphones-novos/17-air/17-air-azul-2.webp";
+import iphoneAirA3 from "../../assets/new-images/iphones-novos/17-air/17-air-azul-3.webp";
 
 // 17
-import iphone17PTraseira from "../../assets/new-images/iphones-novos/17/17-preto-traseira.png";
-import iphone17P2 from "../../assets/new-images/iphones-novos/17/17-preto-2.png";
-import iphone17P3 from "../../assets/new-images/iphones-novos/17/17-preto-3.png";
-import iphone17BTraseiraNovo from "../../assets/new-images/iphones-novos/17/17-branco-traseira.png";
-import iphone17B2 from "../../assets/new-images/iphones-novos/17/17-branco-2.png";
-import iphone17B3 from "../../assets/new-images/iphones-novos/17/17-branco-3.png";
-import iphone17ATraseira from "../../assets/new-images/iphones-novos/17/17-azul-traseira.png";
-import iphone17A2 from "../../assets/new-images/iphones-novos/17/17-azul-2.png";
-import iphone17A3 from "../../assets/new-images/iphones-novos/17/17-azul-3.png";
-import iphone17STraseira from "../../assets/new-images/iphones-novos/17/17-salvia-traseira.png";
-import iphone17S2 from "../../assets/new-images/iphones-novos/17/17-salvia-2.png";
-import iphone17S3 from "../../assets/new-images/iphones-novos/17/17-salvia-3.png";
-import iphone17LTraseira from "../../assets/new-images/iphones-novos/17/17-lavanda-traseira.png";
-import iphone17L2 from "../../assets/new-images/iphones-novos/17/17-lavanda-2.png";
-import iphone17L3 from "../../assets/new-images/iphones-novos/17/17-lavanda-3.png";
+import iphone17PTraseira from "../../assets/new-images/iphones-novos/17/17-preto-traseira.webp";
+import iphone17P2 from "../../assets/new-images/iphones-novos/17/17-preto-2.webp";
+import iphone17P3 from "../../assets/new-images/iphones-novos/17/17-preto-3.webp";
+import iphone17BTraseiraNovo from "../../assets/new-images/iphones-novos/17/17-branco-traseira.webp";
+import iphone17B2 from "../../assets/new-images/iphones-novos/17/17-branco-2.webp";
+import iphone17B3 from "../../assets/new-images/iphones-novos/17/17-branco-3.webp";
+import iphone17ATraseira from "../../assets/new-images/iphones-novos/17/17-azul-traseira.webp";
+import iphone17A2 from "../../assets/new-images/iphones-novos/17/17-azul-2.webp";
+import iphone17A3 from "../../assets/new-images/iphones-novos/17/17-azul-3.webp";
+import iphone17STraseira from "../../assets/new-images/iphones-novos/17/17-salvia-traseira.webp";
+import iphone17S2 from "../../assets/new-images/iphones-novos/17/17-salvia-2.webp";
+import iphone17S3 from "../../assets/new-images/iphones-novos/17/17-salvia-3.webp";
+import iphone17LTraseira from "../../assets/new-images/iphones-novos/17/17-lavanda-traseira.webp";
+import iphone17L2 from "../../assets/new-images/iphones-novos/17/17-lavanda-2.webp";
+import iphone17L3 from "../../assets/new-images/iphones-novos/17/17-lavanda-3.webp";
 
 // 17e
-import iphone17ePTraseira from "../../assets/new-images/iphones-novos/17-e/17-e-preto-traseira.png";
-import iphone17eP2 from "../../assets/new-images/iphones-novos/17-e/17-e-preto-2.png";
-import iphone17eP3 from "../../assets/new-images/iphones-novos/17-e/17-e-preto-3.png";
-import iphone17eBTraseira from "../../assets/new-images/iphones-novos/17-e/17-e-branco-traseira.png";
-import iphone17eB2 from "../../assets/new-images/iphones-novos/17-e/17-e-branco-2.png";
-import iphone17eB3 from "../../assets/new-images/iphones-novos/17-e/17-e-branco-3.png";
-import iphone17eRTraseira from "../../assets/new-images/iphones-novos/17-e/17-e-rosa-traseira.png";
-import iphone17eR2 from "../../assets/new-images/iphones-novos/17-e/17-e-rosa-2.png";
-import iphone17eR3 from "../../assets/new-images/iphones-novos/17-e/17-e-rosa-3.png";
+import iphone17ePTraseira from "../../assets/new-images/iphones-novos/17-e/17-e-preto-traseira.webp";
+import iphone17eP2 from "../../assets/new-images/iphones-novos/17-e/17-e-preto-2.webp";
+import iphone17eP3 from "../../assets/new-images/iphones-novos/17-e/17-e-preto-3.webp";
+import iphone17eBTraseira from "../../assets/new-images/iphones-novos/17-e/17-e-branco-traseira.webp";
+import iphone17eB2 from "../../assets/new-images/iphones-novos/17-e/17-e-branco-2.webp";
+import iphone17eB3 from "../../assets/new-images/iphones-novos/17-e/17-e-branco-3.webp";
+import iphone17eRTraseira from "../../assets/new-images/iphones-novos/17-e/17-e-rosa-traseira.webp";
+import iphone17eR2 from "../../assets/new-images/iphones-novos/17-e/17-e-rosa-2.webp";
+import iphone17eR3 from "../../assets/new-images/iphones-novos/17-e/17-e-rosa-3.webp";
 
 // 16
-import iphone16PTraseiraNovo from "../../assets/new-images/iphones-novos/16/16-preto-traseira.png";
-import iphone16P2 from "../../assets/new-images/iphones-novos/16/16-preto-2.png";
-import iphone16P3 from "../../assets/new-images/iphones-novos/16/16-preto-3.png";
-import iphone16P4 from "../../assets/new-images/iphones-novos/16/16-preto-4.png";
-import iphone16BTraseiraNovo from "../../assets/new-images/iphones-novos/16/16-branco-traseira.png";
-import iphone16B2 from "../../assets/new-images/iphones-novos/16/16-branco-2.png";
-import iphone16B3 from "../../assets/new-images/iphones-novos/16/16-branco-3.png";
-import iphone16B4 from "../../assets/new-images/iphones-novos/16/16-branco-4.png";
-import iphone16RTraseira from "../../assets/new-images/iphones-novos/16/16-rosa-traseira.png";
-import iphone16R2 from "../../assets/new-images/iphones-novos/16/16-rosa-2.png";
-import iphone16R3 from "../../assets/new-images/iphones-novos/16/16-rosa-3.png";
-import iphone16R4 from "../../assets/new-images/iphones-novos/16/16-rosa-4.png";
-import iphone16UTraseira from "../../assets/new-images/iphones-novos/16/16-ultramarino-traseira.png";
-import iphone16U2 from "../../assets/new-images/iphones-novos/16/16-ultramarino-2.png";
-import iphone16U3 from "../../assets/new-images/iphones-novos/16/16-ultramarino-3.png";
-import iphone16U4 from "../../assets/new-images/iphones-novos/16/16-ultramarino-4.png";
-import iphone16VTraseiraNovo from "../../assets/new-images/iphones-novos/16/16-verde-traseira.png";
-import iphone16V2 from "../../assets/new-images/iphones-novos/16/16-verde-2.png";
-import iphone16V3 from "../../assets/new-images/iphones-novos/16/16-verde-3.png";
-import iphone16V4 from "../../assets/new-images/iphones-novos/16/16-verde-4.png";
+import iphone16PTraseiraNovo from "../../assets/new-images/iphones-novos/16/16-preto-traseira.webp";
+import iphone16P2 from "../../assets/new-images/iphones-novos/16/16-preto-2.webp";
+import iphone16P3 from "../../assets/new-images/iphones-novos/16/16-preto-3.webp";
+import iphone16P4 from "../../assets/new-images/iphones-novos/16/16-preto-4.webp";
+import iphone16BTraseiraNovo from "../../assets/new-images/iphones-novos/16/16-branco-traseira.webp";
+import iphone16B2 from "../../assets/new-images/iphones-novos/16/16-branco-2.webp";
+import iphone16B3 from "../../assets/new-images/iphones-novos/16/16-branco-3.webp";
+import iphone16B4 from "../../assets/new-images/iphones-novos/16/16-branco-4.webp";
+import iphone16RTraseira from "../../assets/new-images/iphones-novos/16/16-rosa-traseira.webp";
+import iphone16R2 from "../../assets/new-images/iphones-novos/16/16-rosa-2.webp";
+import iphone16R3 from "../../assets/new-images/iphones-novos/16/16-rosa-3.webp";
+import iphone16R4 from "../../assets/new-images/iphones-novos/16/16-rosa-4.webp";
+import iphone16UTraseira from "../../assets/new-images/iphones-novos/16/16-ultramarino-traseira.webp";
+import iphone16U2 from "../../assets/new-images/iphones-novos/16/16-ultramarino-2.webp";
+import iphone16U3 from "../../assets/new-images/iphones-novos/16/16-ultramarino-3.webp";
+import iphone16U4 from "../../assets/new-images/iphones-novos/16/16-ultramarino-4.webp";
+import iphone16VTraseiraNovo from "../../assets/new-images/iphones-novos/16/16-verde-traseira.webp";
+import iphone16V2 from "../../assets/new-images/iphones-novos/16/16-verde-2.webp";
+import iphone16V3 from "../../assets/new-images/iphones-novos/16/16-verde-3.webp";
+import iphone16V4 from "../../assets/new-images/iphones-novos/16/16-verde-4.webp";
 
 // 15
-import iphone15PTraseiraNovo from "../../assets/new-images/iphones-novos/15/15-preto-traseira.png";
-import iphone15ATraseira from "../../assets/new-images/iphones-novos/15/15-azul-traseira.png";
-// import iphone15RTraseira from "../../assets/new-images/iphones-novos/15/15-rosa-traseira.png";
+import iphone15PTraseiraNovo from "../../assets/new-images/iphones-novos/15/15-preto-traseira.webp";
+import iphone15ATraseira from "../../assets/new-images/iphones-novos/15/15-azul-traseira.webp";
+// import iphone15RTraseira from "../../assets/new-images/iphones-novos/15/15-rosa-traseira.webp";
 
 export const iphonesNovosProducts: GroupedProduct[] = [
   {

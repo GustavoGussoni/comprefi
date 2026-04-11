@@ -1,54 +1,54 @@
 import { GroupedProduct } from "../../types/product";
 
 // iPad Pro Space Black
-import iPadProSpB from "../../assets/new-images/ipad-pro/m5-space-black/ipad-pro-m5-space-b.png";
-import iPadProSpB1 from "../../assets/new-images/ipad-pro/m5-space-black/ipad-pro-m5-space-b-1.png";
-import iPadProSpB2 from "../../assets/new-images/ipad-pro/m5-space-black/ipad-pro-m5-space-b-2.png";
+import iPadProSpB from "../../assets/new-images/ipad-pro/m5-space-black/ipad-pro-m5-space-b.webp";
+import iPadProSpB1 from "../../assets/new-images/ipad-pro/m5-space-black/ipad-pro-m5-space-b-1.webp";
+import iPadProSpB2 from "../../assets/new-images/ipad-pro/m5-space-black/ipad-pro-m5-space-b-2.webp";
 
 // iPad Pro Silver
-import iPadProSilver from "../../assets/new-images/ipad-pro/m5-silver/ipad-pro-m5-silver.png";
-import iPadProSilver1 from "../../assets/new-images/ipad-pro/m5-silver/ipad-pro-m5-silver-1.png";
-import iPadProSilver2 from "../../assets/new-images/ipad-pro/m5-silver/ipad-pro-m5-silver-2.png";
+import iPadProSilver from "../../assets/new-images/ipad-pro/m5-silver/ipad-pro-m5-silver.webp";
+import iPadProSilver1 from "../../assets/new-images/ipad-pro/m5-silver/ipad-pro-m5-silver-1.webp";
+import iPadProSilver2 from "../../assets/new-images/ipad-pro/m5-silver/ipad-pro-m5-silver-2.webp";
 
 // iPad Air Space Gray
-import iPadAirSpG from "../../assets/new-images/ipad-air/m4-space-gray/ipad-air-m4-space-g.png";
-import iPadAirSpG1 from "../../assets/new-images/ipad-air/m4-space-gray/ipad-air-m4-space-g-1.png";
-import iPadAirSpG2 from "../../assets/new-images/ipad-air/m4-space-gray/ipad-air-m4-space-g-2.png";
+import iPadAirSpG from "../../assets/new-images/ipad-air/m4-space-gray/ipad-air-m4-space-g.webp";
+import iPadAirSpG1 from "../../assets/new-images/ipad-air/m4-space-gray/ipad-air-m4-space-g-1.webp";
+import iPadAirSpG2 from "../../assets/new-images/ipad-air/m4-space-gray/ipad-air-m4-space-g-2.webp";
 
 // iPad Air Starlight
-import iPadAirStarlight from "../../assets/new-images/ipad-air/m4-starlight/ipad-air-m4-starlight.png";
-import iPadAirstarlight1 from "../../assets/new-images/ipad-air/m4-starlight/ipad-air-m4-starlight-1.png";
-import iPadAirStarlight2 from "../../assets/new-images/ipad-air/m4-starlight/ipad-air-m4-starlight-2.png";
+import iPadAirStarlight from "../../assets/new-images/ipad-air/m4-starlight/ipad-air-m4-starlight.webp";
+import iPadAirstarlight1 from "../../assets/new-images/ipad-air/m4-starlight/ipad-air-m4-starlight-1.webp";
+import iPadAirStarlight2 from "../../assets/new-images/ipad-air/m4-starlight/ipad-air-m4-starlight-2.webp";
 
 // iPad Air Blue
-import iPadAirBlue from "../../assets/new-images/ipad-air/m4-blue/ipad-air-m4-blue.png";
-import iPadAirBlue1 from "../../assets/new-images/ipad-air/m4-blue/ipad-air-m4-blue-1.png";
-import iPadAirBlue2 from "../../assets/new-images/ipad-air/m4-blue/ipad-air-m4-blue-2.png";
+import iPadAirBlue from "../../assets/new-images/ipad-air/m4-blue/ipad-air-m4-blue.webp";
+import iPadAirBlue1 from "../../assets/new-images/ipad-air/m4-blue/ipad-air-m4-blue-1.webp";
+import iPadAirBlue2 from "../../assets/new-images/ipad-air/m4-blue/ipad-air-m4-blue-2.webp";
 
 // iPad Air Purple
-import iPadAirPurple from "../../assets/new-images/ipad-air/m4-purple/ipad-air-m4-purple.png";
-import iPadAirPurple1 from "../../assets/new-images/ipad-air/m4-purple/ipad-air-m4-purple-1.png";
-import iPadAirPurple2 from "../../assets/new-images/ipad-air/m4-purple/ipad-air-m4-purple-2.png";
+import iPadAirPurple from "../../assets/new-images/ipad-air/m4-purple/ipad-air-m4-purple.webp";
+import iPadAirPurple1 from "../../assets/new-images/ipad-air/m4-purple/ipad-air-m4-purple-1.webp";
+import iPadAirPurple2 from "../../assets/new-images/ipad-air/m4-purple/ipad-air-m4-purple-2.webp";
 
 // iPad A16 Silver
-import iPadA16Silver from "../../assets/new-images/ipad/a16-silver/ipad-a16-slv.png";
-import iPadA16Silver1 from "../../assets/new-images/ipad/a16-silver/ipad-a16-slv-1.png";
-import iPadA16Silver2 from "../../assets/new-images/ipad/a16-silver/ipad-a16-slv-2.png";
+import iPadA16Silver from "../../assets/new-images/ipad/a16-silver/ipad-a16-slv.webp";
+import iPadA16Silver1 from "../../assets/new-images/ipad/a16-silver/ipad-a16-slv-1.webp";
+import iPadA16Silver2 from "../../assets/new-images/ipad/a16-silver/ipad-a16-slv-2.webp";
 
 // iPad A16 Blue
-import iPadA16Blue from "../../assets/new-images/ipad/a16-blue/ipad-a16-blue.png";
-import iPadA16Blue1 from "../../assets/new-images/ipad/a16-blue/ipad-a16-blue-1.png";
-import iPadA16Blue2 from "../../assets/new-images/ipad/a16-blue/ipad-a16-blue-2.png";
+import iPadA16Blue from "../../assets/new-images/ipad/a16-blue/ipad-a16-blue.webp";
+import iPadA16Blue1 from "../../assets/new-images/ipad/a16-blue/ipad-a16-blue-1.webp";
+import iPadA16Blue2 from "../../assets/new-images/ipad/a16-blue/ipad-a16-blue-2.webp";
 
 // iPad A16 Pink
-import iPadA16Pink from "../../assets/new-images/ipad/a16-pink/ipad-a16-pink.png";
-import iPadA16Pink1 from "../../assets/new-images/ipad/a16-pink/ipad-a16-pink-1.png";
-import iPadA16Pink2 from "../../assets/new-images/ipad/a16-pink/ipad-a16-pink-2.png";
+import iPadA16Pink from "../../assets/new-images/ipad/a16-pink/ipad-a16-pink.webp";
+import iPadA16Pink1 from "../../assets/new-images/ipad/a16-pink/ipad-a16-pink-1.webp";
+import iPadA16Pink2 from "../../assets/new-images/ipad/a16-pink/ipad-a16-pink-2.webp";
 
 // iPad A16 Yellow
-import iPadA16Yellow from "../../assets/new-images/ipad/a16-yellow/ipad-a16-yellow.png";
-import iPadA16Yellow1 from "../../assets/new-images/ipad/a16-yellow/ipad-a16-yellow-1.png";
-import iPadA16Yellow2 from "../../assets/new-images/ipad/a16-yellow/ipad-a16-yellow-2.png";
+import iPadA16Yellow from "../../assets/new-images/ipad/a16-yellow/ipad-a16-yellow.webp";
+import iPadA16Yellow1 from "../../assets/new-images/ipad/a16-yellow/ipad-a16-yellow-1.webp";
+import iPadA16Yellow2 from "../../assets/new-images/ipad/a16-yellow/ipad-a16-yellow-2.webp";
 
 // ============================================
 // iPad Pro M5

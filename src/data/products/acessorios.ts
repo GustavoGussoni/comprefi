@@ -1,122 +1,122 @@
 import { GroupedProduct } from "../../types/product";
 
 // AirPods Max
-import airPodsMaxBlue from "../../assets/new-images/acessórios/airpods-max/airpods-max-blue.png";
-import airPodsMaxPurple from "../../assets/new-images/acessórios/airpods-max/airpods-max-purple.png";
-import airPodsMaxMidnight from "../../assets/new-images/acessórios/airpods-max/airpods-max-midnight.png";
-import airPodsMaxStarlight from "../../assets/new-images/acessórios/airpods-max/airpods-max-starlight.png";
-import airPodsMaxOrange from "../../assets/new-images/acessórios/airpods-max/airpods-max-orange.png";
+import airPodsMaxBlue from "../../assets/new-images/acessórios/airpods-max/airpods-max-blue.webp";
+import airPodsMaxPurple from "../../assets/new-images/acessórios/airpods-max/airpods-max-purple.webp";
+import airPodsMaxMidnight from "../../assets/new-images/acessórios/airpods-max/airpods-max-midnight.webp";
+import airPodsMaxStarlight from "../../assets/new-images/acessórios/airpods-max/airpods-max-starlight.webp";
+import airPodsMaxOrange from "../../assets/new-images/acessórios/airpods-max/airpods-max-orange.webp";
 
 // AirPods 4
-import airPods4Anc from "../../assets/new-images/acessórios/airpods-4/airpods-4-anc.png";
-import airPods4 from "../../assets/new-images/acessórios/airpods-4/airpods-4.png";
+import airPods4Anc from "../../assets/new-images/acessórios/airpods-4/airpods-4-anc.webp";
+import airPods4 from "../../assets/new-images/acessórios/airpods-4/airpods-4.webp";
 
 // AirPods Pro 3
-import airPodsPro3 from "../../assets/new-images/acessórios/airpods-pro-3/airpods-pro-3.png";
+import airPodsPro3 from "../../assets/new-images/acessórios/airpods-pro-3/airpods-pro-3.webp";
 
 // Airtag
-import airTag from "../../assets/new-images/acessórios/airtag/airtag-1.png";
-import airTags from "../../assets/new-images/acessórios/airtag/airtag-4.png";
+import airTag from "../../assets/new-images/acessórios/airtag/airtag-1.webp";
+import airTags from "../../assets/new-images/acessórios/airtag/airtag-4.webp";
 
 // Cabo USB-C 1m
-import caboUsbc1m from "../../assets/new-images/acessórios/cabo-usbc-1m/cabo-cc.png";
-import caboUsbc1m1 from "../../assets/new-images/acessórios/cabo-usbc-1m/cabo-cc-1.png";
+import caboUsbc1m from "../../assets/new-images/acessórios/cabo-usbc-1m/cabo-cc.webp";
+import caboUsbc1m1 from "../../assets/new-images/acessórios/cabo-usbc-1m/cabo-cc-1.webp";
 
 // Cabo USB-C 2m
-import caboUsbc2m from "../../assets/new-images/acessórios/cabo-usbc-2m/cabo-cc-2m.png";
-import caboUsbc2m1 from "../../assets/new-images/acessórios/cabo-usbc-2m/cabo-cc-2m-1.png";
+import caboUsbc2m from "../../assets/new-images/acessórios/cabo-usbc-2m/cabo-cc-2m.webp";
+import caboUsbc2m1 from "../../assets/new-images/acessórios/cabo-usbc-2m/cabo-cc-2m-1.webp";
 
 // Cabo Lightning 1m
-import caboLightning1m from "../../assets/new-images/acessórios/cabo-usbc-light-1m/cabo-cl.png";
-import caboLightning1m1 from "../../assets/new-images/acessórios/cabo-usbc-light-1m/cabo-cl-1.png";
-import caboLightning1m2 from "../../assets/new-images/acessórios/cabo-usbc-light-1m/cabo-cl-2.png";
+import caboLightning1m from "../../assets/new-images/acessórios/cabo-usbc-light-1m/cabo-cl.webp";
+import caboLightning1m1 from "../../assets/new-images/acessórios/cabo-usbc-light-1m/cabo-cl-1.webp";
+import caboLightning1m2 from "../../assets/new-images/acessórios/cabo-usbc-light-1m/cabo-cl-2.webp";
 
 // Fonte 20w
-import fonteTurbo20w from "../../assets/new-images/acessórios/fonte-turbo-20w/fonte-turbo-20w.png";
-import fonteTurbo20w1 from "../../assets/new-images/acessórios/fonte-turbo-20w/fonte-turbo-20w-1.png";
-import fonteTurbo20w2 from "../../assets/new-images/acessórios/fonte-turbo-20w/fonte-turbo-20w-2.png";
+import fonteTurbo20w from "../../assets/new-images/acessórios/fonte-turbo-20w/fonte-turbo-20w.webp";
+import fonteTurbo20w1 from "../../assets/new-images/acessórios/fonte-turbo-20w/fonte-turbo-20w-1.webp";
+import fonteTurbo20w2 from "../../assets/new-images/acessórios/fonte-turbo-20w/fonte-turbo-20w-2.webp";
 
 // Fonte 35w
-import fonteTurbo35w from "../../assets/new-images/acessórios/fonte-turbo-35w/fonte-turbo-35w.png";
-import fonteTurbo35w1 from "../../assets/new-images/acessórios/fonte-turbo-35w/fonte-turbo-35w-1.png";
-import fonteTurbo35w2 from "../../assets/new-images/acessórios/fonte-turbo-35w/fonte-turbo-35w-2.png";
+import fonteTurbo35w from "../../assets/new-images/acessórios/fonte-turbo-35w/fonte-turbo-35w.webp";
+import fonteTurbo35w1 from "../../assets/new-images/acessórios/fonte-turbo-35w/fonte-turbo-35w-1.webp";
+import fonteTurbo35w2 from "../../assets/new-images/acessórios/fonte-turbo-35w/fonte-turbo-35w-2.webp";
 
 // MagSafe
-import magSafe from "../../assets/new-images/acessórios/mag-safe/mag-safe.png";
-import magSafe1 from "../../assets/new-images/acessórios/mag-safe/mag-safe-1.png";
-import magSafe2 from "../../assets/new-images/acessórios/mag-safe/mag-safe-2.png";
-import magSafe3 from "../../assets/new-images/acessórios/mag-safe/mag-safe-3.png";
+import magSafe from "../../assets/new-images/acessórios/mag-safe/mag-safe.webp";
+import magSafe1 from "../../assets/new-images/acessórios/mag-safe/mag-safe-1.webp";
+import magSafe2 from "../../assets/new-images/acessórios/mag-safe/mag-safe-2.webp";
+import magSafe3 from "../../assets/new-images/acessórios/mag-safe/mag-safe-3.webp";
 
 // Magic Keyboard iPad Pro m5 11" Black
-import magicKeyIpd11m5Black from "../../assets/new-images/acessórios/magic-keyboard-ipd-pro-m5-11-pol/black/magic-keyb-ipd-m5-11-black.png";
-import magicKeyIpd11m5Black1 from "../../assets/new-images/acessórios/magic-keyboard-ipd-pro-m5-11-pol/black/magic-keyb-ipd-m5-11-black-1.png";
-import magicKeyIpd11m5Black2 from "../../assets/new-images/acessórios/magic-keyboard-ipd-pro-m5-11-pol/black/magic-keyb-ipd-m5-11-black-2.png";
-import magicKeyIpd11m5Black3 from "../../assets/new-images/acessórios/magic-keyboard-ipd-pro-m5-11-pol/black/magic-keyb-ipd-m5-11-black-3.png";
-import magicKeyIpd11m5Black4 from "../../assets/new-images/acessórios/magic-keyboard-ipd-pro-m5-11-pol/black/magic-keyb-ipd-m5-11-black-4.png";
+import magicKeyIpd11m5Black from "../../assets/new-images/acessórios/magic-keyboard-ipd-pro-m5-11-pol/black/magic-keyb-ipd-m5-11-black.webp";
+import magicKeyIpd11m5Black1 from "../../assets/new-images/acessórios/magic-keyboard-ipd-pro-m5-11-pol/black/magic-keyb-ipd-m5-11-black-1.webp";
+import magicKeyIpd11m5Black2 from "../../assets/new-images/acessórios/magic-keyboard-ipd-pro-m5-11-pol/black/magic-keyb-ipd-m5-11-black-2.webp";
+import magicKeyIpd11m5Black3 from "../../assets/new-images/acessórios/magic-keyboard-ipd-pro-m5-11-pol/black/magic-keyb-ipd-m5-11-black-3.webp";
+import magicKeyIpd11m5Black4 from "../../assets/new-images/acessórios/magic-keyboard-ipd-pro-m5-11-pol/black/magic-keyb-ipd-m5-11-black-4.webp";
 
 // Magic Keyboard iPad Pro m5 11" White
-import magicKeyIpd11m5White from "../../assets/new-images/acessórios/magic-keyboard-ipd-pro-m5-11-pol/white/magic-keyb-ipd-m5-11-white.png";
-import magicKeyIpd11m5White1 from "../../assets/new-images/acessórios/magic-keyboard-ipd-pro-m5-11-pol/white/magic-keyb-ipd-m5-11-white-1.png";
-import magicKeyIpd11m5White2 from "../../assets/new-images/acessórios/magic-keyboard-ipd-pro-m5-11-pol/white/magic-keyb-ipd-m5-11-white-2.png";
-import magicKeyIpd11m5White3 from "../../assets/new-images/acessórios/magic-keyboard-ipd-pro-m5-11-pol/white/magic-keyb-ipd-m5-11-white-3.png";
-import magicKeyIpd11m5White4 from "../../assets/new-images/acessórios/magic-keyboard-ipd-pro-m5-11-pol/white/magic-keyb-ipd-m5-11-white-4.png";
+import magicKeyIpd11m5White from "../../assets/new-images/acessórios/magic-keyboard-ipd-pro-m5-11-pol/white/magic-keyb-ipd-m5-11-white.webp";
+import magicKeyIpd11m5White1 from "../../assets/new-images/acessórios/magic-keyboard-ipd-pro-m5-11-pol/white/magic-keyb-ipd-m5-11-white-1.webp";
+import magicKeyIpd11m5White2 from "../../assets/new-images/acessórios/magic-keyboard-ipd-pro-m5-11-pol/white/magic-keyb-ipd-m5-11-white-2.webp";
+import magicKeyIpd11m5White3 from "../../assets/new-images/acessórios/magic-keyboard-ipd-pro-m5-11-pol/white/magic-keyb-ipd-m5-11-white-3.webp";
+import magicKeyIpd11m5White4 from "../../assets/new-images/acessórios/magic-keyboard-ipd-pro-m5-11-pol/white/magic-keyb-ipd-m5-11-white-4.webp";
 
 // Magic Keyboard iPad Pro m5 13" Black
-import magicKeyIpd13m5Black from "../../assets/new-images/acessórios/magic-keyboard-ipd-pro-m5-13-pol/black/magic-keyb-ipd-m5-13-black.png";
-import magicKeyIpd13m5Black1 from "../../assets/new-images/acessórios/magic-keyboard-ipd-pro-m5-13-pol/black/magic-keyb-ipd-m5-13-black-1.png";
-import magicKeyIpd13m5Black2 from "../../assets/new-images/acessórios/magic-keyboard-ipd-pro-m5-13-pol/black/magic-keyb-ipd-m5-13-black-2.png";
-import magicKeyIpd13m5Black3 from "../../assets/new-images/acessórios/magic-keyboard-ipd-pro-m5-13-pol/black/magic-keyb-ipd-m5-13-black-3.png";
-import magicKeyIpd13m5Black4 from "../../assets/new-images/acessórios/magic-keyboard-ipd-pro-m5-13-pol/black/magic-keyb-ipd-m5-13-black-4.png";
+import magicKeyIpd13m5Black from "../../assets/new-images/acessórios/magic-keyboard-ipd-pro-m5-13-pol/black/magic-keyb-ipd-m5-13-black.webp";
+import magicKeyIpd13m5Black1 from "../../assets/new-images/acessórios/magic-keyboard-ipd-pro-m5-13-pol/black/magic-keyb-ipd-m5-13-black-1.webp";
+import magicKeyIpd13m5Black2 from "../../assets/new-images/acessórios/magic-keyboard-ipd-pro-m5-13-pol/black/magic-keyb-ipd-m5-13-black-2.webp";
+import magicKeyIpd13m5Black3 from "../../assets/new-images/acessórios/magic-keyboard-ipd-pro-m5-13-pol/black/magic-keyb-ipd-m5-13-black-3.webp";
+import magicKeyIpd13m5Black4 from "../../assets/new-images/acessórios/magic-keyboard-ipd-pro-m5-13-pol/black/magic-keyb-ipd-m5-13-black-4.webp";
 
 // Magic Keyboard iPad Pro m5 13" White
-import magicKeyIpd13m5White from "../../assets/new-images/acessórios/magic-keyboard-ipd-pro-m5-13-pol/white/magic-keyb-ipd-m5-13-white.png";
-import magicKeyIpd13m5White1 from "../../assets/new-images/acessórios/magic-keyboard-ipd-pro-m5-13-pol/white/magic-keyb-ipd-m5-13-white-1.png";
-import magicKeyIpd13m5White2 from "../../assets/new-images/acessórios/magic-keyboard-ipd-pro-m5-13-pol/white/magic-keyb-ipd-m5-13-white-2.png";
-import magicKeyIpd13m5White3 from "../../assets/new-images/acessórios/magic-keyboard-ipd-pro-m5-13-pol/white/magic-keyb-ipd-m5-13-white-3.png";
-import magicKeyIpd13m5White4 from "../../assets/new-images/acessórios/magic-keyboard-ipd-pro-m5-13-pol/white/magic-keyb-ipd-m5-13-white-4.png";
+import magicKeyIpd13m5White from "../../assets/new-images/acessórios/magic-keyboard-ipd-pro-m5-13-pol/white/magic-keyb-ipd-m5-13-white.webp";
+import magicKeyIpd13m5White1 from "../../assets/new-images/acessórios/magic-keyboard-ipd-pro-m5-13-pol/white/magic-keyb-ipd-m5-13-white-1.webp";
+import magicKeyIpd13m5White2 from "../../assets/new-images/acessórios/magic-keyboard-ipd-pro-m5-13-pol/white/magic-keyb-ipd-m5-13-white-2.webp";
+import magicKeyIpd13m5White3 from "../../assets/new-images/acessórios/magic-keyboard-ipd-pro-m5-13-pol/white/magic-keyb-ipd-m5-13-white-3.webp";
+import magicKeyIpd13m5White4 from "../../assets/new-images/acessórios/magic-keyboard-ipd-pro-m5-13-pol/white/magic-keyb-ipd-m5-13-white-4.webp";
 
 // Magic Keyboard Touch id Black
-import magicKeyTouchBlack from "../../assets/new-images/acessórios/magic-keyboard-tch-id/black/magic-keyb-touchid-black.png";
-import magicKeyTouchBlack1 from "../../assets/new-images/acessórios/magic-keyboard-tch-id/black/magic-keyb-touchid-black-1.png";
-import magicKeyTouchBlack2 from "../../assets/new-images/acessórios/magic-keyboard-tch-id/black/magic-keyb-touchid-black-2.png";
-import magicKeyTouchBlack3 from "../../assets/new-images/acessórios/magic-keyboard-tch-id/black/magic-keyb-touchid-black-3.png";
-import magicKeyTouchBlack4 from "../../assets/new-images/acessórios/magic-keyboard-tch-id/black/magic-keyb-touchid-black-4.png";
+import magicKeyTouchBlack from "../../assets/new-images/acessórios/magic-keyboard-tch-id/black/magic-keyb-touchid-black.webp";
+import magicKeyTouchBlack1 from "../../assets/new-images/acessórios/magic-keyboard-tch-id/black/magic-keyb-touchid-black-1.webp";
+import magicKeyTouchBlack2 from "../../assets/new-images/acessórios/magic-keyboard-tch-id/black/magic-keyb-touchid-black-2.webp";
+import magicKeyTouchBlack3 from "../../assets/new-images/acessórios/magic-keyboard-tch-id/black/magic-keyb-touchid-black-3.webp";
+import magicKeyTouchBlack4 from "../../assets/new-images/acessórios/magic-keyboard-tch-id/black/magic-keyb-touchid-black-4.webp";
 
 // Magic Keyboard Touch id White
-import magicKeyTouchWhite from "../../assets/new-images/acessórios/magic-keyboard-tch-id/white/magic-keyb-touchid-white.png";
-import magicKeyTouchWhite1 from "../../assets/new-images/acessórios/magic-keyboard-tch-id/white/magic-keyb-touchid-white-1.png";
-import magicKeyTouchWhite2 from "../../assets/new-images/acessórios/magic-keyboard-tch-id/white/magic-keyb-touchid-white-2.png";
-import magicKeyTouchWhite3 from "../../assets/new-images/acessórios/magic-keyboard-tch-id/white/magic-keyb-touchid-white-3.png";
-import magicKeyTouchWhite4 from "../../assets/new-images/acessórios/magic-keyboard-tch-id/white/magic-keyb-touchid-white-4.png";
+import magicKeyTouchWhite from "../../assets/new-images/acessórios/magic-keyboard-tch-id/white/magic-keyb-touchid-white.webp";
+import magicKeyTouchWhite1 from "../../assets/new-images/acessórios/magic-keyboard-tch-id/white/magic-keyb-touchid-white-1.webp";
+import magicKeyTouchWhite2 from "../../assets/new-images/acessórios/magic-keyboard-tch-id/white/magic-keyb-touchid-white-2.webp";
+import magicKeyTouchWhite3 from "../../assets/new-images/acessórios/magic-keyboard-tch-id/white/magic-keyb-touchid-white-3.webp";
+import magicKeyTouchWhite4 from "../../assets/new-images/acessórios/magic-keyboard-tch-id/white/magic-keyb-touchid-white-4.webp";
 
 // Magic Mouse Black
-import magicMouseBlack from "../../assets/new-images/acessórios/magic-mouse/black/magic-mouse-black.png";
-import magicMouseBlack1 from "../../assets/new-images/acessórios/magic-mouse/black/magic-mouse-black-1.png";
-import magicMouseBlack2 from "../../assets/new-images/acessórios/magic-mouse/black/magic-mouse-black-2.png";
-import magicMouseBlack3 from "../../assets/new-images/acessórios/magic-mouse/black/magic-mouse-black-3.png";
-import magicMouseBlack4 from "../../assets/new-images/acessórios/magic-mouse/black/magic-mouse-black-4.png";
+import magicMouseBlack from "../../assets/new-images/acessórios/magic-mouse/black/magic-mouse-black.webp";
+import magicMouseBlack1 from "../../assets/new-images/acessórios/magic-mouse/black/magic-mouse-black-1.webp";
+import magicMouseBlack2 from "../../assets/new-images/acessórios/magic-mouse/black/magic-mouse-black-2.webp";
+import magicMouseBlack3 from "../../assets/new-images/acessórios/magic-mouse/black/magic-mouse-black-3.webp";
+import magicMouseBlack4 from "../../assets/new-images/acessórios/magic-mouse/black/magic-mouse-black-4.webp";
 
 // Magic Mouse White
-import magicMouseWhite from "../../assets/new-images/acessórios/magic-mouse/white/magic-mouse-white.png";
-import magicMouseWhite1 from "../../assets/new-images/acessórios/magic-mouse/white/magic-mouse-white-1.png";
-import magicMouseWhite2 from "../../assets/new-images/acessórios/magic-mouse/white/magic-mouse-white-2.png";
-import magicMouseWhite3 from "../../assets/new-images/acessórios/magic-mouse/white/magic-mouse-white-3.png";
-import magicMouseWhite4 from "../../assets/new-images/acessórios/magic-mouse/white/magic-mouse-white-4.png";
+import magicMouseWhite from "../../assets/new-images/acessórios/magic-mouse/white/magic-mouse-white.webp";
+import magicMouseWhite1 from "../../assets/new-images/acessórios/magic-mouse/white/magic-mouse-white-1.webp";
+import magicMouseWhite2 from "../../assets/new-images/acessórios/magic-mouse/white/magic-mouse-white-2.webp";
+import magicMouseWhite3 from "../../assets/new-images/acessórios/magic-mouse/white/magic-mouse-white-3.webp";
+import magicMouseWhite4 from "../../assets/new-images/acessórios/magic-mouse/white/magic-mouse-white-4.webp";
 
 // Pencil Pro
-import pencilPro from "../../assets/new-images/acessórios/pencil/pencil-pro/pencil-pro.png";
-import pencilPro1 from "../../assets/new-images/acessórios/pencil/pencil-pro/pencil-pro-1.png";
-import pencilPro2 from "../../assets/new-images/acessórios/pencil/pencil-pro/pencil-pro-2.png";
+import pencilPro from "../../assets/new-images/acessórios/pencil/pencil-pro/pencil-pro.webp";
+import pencilPro1 from "../../assets/new-images/acessórios/pencil/pencil-pro/pencil-pro-1.webp";
+import pencilPro2 from "../../assets/new-images/acessórios/pencil/pencil-pro/pencil-pro-2.webp";
 
 // Pencil 2
-import pencil2 from "../../assets/new-images/acessórios/pencil/pencil-2/pencil-2.png";
-import pencil21 from "../../assets/new-images/acessórios/pencil/pencil-2/pencil-2-1.png";
-import pencil22 from "../../assets/new-images/acessórios/pencil/pencil-2/pencil-2-2.png";
+import pencil2 from "../../assets/new-images/acessórios/pencil/pencil-2/pencil-2.webp";
+import pencil21 from "../../assets/new-images/acessórios/pencil/pencil-2/pencil-2-1.webp";
+import pencil22 from "../../assets/new-images/acessórios/pencil/pencil-2/pencil-2-2.webp";
 
 // Pencil Usb-c
-import pencilUsbc from "../../assets/new-images/acessórios/pencil/pencil-usbc/pencil-c.png";
-import pencilUsbc1 from "../../assets/new-images/acessórios/pencil/pencil-usbc/pencil-c-1.png";
-import pencilUsbc2 from "../../assets/new-images/acessórios/pencil/pencil-usbc/pencil-c-2.png";
+import pencilUsbc from "../../assets/new-images/acessórios/pencil/pencil-usbc/pencil-c.webp";
+import pencilUsbc1 from "../../assets/new-images/acessórios/pencil/pencil-usbc/pencil-c-1.webp";
+import pencilUsbc2 from "../../assets/new-images/acessórios/pencil/pencil-usbc/pencil-c-2.webp";
 
 // ============================================
 // Áudio
