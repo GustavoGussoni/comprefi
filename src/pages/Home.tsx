@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import FAQ from "../components/FAQ";
 import WhyChooseCompreFi from "../components/WhyChooseCompreFi";
-
+import SEOHead from "../components/SEOHead";
 // Imagens
 import desktopBanner from "../assets/images/IMG_2816_desktop.webp";
 import mobileBanner from "../assets/images/IMG_2791.webp";
@@ -46,6 +46,7 @@ const Home: React.FC<HomeProps> = ({ isMobile }) => {
   }, [hasPlayed]);
   return (
     <div className="home-container">
+      <SEOHead />
       {/* Parábola - Padrão de Interrupção (Russell Brunson)
     <section className="parable-section max-w-4xl mx-auto py-16 px-4 border-gray-800">
       <div className="bg-gradient-to-r from-gray-900 to-black p-8 rounded-xl shadow-xl">

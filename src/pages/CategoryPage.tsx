@@ -1,3 +1,5 @@
+import SEOHead from "../components/SEOHead";
+import { seoBySlug } from "../data/seo-config";
 import React, { useState, useEffect, useCallback } from "react";
 import { useLocation } from "react-router-dom";
 import useEmblaCarousel from "embla-carousel-react";
@@ -102,7 +104,7 @@ const CategoryPage: React.FC = () => {
   const location = useLocation();
   const categorySlug = location.pathname.replace(/^\//, "");
   const config = categorySlug ? getCategoryBySlug(categorySlug) : undefined;
-
+  const seo = seoBySlug[categorySlug];
   // Estado para pagamento (flat products)
   const [selectedPaymentMethods, setSelectedPaymentMethods] = useState<{
     [key: number]: "pix" | "card";
@@ -196,6 +198,13 @@ const CategoryPage: React.FC = () => {
 
   return (
     <div className="bg-black min-h-screen">
+      {seo && (
+        <SEOHead
+          title={seo.title}
+          description={seo.description}
+          url={seo.url}
+        />
+      )}
       <div className="container mx-auto px-4 py-12">
         {/* Header */}
         <h1 className="text-3xl md:text-4xl font-bold mb-2 text-white text-center">
