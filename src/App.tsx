@@ -17,6 +17,8 @@ import Agradecimento from "./pages/Agradecimento";
 import TradeFunnel from "./pages/TradeFunnel";
 import CalculationPage from "./pages/CalculationPage";
 import ResultPage from "./pages/ResultPage";
+import Admin from "./pages/Admin";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 // Componente para detectar mudanças de rota e rolar para o topo
 const ScrollToTop = () => {
@@ -38,6 +40,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
     "/trocar-de-iphone",
     "/calculo-troca",
     "/resultado-troca",
+    "/admin",
   ];
   const shouldHideHeader = hideHeaderRoutes.includes(location.pathname);
 
@@ -152,6 +155,14 @@ function App() {
               <PageTransition>
                 <Agradecimento />
               </PageTransition>
+            }
+          />
+          <Route
+            path="/admin"
+            element={
+              <ProtectedRoute>
+                <Admin />
+              </ProtectedRoute>
             }
           />
           {/* Rotas do Funil de Troca */}
