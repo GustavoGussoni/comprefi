@@ -11,6 +11,7 @@ import WhyChooseSection from "../components/WhyChooseCompreFi";
 import FAQ from "../components/FAQ";
 import ImageLoader from "../components/ImageLoader";
 import ZoomableLightbox from "../components/ZoomableLightbox";
+import { useCatalogPrices, mergePricing } from "../hooks/useCatalogPrices";
 
 // ============================================
 // Carrossel de fotos reais por produto (seminovos)
@@ -104,6 +105,7 @@ const CategoryPage: React.FC = () => {
   const location = useLocation();
   const categorySlug = location.pathname.replace(/^\//, "");
   const config = categorySlug ? getCategoryBySlug(categorySlug) : undefined;
+  const { pricingBySlug, inactiveSlugs } = useCatalogPrices(categorySlug);
   const seo = seoBySlug[categorySlug];
   // Estado para pagamento (flat products)
   const [selectedPaymentMethods, setSelectedPaymentMethods] = useState<{
@@ -188,13 +190,31 @@ const CategoryPage: React.FC = () => {
   );
 
   // ---- Renderizar grid de produtos agrupados ----
-  const renderGroupedGrid = (products: GroupedProduct[]) => (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-      {products.map((product) => (
-        <ProductCard key={product.slug} product={product} />
-      ))}
-    </div>
-  );
+  const renderGroupedGrid = (products: GroupedProduct[]) => {
+    // Filtrar produtos inativos no backend
+    const activeProducts = products.filter((p) => !inactiveSlugs.has(p.slug));
+
+    return (
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        {activeProducts.map((product) => {
+          // Mesclar preços do backend (se disponíveis)
+          const mergedProduct = pricingBySlug[product.slug]
+            ? {
+                ...product,
+                pricing: mergePricing(
+                  product.pricing,
+                  pricingBySlug[product.slug],
+                ),
+              }
+            : product;
+
+          return (
+            <ProductCard key={mergedProduct.slug} product={mergedProduct} />
+          );
+        })}
+      </div>
+    );
+  };
 
   return (
     <div className="bg-black min-h-screen">
