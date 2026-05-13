@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Check, Info } from "lucide-react";
 
 interface ColorStepProps {
   selectedColor: string;
@@ -41,64 +42,61 @@ const ColorStep: React.FC<ColorStepProps> = ({
     }
   };
 
+  /**
+   * Mapeia nomes de cores (PT-BR, conforme retornados pelo backend)
+   * para hex codes reais extraídos do CSS oficial da Apple.
+   * Fonte: https://www.cybermoai.com/iphone-color-codes.html
+   */
   const getColorHex = (colorName: string): string => {
     const colorMap: { [key: string]: string } = {
-      // Cores básicas
-      Preto: "#000000",
-      Branco: "#FFFFFF",
-      Vermelho: "#FF0000",
-      Azul: "#0066CC",
-      Verde: "#00AA00",
-      Rosa: "#FF69B4",
-      Roxo: "#8A2BE2",
-      Amarelo: "#FFD700",
+      // ── iPhone 16 Pro Max / 16 Pro ──
+      "Titânio Natural": "#C2BCB2",
+      "Titânio-deserto": "#BFA48F",
+      "Titânio Preto": "#3C3C3D",
+      "Titânio Branco": "#F2F1ED",
 
-      // Cores específicas Apple
-      Grafite: "#5C5C60",
-      Dourado: "#FAD5A5",
-      Prateado: "#E3E4E6",
-      "Azul Sierra": "#4A90A4",
-      "Verde Alpino": "#5F8A5B",
-      "Titânio Natural": "#8E8E93",
-      "Titânio Azul": "#5E7C8B",
-      "Titânio Branco": "#F2F2F7",
-      "Titânio Preto": "#1C1C1E",
-      "Meia-noite": "#191970",
-      "Luz das estrelas": "#F5F5DC",
-      "Azul Pacífico": "#1E3A8A",
-      Ultramarino: "#4338CA",
-      "Verde-azulado": "#0891B2",
+      // ── iPhone 16 Plus / 16 ──
+      Ultramarino: "#9AADF6",
+      "Verde-acinzentado": "#B0D4D2",
+      // Rosa, Preto, Branco do iPhone 16 usam os mesmos hex abaixo
 
-      // iPhone 11 cores
-      Preto: "#000000",
-      Verde: "#4ADE80",
-      Amarelo: "#FDE047",
-      Roxo: "#A855F7",
+      // ── iPhone 15 Pro Max / 15 Pro ──
+      "Titânio Azul": "#2F4452",
+      // "Titânio Natural" já mapeado acima (15 Pro usa #837F7D, mas 16 Pro usa #C2BCB2)
+      // Para diferenciar, usamos o hex do 16 Pro acima pois é o mais recente.
+      // Se precisar distinguir, pode-se usar lógica por modelo.
 
-      // iPhone 12 cores
-      Azul: "#3B82F6",
-      Verde: "#10B981",
-      Roxo: "#8B5CF6",
+      // ── iPhone 14 Pro Max / 14 Pro ──
+      "Preto-espacial": "#403E3D",
+      "Roxo-profundo": "#594F63",
 
-      // iPhone 13 cores
-      Rosa: "#F472B6",
-      Azul: "#60A5FA",
+      // ── iPhone 13 Pro Max / 13 Pro ──
+      "Azul-Sierra": "#A7C1D9",
+      "Verde-alpino": "#576856",
+      Grafite: "#54524F",
 
-      // iPhone 14 cores
-      Azul: "#3B82F6",
-      Roxo: "#A855F7",
-      Amarelo: "#FCD34D",
+      // ── iPhone 12 Pro Max / 12 Pro ──
+      "Azul-Pacífico": "#2D4E5C",
 
-      // iPhone 15 cores
-      Rosa: "#F9A8D4",
-      Amarelo: "#FDE047",
-      Verde: "#4ADE80",
-      Azul: "#60A5FA",
+      // ── iPhone 11 Pro Max / 11 Pro ──
+      "Verde Meia-noite": "#4E5851",
+      "Cinza-espacial": "#535150",
 
-      // iPhone 16 cores
-      Ultramarino: "#4338CA",
-      "Verde-azulado": "#0891B2",
-      Rosa: "#F472B6",
+      // ── Cores compartilhadas (nomes genéricos usados em múltiplos modelos) ──
+      Prateado: "#F0F2F2",
+      Dourado: "#FAE7CF",
+      "Meia-noite": "#222930",
+      Estelar: "#FAF6F2",
+      Vermelho: "#FC0324",
+
+      // ── Cores base (iPhone 16/15/14/13/12/11 standard) ──
+      Preto: "#1F2020",
+      Branco: "#FAFAFA",
+      Rosa: "#F2ADDA",
+      Azul: "#9AADF6",
+      Verde: "#AEE1CD",
+      Roxo: "#D1CDDA",
+      Amarelo: "#FFE681",
     };
 
     return colorMap[colorName] || "#6B7280";
@@ -131,9 +129,6 @@ const ColorStep: React.FC<ColorStepProps> = ({
   return (
     <div className="space-y-6">
       <div className="text-center">
-        {/* <h2 className="text-2xl font-bold text-white mb-2">
-          Qual a cor do seu iPhone?
-        </h2> */}
         <p className="text-gray-400">
           Selecione a cor exata do seu{" "}
           <span className="text-blue-400 font-medium">{modelName}</span>
@@ -170,17 +165,9 @@ const ColorStep: React.FC<ColorStepProps> = ({
                 >
                   {selectedColor === color && (
                     <div className="w-full h-full flex items-center justify-center">
-                      <svg
+                      <Check
                         className={`w-6 h-6 ${isLight ? "text-gray-800" : "text-white"}`}
-                        fill="currentColor"
-                        viewBox="0 0 20 20"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
+                      />
                     </div>
                   )}
                 </div>
@@ -213,17 +200,7 @@ const ColorStep: React.FC<ColorStepProps> = ({
       {/* Info Box */}
       <div className="bg-blue-900 bg-opacity-30 border border-blue-700 rounded-lg p-4">
         <div className="flex items-start">
-          <svg
-            className="w-5 h-5 text-blue-400 mr-2 mt-0.5 flex-shrink-0"
-            fill="currentColor"
-            viewBox="0 0 20 20"
-          >
-            <path
-              fillRule="evenodd"
-              d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
-              clipRule="evenodd"
-            />
-          </svg>
+          <Info className="w-5 h-5 text-blue-400 mr-2 mt-0.5 flex-shrink-0" />
           <div>
             <p className="text-blue-300 text-sm">
               <strong>Dica:</strong> A cor exata pode influenciar no valor de

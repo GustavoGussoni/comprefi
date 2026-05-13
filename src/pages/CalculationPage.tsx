@@ -10,8 +10,9 @@ import {
   Check,
   Loader,
   AlertTriangle,
+  Lightbulb,
 } from "lucide-react";
-import { apiService } from "../services/api"; // Certifique-se que o apiService está acessível
+
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
 // --- Interfaces (sem alterações) ---
@@ -23,7 +24,7 @@ interface FunnelData {
   defeitos: string[];
   pecasTrocadas: boolean;
   quaisPecas: string;
-  modeloDesejado: string; // Este é o ID do produto
+  modeloDesejado: string; // Este é o ID da variant (ProductVariant)
   ondeOuviu: string;
   tempoPensando: string;
   urgenciaTroca: string;
@@ -84,7 +85,7 @@ const CalculationPage: React.FC = () => {
       const funnelDataStr = localStorage.getItem("funnelData");
       if (!funnelDataStr) {
         setError(
-          "Dados do questionário não encontrados. Por favor, preencha o formulário novamente."
+          "Dados do questionário não encontrados. Por favor, preencha o formulário novamente.",
         );
         return;
       }
@@ -93,7 +94,7 @@ const CalculationPage: React.FC = () => {
     } catch (err) {
       console.error("Erro ao carregar dados:", err);
       setError(
-        "Ocorreu um erro inesperado ao processar sua solicitação. Tente novamente."
+        "Ocorreu um erro inesperado ao processar sua solicitação. Tente novamente.",
       );
     }
   };
@@ -118,6 +119,8 @@ const CalculationPage: React.FC = () => {
       }
     }
 
+    // Marca todos os steps como concluídos visualmente
+    setCurrentStep(steps.length);
     setIsComplete(true);
 
     try {
@@ -129,24 +132,13 @@ const CalculationPage: React.FC = () => {
     } catch (error) {
       console.error("Erro no cálculo:", error);
       setError(
-        "Não foi possível calcular sua proposta no momento. Por favor, tente novamente mais tarde."
+        "Não foi possível calcular sua proposta no momento. Por favor, tente novamente mais tarde.",
       );
     }
   };
 
-  // --- FUNÇÃO CORRIGIDA ---
   const calculateTrade = async (data: FunnelData): Promise<TradeResult> => {
-    // 1. Buscar todos os produtos para encontrar o nome do modelo pelo ID
-    const allProducts = await apiService.getAllProducts();
-    const foundProduct = allProducts.find((p) => p.id === data.modeloDesejado);
-
-    if (!foundProduct) {
-      throw new Error(
-        `Produto com ID ${data.modeloDesejado} não encontrado no frontend.`
-      );
-    }
-
-    // 2. Montar o corpo da requisição com o NOME do modelo
+    // Envia o variant ID direto — o backend resolve o produto via ProductVariant + ProductGroup
     const requestBody = {
       modeloAtual: data.modeloAtual,
       capacidadeAtual: data.capacidadeAtual,
@@ -155,10 +147,9 @@ const CalculationPage: React.FC = () => {
       defeitos: data.defeitos,
       pecasTrocadas: data.pecasTrocadas,
       quaisPecas: data.quaisPecas,
-      modeloDesejado: foundProduct.model, // Usando o nome do modelo
+      modeloDesejado: data.modeloDesejado, // variant ID direto
     };
 
-    // 3. Fazer a chamada à API
     const response = await fetch(`${API_URL}/trade/calculate`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -172,7 +163,6 @@ const CalculationPage: React.FC = () => {
 
     const apiResult = await response.json();
 
-    // 4. Mapear o resultado (sem alterações aqui)
     return {
       valorAparelho: apiResult.valorAparelho,
       valorFinal: apiResult.valorFinal,
@@ -304,25 +294,22 @@ const CalculationPage: React.FC = () => {
           )}
 
           <div className="mt-12 bg-funnel-surface rounded-lg p-6 border border-funnel-surface-light">
-            <h4 className="text-funnel-text-primary font-semibold mb-3">
-              💡 Enquanto você espera, sabia que na CompreFi:
+            <h4 className="text-funnel-text-primary font-semibold mb-3 flex items-center gap-2">
+              <Lightbulb size={18} className="text-yellow-400" />
+              Enquanto você espera, sabia que na CompreFi:
             </h4>
             <div className="text-funnel-text-secondary text-sm space-y-2">
               <p>
-                • A **Troca é Garantida**: Nossa equipe vai até você para
-                avaliar e entregar seu novo iPhone em mãos.
+                • Você garante <strong>Economia Real</strong>: você economiza
+                tempo, dinheiro e dor de cabeça.
               </p>
               <p>
-                • Você tem **Suporte Eterno**: Qualquer dúvida sobre seu
-                aparelho, estaremos aqui para ajudar, para sempre.
+                • Você tem <strong>Entrega Presencial</strong>: você não perde
+                tempo.
               </p>
               <p>
-                • Nossos clientes economizam, em média, **25% a mais** do que em
-                outras lojas na troca.
-              </p>
-              <p>
-                • Você ganha acesso ao nosso **Programa de Indicações** para
-                economizar ainda mais no futuro.
+                • Você tem <strong>Suporte Pessoal</strong>: a gente cuida do
+                resto.
               </p>
             </div>
           </div>

@@ -1,4 +1,24 @@
 import React from "react";
+import {
+  Smartphone,
+  Battery,
+  Camera,
+  ScanFace,
+  Volume2,
+  Mic,
+  CircleDot,
+  ToggleLeft,
+  Plug,
+  User,
+  Fingerprint,
+  Package,
+  Wrench,
+  CircleCheck,
+  Check,
+  CheckCircle2,
+  AlertTriangle,
+  Info,
+} from "lucide-react";
 
 interface PartsStepProps {
   hasParts: boolean;
@@ -42,22 +62,23 @@ const PartsStep: React.FC<PartsStepProps> = ({
     }
   };
 
-  const getPartIcon = (part: string): string => {
-    const iconMap: { [key: string]: string } = {
-      Tela: "📱",
-      Bateria: "🔋",
-      "Câmera traseira": "📷",
-      "Câmera frontal": "🤳",
-      "Alto-falante": "🔊",
-      Microfone: "🎤",
-      "Botão home": "⚪",
-      "Botões laterais": "🔘",
-      "Conector de carregamento": "🔌",
-      "Face ID": "👤",
-      "Touch ID": "👆",
-      "Traseira/Chassi": "📦",
+  const getPartIcon = (part: string): React.ReactNode => {
+    const iconProps = { size: 18, className: "text-current" };
+    const iconMap: { [key: string]: React.ReactNode } = {
+      Tela: <Smartphone {...iconProps} />,
+      Bateria: <Battery {...iconProps} />,
+      "Câmera traseira": <Camera {...iconProps} />,
+      "Câmera frontal": <ScanFace {...iconProps} />,
+      "Alto-falante": <Volume2 {...iconProps} />,
+      Microfone: <Mic {...iconProps} />,
+      "Botão home": <CircleDot {...iconProps} />,
+      "Botões laterais": <ToggleLeft {...iconProps} />,
+      "Conector de carregamento": <Plug {...iconProps} />,
+      "Face ID": <User {...iconProps} />,
+      "Touch ID": <Fingerprint {...iconProps} />,
+      "Traseira/Chassi": <Package {...iconProps} />,
     };
-    return iconMap[part] || "🔧";
+    return iconMap[part] || <Wrench {...iconProps} />;
   };
 
   const selectedParts = whichParts.split(", ").filter((p) => p.trim() !== "");
@@ -91,7 +112,7 @@ const PartsStep: React.FC<PartsStepProps> = ({
           `}
         >
           <div className="flex flex-col items-center space-y-3">
-            <div className="text-4xl">✅</div>
+            <CircleCheck size={40} className="text-current" />
             <div>
               <p className="text-lg font-semibold">Não</p>
               <p className="text-sm text-gray-400">
@@ -113,7 +134,7 @@ const PartsStep: React.FC<PartsStepProps> = ({
           `}
         >
           <div className="flex flex-col items-center space-y-3">
-            <div className="text-4xl">🔧</div>
+            <Wrench size={40} className="text-current" />
             <div>
               <p className="text-lg font-semibold">Sim</p>
               <p className="text-sm text-gray-400">
@@ -151,23 +172,13 @@ const PartsStep: React.FC<PartsStepProps> = ({
                 `}
               >
                 <div className="flex items-center space-x-2">
-                  <div className="text-lg">{getPartIcon(part)}</div>
+                  <div>{getPartIcon(part)}</div>
                   <div className="flex-1">
                     <p className="text-sm font-medium">{part}</p>
                   </div>
                   {selectedParts.includes(part) && (
                     <div className="text-orange-400">
-                      <svg
-                        className="w-4 h-4"
-                        fill="currentColor"
-                        viewBox="0 0 20 20"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
+                      <Check size={16} />
                     </div>
                   )}
                 </div>
@@ -208,28 +219,11 @@ const PartsStep: React.FC<PartsStepProps> = ({
         `}
         >
           <div className="flex items-center">
-            <div
-              className={`
-              w-5 h-5 mr-2
-              ${!hasParts ? "text-green-400" : "text-orange-400"}
-            `}
-            >
+            <div className="mr-2 flex-shrink-0">
               {!hasParts ? (
-                <svg fill="currentColor" viewBox="0 0 20 20">
-                  <path
-                    fillRule="evenodd"
-                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                    clipRule="evenodd"
-                  />
-                </svg>
+                <CheckCircle2 size={20} className="text-green-400" />
               ) : (
-                <svg fill="currentColor" viewBox="0 0 20 20">
-                  <path
-                    fillRule="evenodd"
-                    d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
-                    clipRule="evenodd"
-                  />
-                </svg>
+                <AlertTriangle size={20} className="text-orange-400" />
               )}
             </div>
 
@@ -252,17 +246,10 @@ const PartsStep: React.FC<PartsStepProps> = ({
       {hasParts && selectedParts.length > 0 && (
         <div className="bg-yellow-900 bg-opacity-30 border border-yellow-700 rounded-lg p-4">
           <div className="flex items-start">
-            <svg
-              className="w-5 h-5 text-yellow-400 mr-2 mt-0.5 flex-shrink-0"
-              fill="currentColor"
-              viewBox="0 0 20 20"
-            >
-              <path
-                fillRule="evenodd"
-                d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
-                clipRule="evenodd"
-              />
-            </svg>
+            <AlertTriangle
+              size={20}
+              className="text-yellow-400 mr-2 mt-0.5 flex-shrink-0"
+            />
             <div>
               <p className="text-yellow-300 text-sm">
                 <strong>Cotação Manual Necessária:</strong> Peças trocadas
@@ -277,17 +264,7 @@ const PartsStep: React.FC<PartsStepProps> = ({
       {/* Info Box */}
       <div className="bg-blue-900 bg-opacity-30 border border-blue-700 rounded-lg p-4">
         <div className="flex items-start">
-          <svg
-            className="w-5 h-5 text-blue-400 mr-2 mt-0.5 flex-shrink-0"
-            fill="currentColor"
-            viewBox="0 0 20 20"
-          >
-            <path
-              fillRule="evenodd"
-              d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
-              clipRule="evenodd"
-            />
-          </svg>
+          <Info size={20} className="text-blue-400 mr-2 mt-0.5 flex-shrink-0" />
           <div>
             <p className="text-blue-300 text-sm">
               <strong>Por que perguntamos:</strong> Peças não originais ou

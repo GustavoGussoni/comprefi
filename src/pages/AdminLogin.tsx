@@ -26,6 +26,9 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLoginSuccess }) => {
       setLoading(true);
       setError(null);
 
+      apiService.clearAuthToken();
+      localStorage.removeItem("admin_token");
+
       const result = await apiService.login(email, password);
 
       // Salvar token no localStorage
@@ -40,7 +43,7 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLoginSuccess }) => {
     } catch (err: any) {
       console.error("Erro no login:", err);
       setError(
-        err.message || "Erro ao fazer login. Verifique suas credenciais."
+        err.message || "Erro ao fazer login. Verifique suas credenciais.",
       );
     } finally {
       setLoading(false);

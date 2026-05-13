@@ -1,4 +1,16 @@
 import React, { useState } from "react";
+import {
+  ChevronDown,
+  ChevronRight,
+  Smartphone,
+  Laptop,
+  Tablet,
+  Watch,
+  Package,
+  Search,
+  Check,
+  Info,
+} from "lucide-react";
 
 interface Product {
   id: string;
@@ -27,8 +39,9 @@ const DesiredModelStep: React.FC<DesiredModelStepProps> = ({
   const [selectedCategory, setSelectedCategory] =
     useState<string>("iPhones Novos");
   const [searchTerm, setSearchTerm] = useState<string>("");
+  const [expandedModel, setExpandedModel] = useState<string | null>(null);
 
-  // Filtrar produtos por categoria e busca
+  // Filtrar produtos ativos por categoria e busca
   const filteredProducts = availableProducts.filter((product) => {
     const matchesCategory =
       !selectedCategory || product.category === selectedCategory;
@@ -36,60 +49,114 @@ const DesiredModelStep: React.FC<DesiredModelStepProps> = ({
       !searchTerm ||
       product.model.toLowerCase().includes(searchTerm.toLowerCase()) ||
       product.storage.toLowerCase().includes(searchTerm.toLowerCase());
-
     return matchesCategory && matchesSearch && product.isActive;
   });
 
-  // Obter categorias únicas
+  // Categorias únicas
   const categories = [
     ...new Set(availableProducts.map((p) => p.category)),
   ].sort();
 
-  // Agrupar produtos por modelo
+  // Agrupar por modelo
   const groupedProducts = filteredProducts.reduce(
     (acc, product) => {
-      const key = `${product.model}`;
-      if (!acc[key]) {
-        acc[key] = [];
-      }
+      const key = product.model;
+      if (!acc[key]) acc[key] = [];
       acc[key].push(product);
       return acc;
     },
-    {} as { [key: string]: Product[] }
+    {} as { [key: string]: Product[] },
   );
 
-  const getModelIcon = (model: string): string => {
-    if (model.includes("iPhone 16")) return "📱";
-    if (model.includes("iPhone 15")) return "📱";
-    if (model.includes("iPhone 14")) return "📱";
-    if (model.includes("iPhone 13")) return "📱";
-    if (model.includes("iPhone 12")) return "📱";
-    if (model.includes("iPhone 11")) return "📱";
-    if (model.includes("MacBook")) return "💻";
-    if (model.includes("iPad")) return "📱";
-    if (model.includes("Apple Watch")) return "⌚";
-    return "📦";
+  // Agrupar variantes por storage dentro de cada modelo
+  const getStorageGroups = (products: Product[]) => {
+    const storageMap: { [storage: string]: Product[] } = {};
+    for (const p of products) {
+      if (!storageMap[p.storage]) storageMap[p.storage] = [];
+      storageMap[p.storage].push(p);
+    }
+
+    // Ordenar variantes dentro de cada storage por preço PIX decrescente
+    for (const key of Object.keys(storageMap)) {
+      storageMap[key].sort((a, b) => {
+        const priceA =
+          parseFloat(a.pixPrice.replace(/[^\d.,]/g, "").replace(",", ".")) || 0;
+        const priceB =
+          parseFloat(b.pixPrice.replace(/[^\d.,]/g, "").replace(",", ".")) || 0;
+        return priceB - priceA;
+      });
+    }
+
+    // Ordenar por storage decrescente (maior primeiro)
+    return Object.entries(storageMap).sort((a, b) => {
+      const toGB = (s: string): number => {
+        const num = parseFloat(s) || 0;
+        if (s.toUpperCase().includes("TB")) return num * 1024;
+        return num;
+      };
+      return toGB(b[0]) - toGB(a[0]);
+    });
   };
 
-  const getModelBadge = (model: string): { text: string; color: string } => {
+  const getModelIcon = (model: string) => {
+    if (model.includes("MacBook"))
+      return <Laptop className="w-5 h-5 text-gray-400" />;
+    if (model.includes("iPad"))
+      return <Tablet className="w-5 h-5 text-gray-400" />;
+    if (model.includes("Watch"))
+      return <Watch className="w-5 h-5 text-gray-400" />;
+    if (model.includes("iPhone"))
+      return <Smartphone className="w-5 h-5 text-gray-400" />;
+    return <Package className="w-5 h-5 text-gray-400" />;
+  };
+
+  const getModelBadge = (
+    model: string,
+  ): { text: string; color: string } | null => {
     if (model.includes("Pro Max"))
       return { text: "Pro Max", color: "bg-purple-600" };
     if (model.includes("Pro")) return { text: "Pro", color: "bg-blue-600" };
     if (model.includes("Plus")) return { text: "Plus", color: "bg-green-600" };
     if (model.includes("mini")) return { text: "mini", color: "bg-orange-600" };
-    return { text: "", color: "" };
+    if (model.includes("Air")) return { text: "Air", color: "bg-sky-600" };
+    if (model.includes("Ultra")) return { text: "Ultra", color: "bg-red-600" };
+    return null;
   };
 
   const formatPrice = (price: string): string => {
-    return price.replace("R$", "").trim();
+    const num = parseFloat(price.replace(/[^\d.,]/g, "").replace(",", "."));
+    if (isNaN(num)) return price;
+    return num.toLocaleString("pt-BR", { minimumFractionDigits: 2 });
+  };
+
+  // Preço mais baixo do modelo (para exibir no accordion fechado)
+  const getLowestPrice = (products: Product[]): string => {
+    const prices = products
+      .map((p) =>
+        parseFloat(p.pixPrice.replace(/[^\d.,]/g, "").replace(",", ".")),
+      )
+      .filter((n) => !isNaN(n) && n > 0);
+    if (prices.length === 0) return "—";
+    return Math.min(...prices).toLocaleString("pt-BR", {
+      minimumFractionDigits: 2,
+    });
+  };
+
+  // Verificar se o modelo selecionado pertence a este grupo
+  const isModelSelected = (products: Product[]): boolean => {
+    return products.some((p) => p.id === selectedModel);
+  };
+
+  // Encontrar produto selecionado
+  const selectedProduct = availableProducts.find((p) => p.id === selectedModel);
+
+  const handleToggleModel = (modelName: string) => {
+    setExpandedModel(expandedModel === modelName ? null : modelName);
   };
 
   return (
     <div className="space-y-6">
       <div className="text-center">
-        {/* <h2 className="text-2xl font-bold text-white mb-2">
-          Qual iPhone você deseja?
-        </h2> */}
         <p className="text-gray-400">
           Escolha o modelo que você gostaria de ter. Mostraremos apenas produtos
           disponíveis.
@@ -102,14 +169,11 @@ const DesiredModelStep: React.FC<DesiredModelStepProps> = ({
         <div className="flex flex-wrap gap-2">
           <button
             onClick={() => setSelectedCategory("")}
-            className={`
-            px-4 py-2 rounded-full text-sm font-medium transition-colors
-            ${
+            className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
               !selectedCategory
                 ? "bg-blue-600 text-white"
                 : "bg-gray-700 text-gray-300 hover:bg-gray-600"
-            }
-          `}
+            }`}
           >
             Todos
           </button>
@@ -117,14 +181,11 @@ const DesiredModelStep: React.FC<DesiredModelStepProps> = ({
             <button
               key={category}
               onClick={() => setSelectedCategory(category)}
-              className={`
-              px-4 py-2 rounded-full text-sm font-medium transition-colors
-              ${
+              className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
                 selectedCategory === category
                   ? "bg-blue-600 text-white"
                   : "bg-gray-700 text-gray-300 hover:bg-gray-600"
-              }
-            `}
+              }`}
             >
               {category}
             </button>
@@ -133,134 +194,141 @@ const DesiredModelStep: React.FC<DesiredModelStepProps> = ({
 
         {/* Search */}
         <div className="relative">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
           <input
             type="text"
             placeholder="Buscar por modelo ou capacidade..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full px-4 py-3 pl-10 bg-gray-800 border border-gray-600 rounded-md text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none"
+            className="w-full pl-10 pr-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
           />
-          <svg
-            className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-            />
-          </svg>
         </div>
       </div>
 
-      {/* Products Grid */}
-      <div className="space-y-6">
+      {/* Accordion List */}
+      <div className="space-y-2">
         {Object.keys(groupedProducts).length === 0 ? (
-          <div className="text-center py-8">
-            <div className="text-gray-400 mb-4">
-              <svg
-                className="w-16 h-16 mx-auto"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={1}
-                  d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6-4h6m2 5.291A7.962 7.962 0 0112 15c-2.34 0-4.47.881-6.08 2.33l-.926-.926A9.953 9.953 0 0112 13c2.74 0 5.23 1.1 7.006 2.904l-.926.926A7.963 7.963 0 0112 15z"
-                />
-              </svg>
-            </div>
-            <p className="text-gray-400">
-              Nenhum produto encontrado com os filtros selecionados.
-            </p>
+          <div className="text-center py-8 text-gray-400">
+            <Package className="w-12 h-12 mx-auto mb-3 opacity-50" />
+            <p>Nenhum produto encontrado</p>
           </div>
         ) : (
           Object.entries(groupedProducts).map(([modelName, products]) => {
+            const isExpanded = expandedModel === modelName;
+            const hasSelection = isModelSelected(products);
             const badge = getModelBadge(modelName);
-            // const isSelected = products.some(
-            //   (product) => product.id === selectedModel
-            // );
+            const storageGroups = getStorageGroups(products);
 
             return (
-              <div key={modelName} className="space-y-3">
-                <div className="flex items-center space-x-3">
-                  <div className="text-2xl">{getModelIcon(modelName)}</div>
-                  <div>
-                    <h3 className="text-lg font-semibold text-white flex items-center space-x-2">
-                      <span>{modelName}</span>
-                      {badge.text && (
-                        <span
-                          className={`px-2 py-1 rounded-full text-xs font-medium text-white ${badge.color}`}
-                        >
-                          {badge.text}
+              <div
+                key={modelName}
+                className={`rounded-lg border-2 overflow-hidden transition-all duration-200 ${
+                  hasSelection
+                    ? "border-green-500 bg-gray-800"
+                    : isExpanded
+                      ? "border-gray-500 bg-gray-800"
+                      : "border-gray-700 bg-gray-800/50 hover:border-gray-600"
+                }`}
+              >
+                {/* Model Header (clickable) */}
+                <button
+                  onClick={() => handleToggleModel(modelName)}
+                  className="w-full flex items-center justify-between p-4 text-left"
+                >
+                  <div className="flex items-center gap-3">
+                    {getModelIcon(modelName)}
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <h3 className="text-white font-semibold">
+                          {modelName}
+                        </h3>
+                        {badge && (
+                          <span
+                            className={`px-2 py-0.5 rounded-full text-xs font-medium text-white ${badge.color}`}
+                          >
+                            {badge.text}
+                          </span>
+                        )}
+                        {hasSelection && (
+                          <Check className="w-4 h-4 text-green-400" />
+                        )}
+                      </div>
+                      <p className="text-sm text-gray-400">
+                        A partir de{" "}
+                        <span className="text-green-400 font-medium">
+                          R$ {getLowestPrice(products)}
+                        </span>{" "}
+                        no PIX
+                        <span className="text-gray-500 ml-2">
+                          — {storageGroups.length} capacidade
+                          {storageGroups.length > 1 ? "s" : ""}
                         </span>
-                      )}
-                    </h3>
-                    <p className="text-sm text-gray-400">
-                      {products.length} opção{products.length > 1 ? "ões" : ""}{" "}
-                      disponível{products.length > 1 ? "eis" : ""}
-                    </p>
+                      </p>
+                    </div>
                   </div>
-                </div>
+                  {isExpanded ? (
+                    <ChevronDown className="w-5 h-5 text-gray-400 flex-shrink-0" />
+                  ) : (
+                    <ChevronRight className="w-5 h-5 text-gray-400 flex-shrink-0" />
+                  )}
+                </button>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                  {products.map((product) => (
-                    <button
-                      key={product.id}
-                      onClick={() => {
-                        console.log("🔧 CLICOU NO MODELO:", modelName);
-                        console.log("🔧 CHAMANDO onSelect com:", modelName);
-
-                        console.log(
-                          "🔧 ID DO PRODUTO SELECIONADO:",
-                          product.id
-                        );
-                        onSelect(product.id);
-                        console.log("🔧 onSelect executado");
-                      }}
-                      className={`
-p-4 rounded-lg border-2 transition-all duration-200 text-left
-${
-  product.id === selectedModel // <-- AGORA COMPARA O ID DO PRODUTO COM O SELECIONADO
-    ? "border-blue-500 bg-blue-500 bg-opacity-20 text-white transform scale-105"
-    : "border-gray-600 bg-gray-800 hover:border-gray-500 hover:bg-gray-750 text-gray-300"
-}
-`}
-                    >
-                      <div className="space-y-2">
-                        <div className="flex items-center justify-between">
-                          <p className="font-medium text-sm">
-                            {product.storage}
-                          </p>
-                          {product.isNew && (
-                            <span className="px-2 py-1 bg-green-600 text-white text-xs rounded-full">
-                              Novo
-                            </span>
-                          )}
-                        </div>
-
-                        <p className="text-xs text-gray-400">{product.color}</p>
-
-                        <div className="space-y-1">
-                          <p className="text-sm">
-                            <span className="text-gray-400">PIX:</span>
-                            <span className="text-green-400 font-semibold ml-1">
-                              R$ {formatPrice(product.pixPrice)}
-                            </span>
-                          </p>
-                          <p className="text-xs text-gray-400">
-                            12x R$ {formatPrice(product.installmentPrice)}
-                          </p>
+                {/* Expanded Content - Storage groups */}
+                {isExpanded && (
+                  <div className="px-4 pb-4 space-y-3">
+                    <div className="border-t border-gray-700 pt-3" />
+                    {storageGroups.map(([storage, variants]) => (
+                      <div key={storage}>
+                        <p className="text-xs text-gray-500 uppercase tracking-wider mb-2 font-medium">
+                          {storage}
+                        </p>
+                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                          {variants.map((product) => {
+                            const isSelected = product.id === selectedModel;
+                            return (
+                              <button
+                                key={product.id}
+                                onClick={() => onSelect(product.id)}
+                                className={`p-3 rounded-lg border transition-all duration-150 text-left ${
+                                  isSelected
+                                    ? "border-green-500 bg-green-900/30 ring-1 ring-green-500/50"
+                                    : "border-gray-600 bg-gray-700/50 hover:border-gray-500 hover:bg-gray-700"
+                                }`}
+                              >
+                                <p
+                                  className={`text-sm font-medium ${isSelected ? "text-green-300" : "text-gray-200"}`}
+                                >
+                                  {product.color}
+                                </p>
+                                <p className="mt-1">
+                                  <span className="text-xs text-gray-400">
+                                    PIX:{" "}
+                                  </span>
+                                  <span
+                                    className={`text-sm font-semibold ${isSelected ? "text-green-400" : "text-green-400"}`}
+                                  >
+                                    R$ {formatPrice(product.pixPrice)}
+                                  </span>
+                                </p>
+                                <p className="text-xs text-gray-500">
+                                  12x R$ {formatPrice(product.installmentPrice)}
+                                </p>
+                                {isSelected && (
+                                  <div className="flex items-center gap-1 mt-1">
+                                    <Check className="w-3 h-3 text-green-400" />
+                                    <span className="text-xs text-green-400">
+                                      Selecionado
+                                    </span>
+                                  </div>
+                                )}
+                              </button>
+                            );
+                          })}
                         </div>
                       </div>
-                    </button>
-                  ))}
-                </div>
+                    ))}
+                  </div>
+                )}
               </div>
             );
           })
@@ -268,52 +336,33 @@ ${
       </div>
 
       {/* Selected Model Confirmation */}
-      {selectedModel && (
-        <div className="mt-6 p-4 bg-green-900 bg-opacity-30 border border-green-700 rounded-lg">
-          <div className="flex items-center">
-            <svg
-              className="w-5 h-5 text-green-400 mr-2"
-              fill="currentColor"
-              viewBox="0 0 20 20"
-            >
-              <path
-                fillRule="evenodd"
-                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                clipRule="evenodd"
-              />
-            </svg>
+      {selectedProduct && (
+        <div className="p-4 bg-green-900/30 border border-green-700 rounded-lg">
+          <div className="flex items-center gap-2">
+            <Check className="w-5 h-5 text-green-400 flex-shrink-0" />
             <p className="text-green-300">
-              <span className="font-medium">
-                {availableProducts.find((p) => p.id === selectedModel)?.model ||
-                  selectedModel}
-              </span>{" "}
-              selecionado como seu iPhone dos sonhos!
+              <span className="font-medium">{selectedProduct.model}</span>
+              {" — "}
+              {selectedProduct.storage}, {selectedProduct.color}
+              {" — "}
+              <span className="text-green-400 font-semibold">
+                R$ {formatPrice(selectedProduct.pixPrice)}
+              </span>
+              {" no PIX"}
             </p>
           </div>
         </div>
       )}
 
       {/* Info Box */}
-      <div className="bg-blue-900 bg-opacity-30 border border-blue-700 rounded-lg p-4">
-        <div className="flex items-start">
-          <svg
-            className="w-5 h-5 text-blue-400 mr-2 mt-0.5 flex-shrink-0"
-            fill="currentColor"
-            viewBox="0 0 20 20"
-          >
-            <path
-              fillRule="evenodd"
-              d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
-              clipRule="evenodd"
-            />
-          </svg>
-          <div>
-            <p className="text-blue-300 text-sm">
-              <strong>Produtos disponíveis:</strong> Mostramos apenas iPhones
-              que temos em estoque. Os preços são atualizados em tempo real e
-              incluem garantia CompreFi.
-            </p>
-          </div>
+      <div className="bg-blue-900/30 border border-blue-700 rounded-lg p-4">
+        <div className="flex items-start gap-2">
+          <Info className="w-5 h-5 text-blue-400 mt-0.5 flex-shrink-0" />
+          <p className="text-blue-300 text-sm">
+            <strong>Produtos disponíveis:</strong> Mostramos apenas iPhones que
+            temos em estoque. Os preços são atualizados em tempo real e incluem
+            garantia CompreFi.
+          </p>
         </div>
       </div>
     </div>

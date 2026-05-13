@@ -1,4 +1,14 @@
 import React from "react";
+import {
+  Smartphone,
+  Camera,
+  Video,
+  Briefcase,
+  Film,
+  HardDrive,
+  CheckCircle2,
+  Info,
+} from "lucide-react";
 
 interface CapacityStepProps {
   selectedCapacity: string;
@@ -30,20 +40,21 @@ const CapacityStep: React.FC<CapacityStepProps> = ({
     }
   };
 
-  const getCapacityIcon = (capacity: string): string => {
+  const getCapacityIcon = (capacity: string): React.ReactNode => {
+    const iconProps = { size: 28, className: "text-current" };
     switch (capacity) {
       case "64GB":
-        return "📱";
+        return <Smartphone {...iconProps} />;
       case "128GB":
-        return "📸";
+        return <Camera {...iconProps} />;
       case "256GB":
-        return "🎥";
+        return <Video {...iconProps} />;
       case "512GB":
-        return "💼";
+        return <Briefcase {...iconProps} />;
       case "1TB":
-        return "🎬";
+        return <Film {...iconProps} />;
       default:
-        return "💾";
+        return <HardDrive {...iconProps} />;
     }
   };
 
@@ -111,7 +122,7 @@ const CapacityStep: React.FC<CapacityStepProps> = ({
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4">
-                <div className="text-3xl">{getCapacityIcon(capacity)}</div>
+                <div>{getCapacityIcon(capacity)}</div>
 
                 <div>
                   <p className="text-xl font-bold">{capacity}</p>
@@ -123,17 +134,7 @@ const CapacityStep: React.FC<CapacityStepProps> = ({
 
               {selectedCapacity === capacity && (
                 <div className="text-blue-400">
-                  <svg
-                    className="w-6 h-6"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
+                  <CheckCircle2 size={24} />
                 </div>
               )}
             </div>
@@ -144,17 +145,10 @@ const CapacityStep: React.FC<CapacityStepProps> = ({
       {selectedCapacity && (
         <div className="mt-6 p-4 bg-green-900 bg-opacity-30 border border-green-700 rounded-lg">
           <div className="flex items-center">
-            <svg
-              className="w-5 h-5 text-green-400 mr-2"
-              fill="currentColor"
-              viewBox="0 0 20 20"
-            >
-              <path
-                fillRule="evenodd"
-                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                clipRule="evenodd"
-              />
-            </svg>
+            <CheckCircle2
+              size={20}
+              className="text-green-400 mr-2 flex-shrink-0"
+            />
             <p className="text-green-300">
               <span className="font-medium">{selectedCapacity}</span>{" "}
               selecionado para seu {modelName}
@@ -166,17 +160,7 @@ const CapacityStep: React.FC<CapacityStepProps> = ({
       {/* Info Box */}
       <div className="bg-blue-900 bg-opacity-30 border border-blue-700 rounded-lg p-4">
         <div className="flex items-start">
-          <svg
-            className="w-5 h-5 text-blue-400 mr-2 mt-0.5 flex-shrink-0"
-            fill="currentColor"
-            viewBox="0 0 20 20"
-          >
-            <path
-              fillRule="evenodd"
-              d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
-              clipRule="evenodd"
-            />
-          </svg>
+          <Info size={20} className="text-blue-400 mr-2 mt-0.5 flex-shrink-0" />
           <div>
             <p className="text-blue-300 text-sm">
               <strong>Como verificar:</strong> Vá em Ajustes → Geral → Sobre. A

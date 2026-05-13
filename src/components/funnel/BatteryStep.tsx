@@ -47,16 +47,16 @@ const BatteryStep: React.FC<BatteryStepProps> = ({
     return "Muito fraca - Troca urgente";
   };
 
-  const getDepreciationInfo = (
-    level: number
-  ): { amount: string; color: string } => {
-    if (level === 100) return { amount: "R$ 200", color: "text-green-400" };
-    if (level >= 90) return { amount: "R$ 400", color: "text-yellow-400" };
-    if (level >= 80) return { amount: "R$ 1.000", color: "text-orange-400" };
-    return { amount: "R$ 1.700", color: "text-red-400" };
-  };
+  // const getDepreciationInfo = (
+  //   level: number,
+  // ): { amount: string; color: string } => {
+  //   if (level === 100) return { amount: "R$ 200", color: "text-green-400" };
+  //   if (level >= 90) return { amount: "R$ 400", color: "text-yellow-400" };
+  //   if (level >= 80) return { amount: "R$ 1.000", color: "text-orange-400" };
+  //   return { amount: "R$ 1.700", color: "text-red-400" };
+  // };
 
-  const depreciation = getDepreciationInfo(batteryLevel);
+  // const depreciation = getDepreciationInfo(batteryLevel);
 
   return (
     <div className="space-y-6">
@@ -155,7 +155,7 @@ const BatteryStep: React.FC<BatteryStepProps> = ({
         </div>
 
         {/* Impact on Value */}
-        <div className="border-t border-gray-700 pt-4">
+        {/* <div className="border-t border-gray-700 pt-4">
           <div className="flex justify-between items-center">
             <span className="text-gray-300">Impacto no valor:</span>
             <span className={`font-semibold ${depreciation.color}`}>
@@ -165,7 +165,7 @@ const BatteryStep: React.FC<BatteryStepProps> = ({
           <p className="text-sm text-gray-400 mt-2">
             Quanto será descontado do valor do seu iPhone devido à bateria
           </p>
-        </div>
+        </div> */}
 
         {/* Quick Select Buttons */}
         <div className="border-t border-gray-700 pt-4">

@@ -134,7 +134,7 @@ const TradeFunnel: React.FC = () => {
     const currentUserValue = getProductValue(currentUserProduct);
 
     const filtered = allAvailableIphones.filter(
-      (p) => getProductValue(p) >= currentUserValue
+      (p) => getProductValue(p) >= currentUserValue,
     );
     setFilteredProducts(filtered);
   }, [funnelData.modeloAtual, funnelData.capacidadeAtual, allAvailableIphones]);
@@ -147,15 +147,15 @@ const TradeFunnel: React.FC = () => {
           fetch(`${API_URL}/trade/combinations`).then((r) => r.json()),
           fetch(`${API_URL}/trade/defects`).then((r) => r.json()),
           fetch(`${API_URL}/trade/qualification-options`).then((r) => r.json()),
-          apiService.getAllProducts(),
-        ]
+          fetch(`${API_URL}/catalog/products-flat`).then((r) => r.json()),
+        ],
       );
       setCombinations(combData);
       setDefectsList(defectsData);
       setQualificationOptions(qualData);
 
       const activeIphones = productsData.filter(
-        (p: any) => p.isActive && p.category === "iPhones Novos"
+        (p: any) => p.isActive && p.category === "iPhones Novos",
       );
 
       const sortedIphones = sortProducts(activeIphones);
@@ -241,7 +241,7 @@ const TradeFunnel: React.FC = () => {
     if (!funnelData.modeloAtual) return [];
     try {
       const response = await fetch(
-        `${API_URL}/trade/colors/${encodeURIComponent(funnelData.modeloAtual)}`
+        `${API_URL}/trade/colors/${encodeURIComponent(funnelData.modeloAtual)}`,
       );
       const data = await response.json();
       return data.colors || [];
@@ -339,7 +339,6 @@ const TradeFunnel: React.FC = () => {
                 batteryLevel={funnelData.bateriaAtual}
                 onSelect={(battery) => {
                   updateFunnelData("bateriaAtual", battery);
-                  handleScrollTo(navigationRef);
                 }}
               />
             )}
@@ -362,7 +361,6 @@ const TradeFunnel: React.FC = () => {
                 }}
                 onSelectWhichParts={(parts) => {
                   updateFunnelData("quaisPecas", parts);
-                  handleScrollTo(navigationRef);
                 }}
               />
             )}

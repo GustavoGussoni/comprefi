@@ -1,4 +1,21 @@
 import React from "react";
+import {
+  Sparkles,
+  Search,
+  ShieldCheck,
+  Smartphone,
+  Camera,
+  Hammer,
+  Zap,
+  CameraOff,
+  ScanFace,
+  RotateCcw,
+  HelpCircle,
+  AlertTriangle,
+  CheckCircle2,
+  Info,
+  Check,
+} from "lucide-react";
 
 interface DefectsStepProps {
   selectedDefects: string[];
@@ -20,40 +37,33 @@ const DefectsStep: React.FC<DefectsStepProps> = ({
   onSelect,
 }) => {
   const handleDefectToggle = (defectKey: string) => {
-    console.log("🔧 CLICOU EM:", defectKey);
-    console.log("🔧 DEFEITOS ATUAIS:", selectedDefects);
-
     const isSelected = selectedDefects.includes(defectKey);
-    console.log("🔧 JÁ ESTÁ SELECIONADO?", isSelected);
 
     if (isSelected) {
-      // Remove defeito
       const newDefects = selectedDefects.filter((d) => d !== defectKey);
-      console.log("🔧 REMOVENDO - NOVOS DEFEITOS:", newDefects);
       onSelect(newDefects);
     } else {
-      // Adiciona defeito
       const newDefects = [...selectedDefects, defectKey];
-      console.log("🔧 ADICIONANDO - NOVOS DEFEITOS:", newDefects);
       onSelect(newDefects);
     }
   };
 
-  const getDefectIcon = (defectId: string): string => {
-    const iconMap: { [key: string]: string } = {
-      nenhum: "✨",
-      detalhe_leve: "🔍",
-      detalhe_capinha: "🛡️",
-      risco_tela: "📱",
-      risco_camera: "📷",
-      amassado: "🔨",
-      tela_quebrada: "💥",
-      camera_quebrada: "📸",
-      faceid_off: "🚫",
-      traseira_quebrada: "🔙",
-      outros: "❓",
+  const getDefectIcon = (defectId: string): React.ReactNode => {
+    const iconProps = { size: 20, className: "text-current" };
+    const iconMap: { [key: string]: React.ReactNode } = {
+      nenhum: <Sparkles {...iconProps} />,
+      detalhe_leve: <Search {...iconProps} />,
+      detalhe_capinha: <ShieldCheck {...iconProps} />,
+      risco_tela: <Smartphone {...iconProps} />,
+      risco_camera: <Camera {...iconProps} />,
+      amassado: <Hammer {...iconProps} />,
+      tela_quebrada: <Zap {...iconProps} />,
+      camera_quebrada: <CameraOff {...iconProps} />,
+      faceid_off: <ScanFace {...iconProps} />,
+      traseira_quebrada: <RotateCcw {...iconProps} />,
+      outros: <HelpCircle {...iconProps} />,
     };
-    return iconMap[defectId] || "⚠️";
+    return iconMap[defectId] || <AlertTriangle {...iconProps} />;
   };
 
   const getDefectColor = (defectId: string, isInstant: boolean): string => {
@@ -65,7 +75,7 @@ const DefectsStep: React.FC<DefectsStepProps> = ({
   };
 
   const hasManualQuotationDefects = selectedDefects.some((defect) =>
-    defectsList.manualQuotation?.some((d) => d.id === defect)
+    defectsList.manualQuotation?.some((d) => d.id === defect),
   );
 
   return (
@@ -97,7 +107,7 @@ const DefectsStep: React.FC<DefectsStepProps> = ({
         >
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
-              <div className="text-2xl">✨</div>
+              <Sparkles size={24} className="text-current" />
               <div>
                 <p className="font-semibold text-lg">Nenhum defeito</p>
                 <p className="text-sm text-gray-400">
@@ -108,17 +118,7 @@ const DefectsStep: React.FC<DefectsStepProps> = ({
 
             {selectedDefects.includes("nenhum") && (
               <div className="text-green-400">
-                <svg
-                  className="w-6 h-6"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                    clipRule="evenodd"
-                  />
-                </svg>
+                <CheckCircle2 size={24} />
               </div>
             )}
           </div>
@@ -137,56 +137,41 @@ const DefectsStep: React.FC<DefectsStepProps> = ({
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              {defectsList.instantCalculation.map((defect) => {
-                console.log("🔍 DEFEITO:", defect);
-                return (
-                  <button
-                    key={defect.id}
-                    onClick={() => handleDefectToggle(defect.id)}
-                    className={`
-                  p-4 rounded-lg border-2 transition-all duration-200 text-left
-                  ${
-                    selectedDefects.includes(defect.id)
-                      ? "border-green-500 bg-green-500 bg-opacity-20 text-white"
-                      : "border-green-600 bg-green-900 bg-opacity-20 hover:bg-opacity-30 text-gray-300"
-                  }
-                `}
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-3">
-                        <div className="text-xl">
-                          {getDefectIcon(defect.id)}
-                        </div>
-                        <div>
-                          <p className="font-medium">{defect.label}</p>
-                          <p className="text-xs text-gray-400">
-                            {defect.description}
-                          </p>
-                          <p className="text-xs text-red-400 font-medium">
-                            {defect.impact}
-                          </p>
-                        </div>
+              {defectsList.instantCalculation.map((defect) => (
+                <button
+                  key={defect.id}
+                  onClick={() => handleDefectToggle(defect.id)}
+                  className={`
+                    p-4 rounded-lg border-2 transition-all duration-200 text-left
+                    ${
+                      selectedDefects.includes(defect.id)
+                        ? "border-green-500 bg-green-500 bg-opacity-20 text-white"
+                        : "border-green-600 bg-green-900 bg-opacity-20 hover:bg-opacity-30 text-gray-300"
+                    }
+                  `}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      <div>{getDefectIcon(defect.id)}</div>
+                      <div>
+                        <p className="font-medium">{defect.label}</p>
+                        <p className="text-xs text-gray-400">
+                          {defect.description}
+                        </p>
+                        <p className="text-xs text-red-400 font-medium">
+                          {defect.impact}
+                        </p>
                       </div>
-
-                      {selectedDefects.includes(defect.id) && (
-                        <div className="text-green-400">
-                          <svg
-                            className="w-5 h-5"
-                            fill="currentColor"
-                            viewBox="0 0 20 20"
-                          >
-                            <path
-                              fillRule="evenodd"
-                              d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                              clipRule="evenodd"
-                            />
-                          </svg>
-                        </div>
-                      )}
                     </div>
-                  </button>
-                );
-              })}
+
+                    {selectedDefects.includes(defect.id) && (
+                      <div className="text-green-400">
+                        <Check size={20} />
+                      </div>
+                    )}
+                  </div>
+                </button>
+              ))}
             </div>
           </div>
         )}
@@ -217,7 +202,7 @@ const DefectsStep: React.FC<DefectsStepProps> = ({
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
-                    <div className="text-xl">{getDefectIcon(defect.id)}</div>
+                    <div>{getDefectIcon(defect.id)}</div>
                     <div>
                       <p className="font-medium">{defect.label}</p>
                       <p className="text-xs text-gray-400">
@@ -231,17 +216,7 @@ const DefectsStep: React.FC<DefectsStepProps> = ({
 
                   {selectedDefects.includes(defect.id) && (
                     <div className="text-orange-400">
-                      <svg
-                        className="w-5 h-5"
-                        fill="currentColor"
-                        viewBox="0 0 20 20"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
+                      <Check size={20} />
                     </div>
                   )}
                 </div>
@@ -266,42 +241,13 @@ const DefectsStep: React.FC<DefectsStepProps> = ({
         `}
         >
           <div className="flex items-center">
-            <div
-              className={`
-              w-5 h-5 mr-2
-              ${
-                selectedDefects.includes("nenhum")
-                  ? "text-green-400"
-                  : hasManualQuotationDefects
-                    ? "text-orange-400"
-                    : "text-blue-400"
-              }
-            `}
-            >
+            <div className="mr-2 flex-shrink-0">
               {selectedDefects.includes("nenhum") ? (
-                <svg fill="currentColor" viewBox="0 0 20 20">
-                  <path
-                    fillRule="evenodd"
-                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                    clipRule="evenodd"
-                  />
-                </svg>
+                <CheckCircle2 size={20} className="text-green-400" />
               ) : hasManualQuotationDefects ? (
-                <svg fill="currentColor" viewBox="0 0 20 20">
-                  <path
-                    fillRule="evenodd"
-                    d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
-                    clipRule="evenodd"
-                  />
-                </svg>
+                <AlertTriangle size={20} className="text-orange-400" />
               ) : (
-                <svg fill="currentColor" viewBox="0 0 20 20">
-                  <path
-                    fillRule="evenodd"
-                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
-                    clipRule="evenodd"
-                  />
-                </svg>
+                <Info size={20} className="text-blue-400" />
               )}
             </div>
 
@@ -329,17 +275,7 @@ const DefectsStep: React.FC<DefectsStepProps> = ({
       {/* Info Box */}
       <div className="bg-blue-900 bg-opacity-30 border border-blue-700 rounded-lg p-4">
         <div className="flex items-start">
-          <svg
-            className="w-5 h-5 text-blue-400 mr-2 mt-0.5 flex-shrink-0"
-            fill="currentColor"
-            viewBox="0 0 20 20"
-          >
-            <path
-              fillRule="evenodd"
-              d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
-              clipRule="evenodd"
-            />
-          </svg>
+          <Info size={20} className="text-blue-400 mr-2 mt-0.5 flex-shrink-0" />
           <div>
             <p className="text-blue-300 text-sm">
               <strong>Seja honesto:</strong> Informações precisas garantem uma
