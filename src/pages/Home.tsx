@@ -8,6 +8,7 @@ import desktopBanner from "../assets/images/IMG_2816_desktop.webp";
 import mobileBanner from "../assets/images/IMG_2791.webp";
 import locsBanner from "../assets/images/MAPA-BRASIL-LOCAIS-DE-ENTREGA.gif";
 import locsBannerStatic from "../assets/images/mapa-static.webp";
+import HeroBanner from "@/components/HeroBanner";
 
 interface HomeProps {
   isMobile: boolean;
@@ -107,6 +108,8 @@ const Home: React.FC<HomeProps> = ({ isMobile }) => {
         </div>
       </div>
     </section> */}
+
+      <HeroBanner />
 
       {/* Parábola - Como começou */}
       <section className="parable-section max-w-4xl mx-auto py-16 px-4 border-gray-800">
