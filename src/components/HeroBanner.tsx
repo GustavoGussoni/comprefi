@@ -87,7 +87,7 @@ const HeroBanner: React.FC = () => {
             <img
               src={heroImage}
               alt="Gustavo Gussoni - CompreFi"
-              className="w-full h-auto object-contain"
+              className="w-full h-auto object-contain opacity-50"
             />
           </div>
         </div>
@@ -108,6 +108,9 @@ const HeroBanner: React.FC = () => {
               maskImage:
                 "linear-gradient(to bottom, black 40%, transparent 90%), linear-gradient(to right, transparent 0%, black 30%)",
               maskComposite: "intersect",
+              position: "relative",
+              right: "-107px",
+              top: "40px",
             }}
           />
         </div>
