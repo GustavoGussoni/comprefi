@@ -4,7 +4,8 @@ import FAQ from "../components/FAQ";
 import WhyChooseCompreFi from "../components/WhyChooseCompreFi";
 import SEOHead from "../components/SEOHead";
 // Imagens
-
+import desktopBanner from "../assets/images/IMG_2816_desktop.webp";
+import mobileBanner from "../assets/images/IMG_2791.webp";
 import locsBanner from "../assets/images/MAPA-BRASIL-LOCAIS-DE-ENTREGA.gif";
 import locsBannerStatic from "../assets/images/mapa-static.webp";
 import HeroBanner from "@/components/HeroBanner";
@@ -115,16 +116,9 @@ const Home: React.FC<HomeProps> = ({ isMobile }) => {
 
       <ContrastSection />
 
-      <SocialProofSection />
+      <HowItWorksSection />
 
-      {/* Banner Locais */}
-      <section className="banner-locs max-w-4xl w-full mx-auto py-16 px-4">
-        <img
-          src={bannerSrc}
-          alt="CompreFi - Produtos Apple Premium"
-          className="w-full h-auto object-cover max-w-4xl"
-        />
-      </section>
+      <SocialProofSection />
 
       {/* Parábola - Como começou */}
       <section className="parable-section max-w-4xl mx-auto py-16 px-4 border-gray-800">
@@ -207,16 +201,14 @@ const Home: React.FC<HomeProps> = ({ isMobile }) => {
         </div>
       </section>
 
-      <HowItWorksSection />
-
       {/* Banner Principal */}
-      {/* <section ref={bannerRef} className="banner-section w-full">
+      <section ref={bannerRef} className="banner-section w-full">
         <img
           src={isMobile ? mobileBanner : desktopBanner}
           alt="CompreFi - Produtos Apple Premium"
           className="w-full h-auto object-cover"
         />
-      </section> */}
+      </section>
 
       {/* História Pessoal - Dividida em seções para melhor engajamento
     <section className="story-section max-w-4xl mx-auto py-16 px-4">
@@ -268,85 +260,6 @@ const Home: React.FC<HomeProps> = ({ isMobile }) => {
         </p>
       </div>
     </section> */}
-
-      {/* Espaço para Depoimentos - Será implementado quando o usuário enviar os depoimentos */}
-      <section className="testimonials-section py-16 px-4">
-        <h2 className="text-3xl md:text-4xl font-bold mb-12 text-center text-white">
-          O Que Nossos Clientes Dizem
-        </h2>
-
-        <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <div className="bg-gray-900 flex flex-col justify-between rounded-lg p-6 border border-gray-800">
-            <div className="flex mb-4">
-              {[...Array(5)].map((_, i) => (
-                <svg
-                  key={i}
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5 text-[#ff6100]"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                >
-                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                </svg>
-              ))}
-            </div>
-            <div className="flex flex-col justify-between h-full max-h-full">
-              <p className="text-gray-300 mb-4 italic">
-                "Comprei meu iPhone na CompreFi e fiquei impressionado com a
-                qualidade do atendimento. Recomendo!"
-              </p>
-              <p className="text-white font-medium">Carlos Silva</p>
-            </div>
-          </div>
-
-          <div className="bg-gray-900 flex flex-col justify-between rounded-lg p-6 border border-gray-800">
-            <div className="flex mb-4">
-              {[...Array(5)].map((_, i) => (
-                <svg
-                  key={i}
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5 text-[#ff6100]"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                >
-                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                </svg>
-              ))}
-            </div>
-            <div className="flex flex-col justify-between h-full max-h-full">
-              <p className="text-gray-300 mb-4 italic">
-                "Com certeza vou recomendar você pra quem perguntar algo, um dos
-                únicos que se preocupou em achar oq eu queria."
-              </p>
-              <p className="text-white font-medium">Madu</p>
-            </div>
-          </div>
-
-          <div className="bg-gray-900 flex flex-col justify-between rounded-lg p-6 border border-gray-800">
-            <div className="flex mb-4">
-              {[...Array(5)].map((_, i) => (
-                <svg
-                  key={i}
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5 text-[#ff6100]"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                >
-                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                </svg>
-              ))}
-            </div>
-            <div className="flex flex-col justify-between h-full max-h-full">
-              <p className="text-gray-300 mb-4 italic">
-                "Muuuuito obrigada Gustavo. Pelo atendimento e agilidade. To
-                muito feliz com meu novo celular. Você ganhou uma cliente e vai
-                ganhar mais alguns hahaha pq vou super indicar "
-              </p>
-              <p className="text-white font-medium">Luana Bernardes</p>
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* História Pessoal - Dividida em seções para melhor engajamento */}
       <section className="story-section max-w-4xl mx-auto py-16 px-4">
@@ -439,6 +352,104 @@ const Home: React.FC<HomeProps> = ({ isMobile }) => {
         </div>
       </section>
 
+      {/* Banner Locais */}
+      <section className="banner-locs max-w-4xl w-full mx-auto py-16 px-4">
+        <img
+          src={bannerSrc}
+          alt="CompreFi - Produtos Apple Premium"
+          className="w-full h-auto object-cover max-w-4xl"
+        />
+      </section>
+
+      {/* Espaço para Depoimentos - Será implementado quando o usuário enviar os depoimentos */}
+      <section className="testimonials-section py-16 px-4">
+        <h2 className="text-3xl md:text-4xl font-bold mb-12 text-center text-white">
+          O Que Nossos Clientes Dizem
+        </h2>
+
+        <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="bg-gray-900 flex flex-col justify-between rounded-lg p-6 border border-gray-800">
+            <div className="flex mb-4">
+              {[...Array(5)].map((_, i) => (
+                <svg
+                  key={i}
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5 text-[#ff6100]"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                </svg>
+              ))}
+            </div>
+            <div className="flex flex-col justify-between h-full max-h-full">
+              <p className="text-gray-300 mb-4 italic">
+                "Comprei meu iPhone na CompreFi e fiquei impressionado com a
+                qualidade do atendimento. Recomendo!"
+              </p>
+              <p className="text-white font-medium">Carlos Silva</p>
+            </div>
+          </div>
+
+          <div className="bg-gray-900 flex flex-col justify-between rounded-lg p-6 border border-gray-800">
+            <div className="flex mb-4">
+              {[...Array(5)].map((_, i) => (
+                <svg
+                  key={i}
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5 text-[#ff6100]"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                </svg>
+              ))}
+            </div>
+            <div className="flex flex-col justify-between h-full max-h-full">
+              <p className="text-gray-300 mb-4 italic">
+                "Com certeza vou recomendar você pra quem perguntar algo, um dos
+                únicos que se preocupou em achar oq eu queria."
+              </p>
+              <p className="text-white font-medium">Madu</p>
+            </div>
+          </div>
+
+          <div className="bg-gray-900 flex flex-col justify-between rounded-lg p-6 border border-gray-800">
+            <div className="flex mb-4">
+              {[...Array(5)].map((_, i) => (
+                <svg
+                  key={i}
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5 text-[#ff6100]"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                </svg>
+              ))}
+            </div>
+            <div className="flex flex-col justify-between h-full max-h-full">
+              <p className="text-gray-300 mb-4 italic">
+                "Muuuuito obrigada Gustavo. Pelo atendimento e agilidade. To
+                muito feliz com meu novo celular. Você ganhou uma cliente e vai
+                ganhar mais alguns hahaha pq vou super indicar "
+              </p>
+              <p className="text-white font-medium">Luana Bernardes</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ */}
+      <section className="faq-section pt-16 px-4">
+        <FAQ />
+      </section>
+
+      {/* Por que escolher a CompreFi */}
+      <section className="why-choose-section py-16 px-4">
+        <WhyChooseCompreFi />
+      </section>
+
       {/* Módulo de Categorias */}
       <section className="categories-section py-16 px-4">
         <h2 className="text-3xl md:text-4xl font-bold mb-12 text-center text-white">
@@ -477,16 +488,6 @@ const Home: React.FC<HomeProps> = ({ isMobile }) => {
             description="Complementos originais para seus dispositivos Apple"
           />
         </div>
-      </section>
-
-      {/* Por que escolher a CompreFi */}
-      <section className="why-choose-section py-16 px-4">
-        <WhyChooseCompreFi />
-      </section>
-
-      {/* FAQ */}
-      <section className="faq-section pt-16 px-4">
-        <FAQ />
       </section>
     </div>
   );
