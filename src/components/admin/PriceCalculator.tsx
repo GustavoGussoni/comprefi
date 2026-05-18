@@ -63,12 +63,13 @@ const PriceCalculator: React.FC = () => {
     setError(null);
   };
 
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat("pt-BR", {
-      style: "currency",
-      currency: "BRL",
-    }).format(value);
-  };
+  // // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // const formatCurrency = (value: number) => {
+  //   return new Intl.NumberFormat("pt-BR", {
+  //     style: "currency",
+  //     currency: "BRL",
+  //   }).format(value);
+  // };
 
   return (
     <div className="bg-gray-900 rounded-lg p-8">

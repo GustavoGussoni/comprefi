@@ -196,10 +196,9 @@ function TestimonialsCarousel() {
 }
 
 /* ------------------------------------------------------------------ */
-/*  Vídeo YouTube Placeholder                                          */
+/*  Vídeo YouTube (formato Shorts — vertical 9:16)                     */
 /* ------------------------------------------------------------------ */
 
-// TODO: Substituir pelo ID real do vídeo do YouTube
 const YOUTUBE_VIDEO_ID = "Re_rCRT6R28";
 
 function VideoSection() {
@@ -207,34 +206,38 @@ function VideoSection() {
 
   if (YOUTUBE_VIDEO_ID && isPlaying) {
     return (
-      <div className="relative w-full aspect-video rounded-2xl overflow-hidden border border-gray-700/50">
-        <iframe
-          src={`https://www.youtube.com/embed/${YOUTUBE_VIDEO_ID}?autoplay=1&rel=0`}
-          title="Depoimento em vídeo — CompreFi"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowFullScreen
-          className="absolute inset-0 w-full h-full"
-        />
+      <div className="flex justify-center">
+        <div className="relative w-full max-w-[360px] aspect-[9/16] rounded-2xl overflow-hidden border border-gray-700/50">
+          <iframe
+            src={`https://www.youtube.com/embed/${YOUTUBE_VIDEO_ID}?autoplay=1&rel=0`}
+            title="Depoimento em vídeo — CompreFi"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+            className="absolute inset-0 w-full h-full"
+          />
+        </div>
       </div>
     );
   }
 
   return (
-    <div
-      onClick={() => YOUTUBE_VIDEO_ID && setIsPlaying(true)}
-      className={`relative w-full aspect-video rounded-2xl overflow-hidden border border-gray-700/50 bg-[#0d1117] flex items-center justify-center ${
-        YOUTUBE_VIDEO_ID ? "cursor-pointer group" : ""
-      }`}
-    >
-      <div className="text-center">
-        <div className="w-16 h-16 rounded-full bg-[#FF6100]/20 border-2 border-[#FF6100]/40 flex items-center justify-center mx-auto mb-4 group-hover:bg-[#FF6100]/30 transition-colors">
-          <Play className="w-7 h-7 text-[#FF6100] ml-1" />
+    <div className="flex justify-center">
+      <div
+        onClick={() => YOUTUBE_VIDEO_ID && setIsPlaying(true)}
+        className={`relative w-full max-w-[360px] aspect-[9/16] rounded-2xl overflow-hidden border border-gray-700/50 bg-[#0d1117] flex items-center justify-center ${
+          YOUTUBE_VIDEO_ID ? "cursor-pointer group" : ""
+        }`}
+      >
+        <div className="text-center">
+          <div className="w-16 h-16 rounded-full bg-[#FF6100]/20 border-2 border-[#FF6100]/40 flex items-center justify-center mx-auto mb-4 group-hover:bg-[#FF6100]/30 transition-colors">
+            <Play className="w-7 h-7 text-[#FF6100] ml-1" />
+          </div>
+          <p className="text-gray-400 text-sm">
+            {YOUTUBE_VIDEO_ID
+              ? "Clique para assistir"
+              : "Em breve: depoimento em vídeo"}
+          </p>
         </div>
-        <p className="text-gray-400 text-sm">
-          {YOUTUBE_VIDEO_ID
-            ? "Clique para assistir"
-            : "Em breve: depoimento em vídeo"}
-        </p>
       </div>
     </div>
   );

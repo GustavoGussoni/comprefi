@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 // src/pages/ResultPage.tsx
 
 import {
@@ -8,10 +9,8 @@ import {
   Repeat,
   ShieldCheck,
   Users,
-  Zap,
 } from "lucide-react";
 import React, { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
 
 // --- Interfaces ---
 interface FunnelData {
@@ -57,7 +56,6 @@ const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const CEP_REGEX = /^\d{5}-\d{3}$/; // <-- ADICIONADO
 
 const ResultPage: React.FC = () => {
-  const navigate = useNavigate();
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const [funnelData, setFunnelData] = useState<FunnelData | null>(null);
   const [result, setResult] = useState<TradeResult | null>(null);

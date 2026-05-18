@@ -66,14 +66,6 @@ const DefectsStep: React.FC<DefectsStepProps> = ({
     return iconMap[defectId] || <AlertTriangle {...iconProps} />;
   };
 
-  const getDefectColor = (defectId: string, isInstant: boolean): string => {
-    if (isInstant) {
-      return "border-green-500 bg-green-900";
-    } else {
-      return "border-orange-500 bg-orange-900";
-    }
-  };
-
   const hasManualQuotationDefects = selectedDefects.some((defect) =>
     defectsList.manualQuotation?.some((d) => d.id === defect),
   );

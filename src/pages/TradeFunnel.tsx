@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import StepProgress from "../components/funnel/StepProgress";
@@ -9,7 +10,7 @@ import DefectsStep from "../components/funnel/DefectsStep";
 import PartsStep from "../components/funnel/PartsStep";
 import DesiredModelStep from "../components/funnel/DesiredModelStep";
 import QualificationStep from "../components/funnel/QualificationStep";
-import { apiService } from "../services/api";
+// import { apiService } from "../services/api";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 

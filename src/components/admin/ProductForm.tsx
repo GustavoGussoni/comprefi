@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState, useEffect } from "react";
 import { apiService, type Product } from "../../services/api";
 
@@ -33,7 +34,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
 
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-  const [calculatedPrices, setCalculatedPrices] = useState<any>(null);
+  const [, setCalculatedPrices] = useState<any>(null);
 
   const categories = [
     "iPhones Novos",
@@ -74,7 +75,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
   const handleInputChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
+    >,
   ) => {
     const { name, value, type } = e.target;
 
@@ -142,7 +143,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
   const prepareDataForAPI = () => {
     // Limpar URLs de imagem vazias
     const cleanRealImages = formData.realImages.filter(
-      (img) => img.trim() !== ""
+      (img) => img.trim() !== "",
     );
 
     // Preparar dados conforme esperado pela API
