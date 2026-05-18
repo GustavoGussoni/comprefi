@@ -256,7 +256,10 @@ export default function HowItWorksSection() {
   const { ref: headerRef, isVisible: headerVisible } = useInView(0.1);
 
   return (
-    <section className="relative w-full bg-[#000] py-20 md:py-28 overflow-hidden">
+    <section
+      id="como-funciona"
+      className="relative w-full bg-[#000] py-20 md:py-28 overflow-hidden"
+    >
       {/* Subtle background pattern */}
       <div className="absolute inset-0 opacity-[0.03]">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.15)_1px,transparent_1px)] bg-[length:24px_24px]" />
