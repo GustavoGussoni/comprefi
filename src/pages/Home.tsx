@@ -116,9 +116,16 @@ const Home: React.FC<HomeProps> = ({ isMobile }) => {
 
       <ContrastSection />
 
-      <HowItWorksSection />
-
       <SocialProofSection />
+
+      {/* Banner Locais */}
+      <section className="banner-locs max-w-4xl w-full mx-auto py-16 px-4">
+        <img
+          src={bannerSrc}
+          alt="CompreFi - Produtos Apple Premium"
+          className="w-full h-auto object-cover max-w-4xl"
+        />
+      </section>
 
       {/* Parábola - Como começou */}
       <section className="parable-section max-w-4xl mx-auto py-16 px-4 border-gray-800">
@@ -352,15 +359,6 @@ const Home: React.FC<HomeProps> = ({ isMobile }) => {
         </div>
       </section>
 
-      {/* Banner Locais */}
-      <section className="banner-locs max-w-4xl w-full mx-auto py-16 px-4">
-        <img
-          src={bannerSrc}
-          alt="CompreFi - Produtos Apple Premium"
-          className="w-full h-auto object-cover max-w-4xl"
-        />
-      </section>
-
       {/* Espaço para Depoimentos - Será implementado quando o usuário enviar os depoimentos */}
       <section className="testimonials-section py-16 px-4">
         <h2 className="text-3xl md:text-4xl font-bold mb-12 text-center text-white">
@@ -440,15 +438,7 @@ const Home: React.FC<HomeProps> = ({ isMobile }) => {
         </div>
       </section>
 
-      {/* FAQ */}
-      <section className="faq-section pt-16 px-4">
-        <FAQ />
-      </section>
-
-      {/* Por que escolher a CompreFi */}
-      <section className="why-choose-section py-16 px-4">
-        <WhyChooseCompreFi />
-      </section>
+      <HowItWorksSection />
 
       {/* Módulo de Categorias */}
       <section className="categories-section py-16 px-4">
@@ -488,6 +478,16 @@ const Home: React.FC<HomeProps> = ({ isMobile }) => {
             description="Complementos originais para seus dispositivos Apple"
           />
         </div>
+      </section>
+
+      {/* Por que escolher a CompreFi */}
+      <section className="why-choose-section py-16 px-4">
+        <WhyChooseCompreFi />
+      </section>
+
+      {/* FAQ */}
+      <section className="faq-section pt-16 px-4">
+        <FAQ />
       </section>
     </div>
   );
