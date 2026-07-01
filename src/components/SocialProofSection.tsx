@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, useCallback } from "react";
+import { createPortal } from "react-dom";
 import {
   ChevronLeft,
   ChevronRight,
@@ -289,25 +290,27 @@ function PhotoWall() {
         ))}
       </div>
 
-      {/* Lightbox */}
-      {selectedPhoto && (
-        <div
-          className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4"
-          onClick={() => setSelectedPhoto(null)}
-        >
-          <button
-            className="absolute top-4 right-4 text-white/70 hover:text-white text-3xl font-light"
+      {/* Lightbox via Portal — renderiza fora da hierarquia de overflow */}
+      {selectedPhoto &&
+        createPortal(
+          <div
+            className="fixed inset-0 z-[9999] bg-black/90 flex items-center justify-center p-4"
             onClick={() => setSelectedPhoto(null)}
           >
-            &times;
-          </button>
-          <img
-            src={selectedPhoto}
-            alt="Foto ampliada"
-            className="max-w-full max-h-[90vh] rounded-xl object-contain"
-          />
-        </div>
-      )}
+            <button
+              className="absolute top-4 right-4 text-white/70 hover:text-white text-3xl font-light z-10"
+              onClick={() => setSelectedPhoto(null)}
+            >
+              &times;
+            </button>
+            <img
+              src={selectedPhoto}
+              alt="Foto ampliada"
+              className="max-w-full max-h-[90vh] rounded-xl object-contain"
+            />
+          </div>,
+          document.body
+        )}
     </>
   );
 }
