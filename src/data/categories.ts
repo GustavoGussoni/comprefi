@@ -16,18 +16,12 @@ import { ipadsProducts } from "./products/ipads";
 import { appleWatchProducts } from "./products/apple-watch";
 import { acessoriosProducts } from "./products/acessorios";
 
-// ---- Macbooks: separar em seções M5, M4 e M3/M2/M1 ----
-const macbooksM5 = macbooksProducts.filter((p) => p.model.includes("M5"));
-const macbooksM4 = macbooksProducts.filter(
-  (p) =>
-    p.model.includes("M4") &&
-    !p.model.includes("M5"),
-);
-const macbooksM3Older = macbooksProducts.filter(
-  (p) =>
-    !p.model.includes("M4") &&
-    !p.model.includes("M5"),
-);
+// ---- Macbooks: separar por linha de produto (mais caros primeiro) ----
+const macStudio = macbooksProducts.filter((p) => p.model.includes("Mac Studio"));
+const macbookPro = macbooksProducts.filter((p) => p.model.includes("MacBook Pro"));
+const macbookAir = macbooksProducts.filter((p) => p.model.includes("MacBook Air"));
+const macbookNeo = macbooksProducts.filter((p) => p.model.includes("MacBook Neo"));
+const macMini = macbooksProducts.filter((p) => p.model.includes("Mac Mini"));
 
 // ---- iPads: separar em seções iPad Pro, iPad Air e iPad ----
 const iPadsPro = ipadsProducts.filter((p) => p.model.includes("iPad Pro"));
@@ -99,9 +93,11 @@ export const categoryRegistry: Record<string, CategoryConfig> = {
     slug: "macbooks",
     type: "grouped",
     groupedSections: [
-      ...(macbooksM5.length > 0 ? [{ title: "Linha M5", products: macbooksM5 }] : []),
-      ...(macbooksM4.length > 0 ? [{ title: "Linha M4", products: macbooksM4 }] : []),
-      ...(macbooksM3Older.length > 0 ? [{ title: "Linha M3 / M2 / M1", products: macbooksM3Older }] : []),
+      ...(macbookPro.length > 0 ? [{ title: "MacBook Pro", products: macbookPro }] : []),
+      ...(macbookAir.length > 0 ? [{ title: "MacBook Air", products: macbookAir }] : []),
+      ...(macbookNeo.length > 0 ? [{ title: "MacBook Neo", products: macbookNeo }] : []),
+      ...(macStudio.length > 0 ? [{ title: "Mac Studio", products: macStudio }] : []),
+      ...(macMini.length > 0 ? [{ title: "Mac Mini", products: macMini }] : []),
     ],
     whyChooseTitle: "Por que comprar na CompreFi?",
     whyChooseItems: DEFAULT_WHY_CHOOSE_ITEMS,
