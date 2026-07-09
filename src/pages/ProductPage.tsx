@@ -1,14 +1,15 @@
-import React from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import ProductDetail from "../components/ProductDetail";
 import {
   findFlatProductById,
   findGroupedProductBySlug,
 } from "../data/categories";
+import { useCatalogPrices, mergePricing } from "../hooks/useCatalogPrices";
 
 const ProductPage: React.FC = () => {
   const { category, id } = useParams<{ category: string; id: string }>();
   const navigate = useNavigate();
+  const { pricingBySlug } = useCatalogPrices(category || "");
 
   if (!category || !id) {
     return (
@@ -40,7 +41,18 @@ const ProductPage: React.FC = () => {
   // Tentar buscar como slug (GroupedProduct)
   const groupedResult = findGroupedProductBySlug(id);
   if (groupedResult) {
-    return <ProductDetail product={groupedResult.product} />;
+    // Mesclar preços do backend (se disponíveis)
+    const mergedProduct = pricingBySlug[groupedResult.product.slug]
+      ? {
+          ...groupedResult.product,
+          pricing: mergePricing(
+            groupedResult.product.pricing,
+            pricingBySlug[groupedResult.product.slug],
+          ),
+        }
+      : groupedResult.product;
+
+    return <ProductDetail product={mergedProduct} />;
   }
 
   // Produto não encontrado
