@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import CatalogTable from "../components/admin/CatalogTable";
 import PriceCalculator from "../components/admin/PriceCalculator";
 import ValorTrocaTable from "../components/admin/ValorTrocaTable";
@@ -50,7 +50,30 @@ type TabId = (typeof tabs)[number]["id"];
 // Component
 // ============================================
 const Admin: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<TabId>("dashboard");
+  // Preservar aba ativa na URL hash
+  const getInitialTab = (): TabId => {
+    const hash = window.location.hash.replace("#", "");
+    const validTabs = tabs.map((t) => t.id) as string[];
+    if (hash && validTabs.includes(hash)) return hash as TabId;
+    return "dashboard";
+  };
+
+  const [activeTab, setActiveTab] = useState<TabId>(getInitialTab);
+
+  const handleSetActiveTab = useCallback((tab: TabId) => {
+    setActiveTab(tab);
+    window.location.hash = tab;
+  }, []);
+
+  useEffect(() => {
+    const onHashChange = () => {
+      const hash = window.location.hash.replace("#", "");
+      const validTabs = tabs.map((t) => t.id) as string[];
+      if (hash && validTabs.includes(hash)) setActiveTab(hash as TabId);
+    };
+    window.addEventListener("hashchange", onHashChange);
+    return () => window.removeEventListener("hashchange", onHashChange);
+  }, []);
   const [dashboardStats, setDashboardStats] = useState<CatalogStats | null>(
     null,
   );
@@ -117,7 +140,7 @@ const Admin: React.FC = () => {
               return (
                 <button
                   key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
+                  onClick={() => handleSetActiveTab(tab.id)}
                   className={`flex items-center space-x-2 py-4 px-2 border-b-2 font-medium text-sm transition-colors whitespace-nowrap ${
                     activeTab === tab.id
                       ? "border-blue-500 text-blue-400"
