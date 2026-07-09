@@ -124,21 +124,26 @@ const DesiredModelStep: React.FC<DesiredModelStepProps> = ({
   };
 
   const formatPrice = (price: string): string => {
-    const num = parseFloat(price.replace(/[^\d.,]/g, "").replace(",", "."));
+    // Remove tudo exceto dígitos, ponto e vírgula
+    const cleaned = price.replace(/[^\d.,]/g, "");
+    // Formato BR: ponto é milhar, vírgula é decimal
+    const num = parseFloat(cleaned.replace(/\./g, "").replace(",", "."));
     if (isNaN(num)) return price;
-    return num.toLocaleString("pt-BR", { minimumFractionDigits: 2 });
+    return num.toLocaleString("pt-BR", { minimumFractionDigits: 0 });
   };
 
   // Preço mais baixo do modelo (para exibir no accordion fechado)
   const getLowestPrice = (products: Product[]): string => {
     const prices = products
-      .map((p) =>
-        parseFloat(p.pixPrice.replace(/[^\d.,]/g, "").replace(",", ".")),
-      )
+      .map((p) => {
+        const cleaned = p.pixPrice.replace(/[^\d.,]/g, "");
+        // Formato BR: ponto é milhar, vírgula é decimal
+        return parseFloat(cleaned.replace(/\./g, "").replace(",", "."));
+      })
       .filter((n) => !isNaN(n) && n > 0);
     if (prices.length === 0) return "—";
     return Math.min(...prices).toLocaleString("pt-BR", {
-      minimumFractionDigits: 2,
+      minimumFractionDigits: 0,
     });
   };
 
