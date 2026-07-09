@@ -335,8 +335,11 @@ const ValorTrocaTable: React.FC = () => {
                     <tr className="text-left text-gray-400 text-sm border-b border-gray-800">
                       <th className="px-4 py-3">Capacidade</th>
                       <th className="px-4 py-3">Valor Base</th>
+                      <th className="px-4 py-3 text-center">Bat. 99-100%</th>
+                      <th className="px-4 py-3 text-center">Bat. 88-98%</th>
+                      <th className="px-4 py-3 text-center">Bat. 80-87%</th>
+                      <th className="px-4 py-3 text-center">Bat. &lt; 80%</th>
                       <th className="px-4 py-3">Status</th>
-                      <th className="px-4 py-3">Atualizado</th>
                       <th className="px-4 py-3 text-right">Ações</th>
                     </tr>
                   </thead>
@@ -384,6 +387,18 @@ const ValorTrocaTable: React.FC = () => {
                               </span>
                             )}
                           </td>
+                          <td className="px-4 py-3 text-center text-gray-300 text-sm">
+                            {formatCurrency(Math.round((editingId === valor.id ? editValue : valor.valorBase) * 0.96))}
+                          </td>
+                          <td className="px-4 py-3 text-center text-gray-300 text-sm">
+                            {formatCurrency(Math.round((editingId === valor.id ? editValue : valor.valorBase) * 0.92))}
+                          </td>
+                          <td className="px-4 py-3 text-center text-yellow-400 text-sm">
+                            {formatCurrency(Math.round((editingId === valor.id ? editValue : valor.valorBase) * 0.84))}
+                          </td>
+                          <td className="px-4 py-3 text-center text-red-400 text-sm">
+                            {formatCurrency(Math.round((editingId === valor.id ? editValue : valor.valorBase) * 0.68))}
+                          </td>
                           <td className="px-4 py-3">
                             <button
                               onClick={() => handleToggleAtivo(valor)}
@@ -395,9 +410,6 @@ const ValorTrocaTable: React.FC = () => {
                             >
                               {valor.ativo ? "Ativo" : "Inativo"}
                             </button>
-                          </td>
-                          <td className="px-4 py-3 text-gray-400 text-sm">
-                            {new Date(valor.updatedAt).toLocaleDateString("pt-BR")}
                           </td>
                           <td className="px-4 py-3 text-right">
                             <div className="flex items-center justify-end space-x-2">
