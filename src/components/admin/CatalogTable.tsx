@@ -1220,7 +1220,16 @@ const CatalogTable: React.FC = () => {
                           </tr>
                         </thead>
                         <tbody>
-                          {product.variants.map((variant) => {
+                          {[...product.variants].sort((a, b) => {
+                            const parseSize = (s: string): number => {
+                              const num = parseFloat(s);
+                              if (s.includes('TB')) return num * 1024;
+                              if (s.includes('GB')) return num;
+                              if (s.includes('mm')) return num;
+                              return 0;
+                            };
+                            return parseSize(b.storage) - parseSize(a.storage);
+                          }).map((variant) => {
                             const isEditing =
                               editingVariant?.variantId === variant.id;
 
