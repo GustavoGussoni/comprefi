@@ -287,6 +287,7 @@ const ResultPage: React.FC = () => {
         valorFinal: result?.valorFinal || 0,
         valorComDesconto: result?.valorComDesconto || 0,
         cupomDesconto: result?.cupomDesconto || "",
+        valorTotal: (result?.valorComDesconto || 0) + (result?.valorAparelho || 0),
         precisaCotacao: result?.precisaCotacao || false,
         // Mensagem pronta para follow-up via CRM
         mensagemFollowUp,
