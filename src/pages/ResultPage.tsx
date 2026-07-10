@@ -228,7 +228,7 @@ const ResultPage: React.FC = () => {
     const isNameValid = validateField("nome", contactForm.nome);
     const isEmailValid = validateField("email", contactForm.email);
     const isWhatsappValid = validateField("whatsapp", contactForm.whatsapp);
-    const isCepValid = validateField("cep", contactForm.cep); // <-- ADICIONADO
+    const isCepValid = validateField("cep", contactForm.cep);
 
     if (!isNameValid || !isEmailValid || !isWhatsappValid || !isCepValid) {
       return;
@@ -236,7 +236,53 @@ const ResultPage: React.FC = () => {
 
     setLoading(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      // Enviar dados para o webhook do CRM
+      const webhookUrl =
+        "https://api.datacrazy.io/v1/crm/api/crm/integrations/webhook/business/54169891-77a1-4507-a932-cb0556e7a6a7";
+
+      const webhookData = {
+        // Dados de contato
+        nome: contactForm.nome,
+        email: contactForm.email,
+        whatsapp: contactForm.whatsapp,
+        cep: contactForm.cep,
+        // Dados do aparelho atual
+        modeloAtual: funnelData?.modeloAtual || "",
+        capacidadeAtual: funnelData?.capacidadeAtual || "",
+        corAtual: funnelData?.corAtual || "",
+        bateriaAtual: funnelData?.bateriaAtual || 0,
+        defeitos: funnelData?.defeitos || [],
+        pecasTrocadas: funnelData?.pecasTrocadas || false,
+        quaisPecas: funnelData?.quaisPecas || "",
+        // Dados de qualificação
+        ondeOuviu: funnelData?.ondeOuviu || "",
+        tempoPensando: funnelData?.tempoPensando || "",
+        urgenciaTroca: funnelData?.urgenciaTroca || "",
+        // Produto desejado
+        modeloDesejado: funnelData?.modeloDesejado || "",
+        produtoDesejado: result?.produtoDesejado?.modelo || "",
+        // Valores calculados
+        valorBase: result?.valorBase || 0,
+        valorAparelho: result?.valorAparelho || 0,
+        depreciacaoBateria: result?.depreciacaoBateria || 0,
+        depreciacaoDefeitos: result?.depreciacaoDefeitos || 0,
+        valorFinal: result?.valorFinal || 0,
+        valorComDesconto: result?.valorComDesconto || 0,
+        cupomDesconto: result?.cupomDesconto || "",
+        precisaCotacao: result?.precisaCotacao || false,
+        // Metadata
+        fonte: "funil-troca",
+        dataEnvio: new Date().toISOString(),
+      };
+
+      await fetch(webhookUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(webhookData),
+      }).catch((err) => console.error("Erro ao enviar webhook:", err));
+
       setShowResult(true);
     } catch (err) {
       console.error("Erro ao enviar:", err);
