@@ -256,6 +256,9 @@ const ResultPage: React.FC = () => {
       const webhookUrl =
         "https://api.datacrazy.io/v1/crm/api/crm/integrations/webhook/business/54169891-77a1-4507-a932-cb0556e7a6a7";
 
+      const discount = calculateDiscount();
+      const mensagemFollowUp = `CONFIRMAÇÃO DE TROCA - CompreFi\n\nCliente: ${contactForm.nome}\nEmail: ${contactForm.email}\nWhatsApp: ${contactForm.whatsapp}\nCEP: ${contactForm.cep}\n\nTROCA CONFIRMADA:\n* De: ${funnelData?.modeloAtual || ""} ${funnelData?.capacidadeAtual || ""}\n* Para: ${result?.produtoDesejado?.modelo || ""}\n\nVALORES FINAIS:\n* Valor do seu aparelho: ${formatCurrency(result?.valorAparelho)}\n* Valor a pagar: ${formatCurrency(result?.valorComDesconto)}\n${timeLeft > 0 ? `* Desconto Refinado Exclusivo: ${formatCurrency(discount)}` : "* Valor original (sem desconto)"}\n${result?.cupomDesconto ? `* Cupom: ${result.cupomDesconto}` : ""}\n\nConfirmado em: ${new Date().toLocaleString("pt-BR")}`;
+
       const webhookData = {
         // Dados de contato
         nome: contactForm.nome,
@@ -285,6 +288,8 @@ const ResultPage: React.FC = () => {
         valorComDesconto: result?.valorComDesconto || 0,
         cupomDesconto: result?.cupomDesconto || "",
         precisaCotacao: result?.precisaCotacao || false,
+        // Mensagem pronta para follow-up via CRM
+        mensagemFollowUp,
         // Metadata
         fonte: "funil-troca",
         dataEnvio: new Date().toISOString(),
