@@ -174,6 +174,7 @@ const CalculationPage: React.FC = () => {
       depreciacaoDefeitos: apiResult.depreciacaoDefeitos,
       precoProduto: apiResult.precoProduto,
       valorComDesconto: apiResult.valorComDesconto,
+      cupomDesconto: apiResult.cupomDesconto || "",
       produtoDesejado: apiResult.produtoDesejado,
     };
   };
