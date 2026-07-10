@@ -43,7 +43,9 @@ const DefectsStep: React.FC<DefectsStepProps> = ({
       const newDefects = selectedDefects.filter((d) => d !== defectKey);
       onSelect(newDefects);
     } else {
-      const newDefects = [...selectedDefects, defectKey];
+      // Remover "nenhum" se estiver selecionado e o usuário clicar em um defeito
+      const withoutNenhum = selectedDefects.filter((d) => d !== "nenhum");
+      const newDefects = [...withoutNenhum, defectKey];
       onSelect(newDefects);
     }
   };

@@ -39,6 +39,7 @@ interface TradeResult {
   depreciacaoDefeitos: number;
   precoProduto: number;
   valorComDesconto: number;
+  cupomDesconto?: string;
   produtoDesejado?: any;
 }
 

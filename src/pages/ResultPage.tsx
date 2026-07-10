@@ -70,7 +70,15 @@ const ResultPage: React.FC = () => {
   });
   const [loading, setLoading] = useState<boolean>(false);
   const [showResult, setShowResult] = useState<boolean>(false);
-  const [timeLeft, setTimeLeft] = useState<number>(1800);
+  const [timeLeft, setTimeLeft] = useState<number>(() => {
+    const stored = localStorage.getItem("comprefi_timer_start");
+    if (stored) {
+      const elapsed = Math.floor((Date.now() - parseInt(stored, 10)) / 1000);
+      const remaining = 1800 - elapsed;
+      return remaining > 0 ? remaining : 0;
+    }
+    return 1800;
+  });
   const [showFAQ, setShowFAQ] = useState<boolean>(false);
   const [errors, setErrors] = useState<{ [key: string]: string | null }>({});
 
@@ -111,9 +119,17 @@ const ResultPage: React.FC = () => {
   };
 
   const startTimer = () => {
+    // Persistir o momento de início no localStorage
+    if (!localStorage.getItem("comprefi_timer_start")) {
+      localStorage.setItem("comprefi_timer_start", Date.now().toString());
+    }
+
     if (timerRef.current) {
       clearInterval(timerRef.current);
     }
+
+    // Se já expirou, não iniciar o intervalo
+    if (timeLeft <= 0) return;
 
     timerRef.current = setInterval(() => {
       setTimeLeft((prev) => {
@@ -259,8 +275,7 @@ const ResultPage: React.FC = () => {
         tempoPensando: funnelData?.tempoPensando || "",
         urgenciaTroca: funnelData?.urgenciaTroca || "",
         // Produto desejado
-        modeloDesejado: funnelData?.modeloDesejado || "",
-        produtoDesejado: result?.produtoDesejado?.modelo || "",
+        modeloDesejado: result?.produtoDesejado?.modelo || funnelData?.modeloDesejado || "",
         // Valores calculados
         valorBase: result?.valorBase || 0,
         valorAparelho: result?.valorAparelho || 0,
@@ -308,7 +323,7 @@ const ResultPage: React.FC = () => {
 
 *TROCA CONFIRMADA:*
 • De: ${funnelData?.modeloAtual} ${funnelData?.capacidadeAtual}
-• Para: ${result?.produtoDesejado?.model}
+• Para: ${result?.produtoDesejado?.modelo}
 
 *VALORES FINAIS:*
 • Valor do seu aparelho: ${formatCurrency(result?.valorAparelho)}
