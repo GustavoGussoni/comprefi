@@ -97,9 +97,9 @@ export const iphonesSeminovosProducts: FlatProduct[] = [
    storage: "256GB",
    color: "Titânio Natural",
    battery: "91%",
-   originalPrice: "R$ 6.990,00",
-   installmentPrice: "R$ 616,69",
-   pixPrice: "R$ 6.490",
+   originalPrice: "R$ 5.990,00",
+   installmentPrice: "R$ 521,67",
+   pixPrice: "R$ 5.490",
    details: "sem detalhes | acompanha capinha",
    image: iphone16PMNTraseira,
    realImages: [
