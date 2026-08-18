@@ -3,12 +3,14 @@ import CatalogTable from "../components/admin/CatalogTable";
 import PriceCalculator from "../components/admin/PriceCalculator";
 import ValorTrocaTable from "../components/admin/ValorTrocaTable";
 import QuestionarioTable from "../components/admin/QuestionarioTable";
+import SimuladorTaxas from "../components/admin/SimuladorTaxas";
 import {
   LayoutDashboard,
   Package,
   Calculator,
   ArrowLeftRight,
   ClipboardList,
+  CreditCard,
 } from "lucide-react";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
@@ -41,6 +43,7 @@ const tabs = [
   { id: "catalogo", label: "Catálogo", icon: Package },
   { id: "calculator", label: "Calculadora", icon: Calculator },
   { id: "valores-troca", label: "Valores Troca", icon: ArrowLeftRight },
+  { id: "simulador-taxas", label: "Simulador Taxas", icon: CreditCard },
   { id: "questionarios", label: "Questionários", icon: ClipboardList },
 ] as const;
 
@@ -89,6 +92,12 @@ const Admin: React.FC = () => {
             ...(token ? { Authorization: `Bearer ${token}` } : {}),
           },
         });
+        if (res.status === 401) {
+          localStorage.removeItem("admin_token");
+          localStorage.removeItem("admin_user");
+          window.dispatchEvent(new Event("auth:expired"));
+          return;
+        }
         if (res.ok) {
           setDashboardStats(await res.json());
         }
@@ -251,6 +260,9 @@ const Admin: React.FC = () => {
 
         {/* Valores de Troca */}
         {activeTab === "valores-troca" && <ValorTrocaTable />}
+
+        {/* Simulador de Taxas */}
+        {activeTab === "simulador-taxas" && <SimuladorTaxas />}
 
         {/* Questionários */}
         {activeTab === "questionarios" && <QuestionarioTable />}

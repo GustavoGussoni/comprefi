@@ -59,13 +59,25 @@ const QuestionarioTable: React.FC = () => {
   const loadData = async (pageNum = 1) => {
     try {
       setLoading(true);
-      const [questRes, statsRes] = await Promise.all([
+      const [questRaw, statsRaw] = await Promise.all([
         fetch(`${API_URL}/trade/questionarios?page=${pageNum}&limit=15`, {
           headers: getAuthHeaders(),
-        }).then((r) => r.json()),
+        }),
         fetch(`${API_URL}/trade/questionarios/stats`, {
           headers: getAuthHeaders(),
-        }).then((r) => r.json()),
+        }),
+      ]);
+
+      if (questRaw.status === 401 || statsRaw.status === 401) {
+        localStorage.removeItem("admin_token");
+        localStorage.removeItem("admin_user");
+        window.dispatchEvent(new Event("auth:expired"));
+        return;
+      }
+
+      const [questRes, statsRes] = await Promise.all([
+        questRaw.json(),
+        statsRaw.json(),
       ]);
 
       setQuestionarios(questRes.data || []);

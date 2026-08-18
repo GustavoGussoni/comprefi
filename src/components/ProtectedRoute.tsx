@@ -16,6 +16,16 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
     checkAuthentication();
   }, []);
 
+  // Listener para token expirado durante o uso
+  useEffect(() => {
+    const handleAuthExpired = () => {
+      setIsAuthenticated(false);
+      setUser(null);
+    };
+    window.addEventListener("auth:expired", handleAuthExpired);
+    return () => window.removeEventListener("auth:expired", handleAuthExpired);
+  }, []);
+
   const checkAuthentication = async () => {
     try {
       // Verificar se há token salvo

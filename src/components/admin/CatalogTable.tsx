@@ -604,6 +604,12 @@ const CatalogTable: React.FC = () => {
         }),
       ]);
 
+      if (productsRes.status === 401 || statsRes.status === 401) {
+        localStorage.removeItem("admin_token");
+        localStorage.removeItem("admin_user");
+        window.dispatchEvent(new Event("auth:expired"));
+        return;
+      }
       if (!productsRes.ok) throw new Error(`Erro ${productsRes.status}`);
       if (!statsRes.ok) throw new Error(`Erro stats ${statsRes.status}`);
 

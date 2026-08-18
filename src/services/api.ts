@@ -135,6 +135,10 @@ class ApiService {
       if (!response.ok) {
         if (response.status === 401) {
           this.clearAuthToken();
+          localStorage.removeItem("admin_token");
+          localStorage.removeItem("admin_user");
+          // Disparar evento para que o ProtectedRoute redirecione ao login
+          window.dispatchEvent(new Event("auth:expired"));
           throw new Error("Token expirado. Faça login novamente.");
         }
         throw new Error(`HTTP error! status: ${response.status}`);
