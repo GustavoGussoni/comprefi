@@ -38,9 +38,7 @@ const SimuladorTaxas: React.FC = () => {
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
 
   const valorNumerico = useMemo(() => {
-    // Remove tudo que não é número ou vírgula/ponto
     const cleaned = valorPix.replace(/[^\d.,]/g, "");
-    // Trata vírgula como decimal
     const normalized = cleaned.replace(/\./g, "").replace(",", ".");
     const num = parseFloat(normalized);
     return isNaN(num) ? 0 : num;
@@ -50,16 +48,15 @@ const SimuladorTaxas: React.FC = () => {
     if (valorNumerico <= 0) return [];
 
     return TAXAS.map(({ parcelas, taxa }) => {
-      const divisor = 1 - taxa / 100; // ex: 12,3% → 0,877
+      const divisor = 1 - taxa / 100;
       const valorComTaxa = valorNumerico / divisor;
       const valorParcela = valorComTaxa / parcelas;
-      const valorTotal = valorComTaxa;
 
       return {
         parcelas,
         taxa,
         valorParcela,
-        valorTotal,
+        valorTotal: valorComTaxa,
         textoCopiavel: `${formatCurrency(valorNumerico)} no pix ou ${parcelas}x ${formatCurrency(valorParcela)}`,
       };
     });
@@ -68,114 +65,108 @@ const SimuladorTaxas: React.FC = () => {
   const handleCopy = async (texto: string, index: number) => {
     try {
       await navigator.clipboard.writeText(texto);
-      setCopiedIndex(index);
-      setTimeout(() => setCopiedIndex(null), 2000);
     } catch {
-      // Fallback para navegadores sem suporte
       const textarea = document.createElement("textarea");
       textarea.value = texto;
       document.body.appendChild(textarea);
       textarea.select();
       document.execCommand("copy");
       document.body.removeChild(textarea);
-      setCopiedIndex(index);
-      setTimeout(() => setCopiedIndex(null), 2000);
     }
-  };
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setValorPix(e.target.value);
+    setCopiedIndex(index);
+    setTimeout(() => setCopiedIndex(null), 2000);
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 max-w-3xl mx-auto">
       {/* Header */}
-      <div className="flex items-center space-x-3">
-        <CreditCard className="w-6 h-6 text-blue-400" />
+      <div className="flex items-start space-x-3">
+        <CreditCard className="w-6 h-6 text-blue-400 mt-0.5 shrink-0" />
         <div>
-          <h2 className="text-2xl font-bold text-white">
-            Simulador de Taxas da Maquininha
+          <h2 className="text-xl sm:text-2xl font-bold text-white">
+            Simulador de Taxas
           </h2>
           <p className="text-gray-400 text-sm">
-            Digite o valor no Pix e veja todas as opções de parcelamento
+            Digite o valor no Pix e copie a opção de parcelamento
           </p>
         </div>
       </div>
 
       {/* Input do valor */}
-      <div className="bg-gray-900 rounded-lg p-6 border border-gray-800">
+      <div className="bg-gray-900 rounded-lg p-4 sm:p-6 border border-gray-800">
         <label className="block text-sm font-medium text-gray-300 mb-2">
           Valor do produto no Pix (R$)
         </label>
         <input
           type="text"
+          inputMode="numeric"
           value={valorPix}
-          onChange={handleInputChange}
+          onChange={(e) => setValorPix(e.target.value)}
           placeholder="Ex: 7386"
           className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white text-xl font-mono placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
         />
         {valorNumerico > 0 && (
           <p className="text-sm text-gray-400 mt-2">
-            Valor interpretado: {formatCurrency(valorNumerico)}
+            Valor: <span className="text-white font-medium">{formatCurrency(valorNumerico)}</span>
           </p>
         )}
       </div>
 
-      {/* Tabela de simulações */}
+      {/* Lista de simulações — cards no mobile */}
       {simulacoes.length > 0 && (
-        <div className="bg-gray-900 rounded-lg border border-gray-800 overflow-hidden">
-          <div className="grid grid-cols-[60px_70px_1fr_auto] md:grid-cols-[80px_80px_150px_1fr_auto] gap-0 bg-gray-800 px-4 py-3 text-xs font-semibold text-gray-400 uppercase tracking-wider">
-            <span>Parcelas</span>
-            <span>Taxa</span>
-            <span className="hidden md:block">Valor Parcela</span>
-            <span>Texto para copiar</span>
-            <span className="text-right">Ação</span>
-          </div>
-
-          <div className="divide-y divide-gray-800">
-            {simulacoes.map((sim, index) => (
-              <div
-                key={sim.parcelas}
-                className={`grid grid-cols-[60px_70px_1fr_auto] md:grid-cols-[80px_80px_150px_1fr_auto] gap-0 px-4 py-3 items-center hover:bg-gray-800/50 transition-colors ${
-                  sim.parcelas === 12
-                    ? "bg-blue-900/20 border-l-2 border-l-blue-500"
-                    : ""
-                }`}
-              >
-                <span className="text-white font-bold">{sim.parcelas}x</span>
-                <span className="text-yellow-400 text-sm font-mono">
-                  {sim.taxa}%
-                </span>
-                <span className="hidden md:block text-green-400 font-mono font-medium">
-                  {formatCurrency(sim.valorParcela)}
-                </span>
-                <span className="text-gray-300 text-sm font-mono truncate pr-2">
-                  {sim.textoCopiavel}
-                </span>
+        <div className="space-y-2">
+          {simulacoes.map((sim, index) => (
+            <div
+              key={sim.parcelas}
+              className={`rounded-lg border p-3 sm:p-4 transition-colors ${
+                sim.parcelas === 12
+                  ? "bg-blue-900/30 border-blue-700"
+                  : "bg-gray-900 border-gray-800 hover:border-gray-700"
+              }`}
+            >
+              {/* Linha principal: parcelas + parcela + botão */}
+              <div className="flex items-center justify-between gap-2">
+                <div className="flex items-center gap-3 min-w-0">
+                  <span className="text-white font-bold text-lg w-10 shrink-0">
+                    {sim.parcelas}x
+                  </span>
+                  <div className="min-w-0">
+                    <span className="text-green-400 font-mono font-semibold text-lg">
+                      {formatCurrency(sim.valorParcela)}
+                    </span>
+                    <span className="text-gray-500 text-xs ml-2">
+                      ({sim.taxa}%)
+                    </span>
+                  </div>
+                </div>
                 <button
                   onClick={() => handleCopy(sim.textoCopiavel, index)}
-                  className={`flex items-center space-x-1 px-3 py-1.5 rounded text-xs font-medium transition-all ${
+                  className={`flex items-center gap-1.5 px-3 py-2 rounded-md text-sm font-medium transition-all shrink-0 ${
                     copiedIndex === index
                       ? "bg-green-600 text-white"
-                      : "bg-gray-700 hover:bg-gray-600 text-gray-300"
+                      : "bg-gray-700 hover:bg-gray-600 text-gray-300 active:bg-gray-500"
                   }`}
-                  title="Copiar"
                 >
                   {copiedIndex === index ? (
                     <>
-                      <Check className="w-3.5 h-3.5" />
-                      <span>Copiado!</span>
+                      <Check className="w-4 h-4" />
+                      <span className="hidden sm:inline">Copiado!</span>
                     </>
                   ) : (
                     <>
-                      <Copy className="w-3.5 h-3.5" />
+                      <Copy className="w-4 h-4" />
                       <span>Copiar</span>
                     </>
                   )}
                 </button>
               </div>
-            ))}
-          </div>
+
+              {/* Texto que será copiado — visível para conferência */}
+              <p className="text-gray-400 text-xs mt-1.5 font-mono break-words">
+                {sim.textoCopiavel}
+              </p>
+            </div>
+          ))}
         </div>
       )}
 
@@ -183,11 +174,10 @@ const SimuladorTaxas: React.FC = () => {
       {valorNumerico > 0 && (
         <div className="bg-gray-900/50 rounded-lg p-4 border border-gray-800">
           <p className="text-xs text-gray-500">
-            <strong className="text-gray-400">Fórmula:</strong> Valor Pix ÷
-            (1 - taxa%) ÷ nº parcelas = valor da parcela
+            <strong className="text-gray-400">Fórmula:</strong> Valor Pix ÷ (1 - taxa%) ÷ parcelas
           </p>
           <p className="text-xs text-gray-500 mt-1">
-            <strong className="text-gray-400">Exemplo 12x:</strong>{" "}
+            <strong className="text-gray-400">Ex 12x:</strong>{" "}
             {formatCurrency(valorNumerico)} ÷ 0,877 ÷ 12 ={" "}
             {formatCurrency(valorNumerico / 0.877 / 12)}
           </p>
