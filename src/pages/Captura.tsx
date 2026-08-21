@@ -198,9 +198,7 @@ const Captura: React.FC = () => {
 
   const recommendation = getRecommendation(answers);
 
-  // Calcular progresso
   const totalSteps = answers.category === "mac" ? 4 : 3;
-  const currentStepNum = step === "q1" ? 1 : step === "q2" ? 2 : step === "q3" ? 3 : step === "q4_screen" ? 4 : 0;
 
   return (
     <PageTransition>
