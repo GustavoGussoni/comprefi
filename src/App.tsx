@@ -13,6 +13,7 @@ import CategoryPage from "./pages/CategoryPage";
 import ProductPage from "./pages/ProductPage";
 import Captura from "./pages/Captura";
 import Economia from "./pages/Economia";
+import DicasMac from "./pages/DicasMac";
 import Agradecimento from "./pages/Agradecimento";
 import TradeFunnel from "./pages/TradeFunnel";
 import CalculationPage from "./pages/CalculationPage";
@@ -35,6 +36,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   const location = useLocation();
   const hideHeaderRoutes = [
     "/economia",
+    "/dicas-mac",
     "/teste-infalivel",
     "/agradecimento",
     "/trocar-de-iphone",
@@ -146,6 +148,14 @@ function App() {
             element={
               <PageTransition>
                 <Economia />
+              </PageTransition>
+            }
+          />
+          <Route
+            path="/dicas-mac"
+            element={
+              <PageTransition>
+                <DicasMac />
               </PageTransition>
             }
           />
