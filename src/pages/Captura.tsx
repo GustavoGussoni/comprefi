@@ -1,575 +1,385 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import PageTransition from "../components/PageTransition";
-import TestimonialCard from "../components/TestimonialCard";
+import {
+  Smartphone,
+  Monitor,
+  Tablet,
+  ArrowRight,
+  ArrowLeft,
+  MessageCircle,
+  CheckCircle2,
+  Sparkles,
+} from "lucide-react";
+
+const WHATSAPP_BASE = "https://wa.me/5534999252590?text=";
+const WEBHOOK_URL = "https://api.datacrazy.io/v1/crm/api/crm/integrations/webhook/business/ddfbe711-a3c9-4730-827b-9218dd473b34";
+
+// Tipos
+type ProductCategory = "iphone" | "mac" | "ipad";
+type Step = "intro" | "q1" | "q2" | "q3" | "capture" | "result";
+
+interface QuizAnswer {
+  category?: ProductCategory;
+  usage?: string;
+  storage?: string;
+}
+
+interface Recommendation {
+  product: string;
+  reason: string;
+  whatsappText: string;
+}
+
+// Lógica de recomendação
+const getRecommendation = (answers: QuizAnswer): Recommendation => {
+  if (answers.category === "mac") {
+    if (answers.usage === "pesado") {
+      return {
+        product: answers.storage === "muito" ? "MacBook Pro M5 Pro (24GB RAM / 1TB SSD)" : "MacBook Pro M5 Pro (24GB RAM / 512GB SSD)",
+        reason: "Você trabalha com tarefas pesadas que exigem performance sustentada. O Pro com chip M5 Pro tem ventoinha para não perder desempenho em renders longos, tela XDR de 120Hz para trabalho visual e potência de sobra para edição 4K/8K e programação pesada.",
+        whatsappText: "Oi Gussoni, fiz o teste no site e minha recomendação foi MacBook Pro M5 Pro. Quero saber preço e disponibilidade!",
+      };
+    }
+    if (answers.usage === "intermediario") {
+      return {
+        product: answers.storage === "muito" ? "MacBook Air M5 (24GB RAM / 1TB SSD)" : "MacBook Air M5 (24GB RAM / 512GB SSD)",
+        reason: "Você faz multitarefa e precisa de folga para muitas abas e apps simultâneos. O Air com 24GB de RAM é silencioso, leve e não vai travar. Para o seu uso, ele entrega mais que um Pro básico — e custa menos.",
+        whatsappText: "Oi Gussoni, fiz o teste no site e minha recomendação foi MacBook Air M5 24GB. Quero saber preço e disponibilidade!",
+      };
+    }
+    // basico
+    return {
+      product: answers.storage === "muito" ? "MacBook Air M4 (16GB RAM / 512GB SSD)" : "MacBook Air M4 (16GB RAM / 256GB SSD)",
+      reason: "Para o seu uso, um Air com 16GB é mais que suficiente. Ele é 100% silencioso, super leve, a bateria dura o dia todo e não vai travar com planilhas, textos e navegação. Não gaste a mais com o que você não precisa.",
+      whatsappText: "Oi Gussoni, fiz o teste no site e minha recomendação foi MacBook Air M4 16GB. Quero saber preço e disponibilidade!",
+    };
+  }
+
+  if (answers.category === "iphone") {
+    if (answers.usage === "pro") {
+      return {
+        product: answers.storage === "muito" ? "iPhone 16 Pro Max (512GB)" : answers.storage === "intermediario" ? "iPhone 16 Pro Max (256GB)" : "iPhone 16 Pro (256GB)",
+        reason: "Você valoriza a melhor câmera e desempenho. A linha Pro Max entrega as melhores lentes da Apple, a maior bateria e a tela maior para quem trabalha com conteúdo visual. É o iPhone para quem não aceita menos.",
+        whatsappText: "Oi Gussoni, fiz o teste no site e minha recomendação foi iPhone 16 Pro Max. Quero saber preço e disponibilidade!",
+      };
+    }
+    if (answers.usage === "bateria") {
+      return {
+        product: answers.storage === "muito" ? "iPhone 16 Plus (256GB)" : "iPhone 16 Plus (128GB)",
+        reason: "Você quer tela grande e bateria que dura muito. O iPhone 16 Plus tem a mesma tela generosa do Pro Max com bateria excelente, sem pagar o premium da câmera Pro. Ótimo custo-benefício para quem prioriza autonomia.",
+        whatsappText: "Oi Gussoni, fiz o teste no site e minha recomendação foi iPhone 16 Plus. Quero saber preço e disponibilidade!",
+      };
+    }
+    // normal
+    return {
+      product: answers.storage === "muito" ? "iPhone 16 (256GB)" : "iPhone 16 (128GB)",
+      reason: "Você quer um iPhone excelente sem pagar a mais pelo que não precisa. O iPhone 16 tem câmera ótima, desempenho de sobra e tamanho confortável. É a compra inteligente para quem valoriza equilíbrio.",
+      whatsappText: "Oi Gussoni, fiz o teste no site e minha recomendação foi iPhone 16. Quero saber preço e disponibilidade!",
+    };
+  }
+
+  // iPad
+  if (answers.usage === "pro") {
+    return {
+      product: "iPad Pro M4 (11\" ou 13\")",
+      reason: "Você precisa de potência para criação pesada. O iPad Pro com chip M4 é uma máquina de produtividade com tela OLED e compatibilidade com Magic Keyboard e Apple Pencil Pro. Substitui um notebook para muitos profissionais.",
+      whatsappText: "Oi Gussoni, fiz o teste no site e minha recomendação foi iPad Pro M4. Quero saber preço e disponibilidade!",
+    };
+  }
+  return {
+    product: "iPad Air M4 (11\")",
+    reason: "Para estudo, anotações e consumo de conteúdo, o iPad Air com chip M4 é o equilíbrio perfeito. Leve, rápido, compatível com Apple Pencil e com potência de sobra para o dia a dia sem pagar o preço do Pro.",
+    whatsappText: "Oi Gussoni, fiz o teste no site e minha recomendação foi iPad Air M4. Quero saber preço e disponibilidade!",
+  };
+};
 
 const Captura: React.FC = () => {
-  const navigate = useNavigate();
-
-  const formatarDataHoraISO = () => {
-    return new Date().toISOString();
-  };
-
-  const [formData, setFormData] = useState({
-    nome: "",
-    whatsapp: "",
-    email: "",
-  });
+  const [step, setStep] = useState<Step>("intro");
+  const [answers, setAnswers] = useState<QuizAnswer>({});
+  const [contactForm, setContactForm] = useState({ nome: "", whatsapp: "", email: "" });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitSuccess, setSubmitSuccess] = useState(false);
-  const [submitError, setSubmitError] = useState("");
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+  const handleCategorySelect = (category: ProductCategory) => {
+    setAnswers({ ...answers, category });
+    setStep("q2");
   };
 
-  const dataHoraFormatada = formatarDataHoraISO();
-
-  const dadosCompletos = {
-    ...formData,
-    dataHora: dataHoraFormatada,
+  const handleUsageSelect = (usage: string) => {
+    setAnswers({ ...answers, usage });
+    setStep("q3");
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleStorageSelect = (storage: string) => {
+    setAnswers({ ...answers, storage });
+    setStep("capture");
+  };
+
+  const handleCapture = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    setSubmitError("");
-
+    const recommendation = getRecommendation(answers);
     try {
-      // Substitua a URL abaixo pela URL do seu webhook
-      const webhookUrl =
-        "https://api.datacrazy.io/v1/crm/api/crm/integrations/webhook/business/ddfbe711-a3c9-4730-827b-9218dd473b34";
-
-      const response = await fetch(webhookUrl, {
+      await fetch(WEBHOOK_URL, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(dadosCompletos),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...contactForm,
+          ...answers,
+          recomendacao: recommendation.product,
+          fonte: "quiz-teste-infalivel",
+          dataEnvio: new Date().toISOString(),
+        }),
       });
-
-      if (!response.ok) {
-        throw new Error(
-          "Falha ao enviar o formulário. Por favor, tente novamente.",
-        );
-      }
-
-      setSubmitSuccess(true);
-      // Opcional: redirecionar para uma página de agradecimento após alguns segundos
-      setTimeout(() => navigate("/agradecimento?source=teste-infalivel"), 2000);
-    } catch (error) {
-      console.error("Erro ao enviar formulário:", error);
-      setSubmitError(
-        error instanceof Error
-          ? error.message
-          : "Ocorreu um erro ao enviar o formulário",
-      );
+    } catch (err) {
+      console.error("Erro webhook:", err);
     } finally {
       setIsSubmitting(false);
+      setStep("result");
     }
   };
 
-  // Dados dos depoimentos
-  const testimonials = [
-    {
-      name: "Roberto M.",
-      text: "Quase caí em um golpe de R$ 4.200 comprando um MacBook. O guia me salvou e me ensinou a identificar fraudes em segundos!",
-      rating: 5,
-    },
-    {
-      name: "Juliana Santos",
-      text: "Perdi R$ 2.800 em um golpe antes de conhecer a CompreFi. Agora sei exatamente o que verificar antes de comprar qualquer produto Apple.",
-      rating: 5,
-    },
-    {
-      name: "Pedro Oliveira",
-      text: "O checklist de verificação é incrível! Identifiquei 3 ofertas falsas em menos de 5 minutos. Recomendo muito!",
-      rating: 5,
-    },
-  ];
+  const recommendation = getRecommendation(answers);
 
-  // FAQ específico para Captura
-  const faqItems = [
-    {
-      question: "O guia anti-golpes é realmente gratuito?",
-      answer:
-        "Sim! O guia completo + checklist + bônus são 100% gratuitos. Não há nenhum custo oculto.",
-    },
-    {
-      question: "Quando vou receber o guia?",
-      answer:
-        "Você receberá o guia no seu e-mail em até 2 minutos após o cadastro. Verifique também sua caixa de spam.",
-    },
-    {
-      question: "O guia funciona para todos os produtos Apple?",
-      answer:
-        "Sim! As técnicas de verificação funcionam para iPhone, MacBook, iPad, Apple Watch e acessórios Apple.",
-    },
-    {
-      question: "Como o guia me protege de golpes?",
-      answer:
-        "O guia ensina a identificar ofertas falsas, verificar autenticidade de produtos, reconhecer sites fraudulentos e muito mais. São técnicas práticas e fáceis de aplicar.",
-    },
-    {
-      question: "Meus dados estão seguros?",
-      answer:
-        "Sim! Seus dados são protegidos e usados apenas para enviar o guia. Você pode cancelar a qualquer momento.",
-    },
-  ];
+  // Componente de opção
+  const OptionCard = ({ icon, title, subtitle, onClick }: { icon: React.ReactNode; title: string; subtitle: string; onClick: () => void }) => (
+    <button
+      onClick={onClick}
+      className="w-full bg-gray-900 hover:bg-gray-800 border border-gray-700 hover:border-[#ff6100] rounded-xl p-5 text-left transition-all group"
+    >
+      <div className="flex items-center gap-4">
+        <div className="w-12 h-12 bg-gray-800 group-hover:bg-[#ff6100]/10 rounded-full flex items-center justify-center shrink-0 transition-colors">
+          {icon}
+        </div>
+        <div>
+          <p className="text-white font-medium text-lg">{title}</p>
+          <p className="text-gray-400 text-sm">{subtitle}</p>
+        </div>
+        <ArrowRight className="w-5 h-5 text-gray-600 group-hover:text-[#ff6100] ml-auto shrink-0 transition-colors" />
+      </div>
+    </button>
+  );
 
   return (
     <PageTransition>
-      <div className="captura-container bg-black min-h-screen">
-        <div className="container mx-auto px-4 py-12">
-          {/* Cabeçalho da página */}
-          <div className="text-center mb-12">
-            <div className="inline-block bg-red-900/30 border border-red-600 px-4 py-2 rounded-lg mb-6">
-              <p className="text-red-400 font-semibold text-sm">
-                ⚠️ ALERTA: Mais de 12.000 pessoas foram vítimas de golpes em
-                2024
+      <div className="bg-black min-h-screen flex items-center justify-center px-4 py-12">
+        <div className="max-w-xl w-full">
+
+          {/* ===== INTRO ===== */}
+          {step === "intro" && (
+            <div className="text-center">
+              <Sparkles className="w-12 h-12 text-[#ff6100] mx-auto mb-6" />
+              <h1 className="text-3xl md:text-4xl font-bold text-white mb-4 leading-tight">
+                Descubra qual produto Apple<br />foi feito para a sua rotina.
+              </h1>
+              <p className="text-gray-300 text-lg mb-8 max-w-md mx-auto">
+                Não gaste a mais com o que você não precisa, nem economize onde não deve.
+                Responda 4 perguntas rápidas.
               </p>
+              <button
+                onClick={() => setStep("q1")}
+                className="inline-flex items-center gap-2 bg-[#ff6100] hover:bg-[#e55a00] text-white font-bold py-4 px-8 rounded-lg transition-colors text-lg"
+              >
+                Começar o Teste
+                <ArrowRight className="w-5 h-5" />
+              </button>
+              <p className="text-gray-500 text-sm mt-4">Leva menos de 1 minuto.</p>
             </div>
+          )}
 
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 text-white leading-tight">
-              Guia Definitivo:{" "}
-              <span className="text-[#ff6100]">
-                Como Nunca Mais Cair em Golpes
-              </span>{" "}
-              ao Comprar Produtos Apple
-            </h1>
-            <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-              Receba gratuitamente nosso guia completo e aprenda o método
-              infalível para identificar fraudes, ofertas falsas e produtos
-              piratas em menos de 2 minutos.
-            </p>
-
-            {/* Urgência Sutil */}
-            <div className="mt-6 inline-block bg-gradient-to-r from-orange-900 to-red-900 px-6 py-3 rounded-lg border border-orange-600">
-              <p className="text-white font-semibold">
-                🔥 Mais de 2.300 pessoas já se protegeram esta semana
-              </p>
-            </div>
-          </div>
-
-          {/* Conteúdo principal em duas colunas */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start mb-16">
-            {/* Coluna da esquerda - Stack de Bônus */}
-            <div className="bg-gray-900 rounded-xl p-8 border border-gray-800 shadow-lg">
-              <h2 className="text-2xl font-bold mb-6 text-white text-center">
-                🛡️ Ao Se Cadastrar HOJE, Você Recebe:
+          {/* ===== Q1: Categoria ===== */}
+          {step === "q1" && (
+            <div>
+              <p className="text-[#ff6100] text-sm font-medium mb-2">Pergunta 1 de 3</p>
+              <h2 className="text-2xl font-bold text-white mb-6">
+                O que você está procurando hoje?
               </h2>
-
-              {/* Stack de Bônus */}
-              <div className="space-y-6">
-                {/* Bônus Principal */}
-                <div className="bg-gradient-to-r from-red-900 to-red-800 rounded-lg p-6 border-2 border-red-600">
-                  <div className="flex items-start">
-                    <div className="bg-red-600 rounded-full p-3 mr-4">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-6 w-6 text-white"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
-                        />
-                      </svg>
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="text-xl font-bold text-white mb-2">
-                        Guia Anti-Golpes Completo
-                      </h3>
-                      <p className="text-red-100 mb-2">
-                        Método infalível para identificar fraudes em produtos
-                        Apple
-                      </p>
-                      <p className="text-red-200 text-sm line-through">
-                        Valor: R$127
-                      </p>
-                      <p className="text-green-400 font-bold">HOJE: GRÁTIS</p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Bônus 1 */}
-                <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
-                  <div className="flex items-start">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-6 w-6 text-[#ff6100] mr-3 flex-shrink-0 mt-1"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                      />
-                    </svg>
-                    <div>
-                      <h4 className="text-white font-bold mb-1">
-                        BÔNUS 1: Checklist de Verificação Instantânea
-                      </h4>
-                      <p className="text-gray-300 text-sm mb-1">
-                        Verifique a autenticidade de qualquer produto Apple em
-                        menos de 2 minutos
-                      </p>
-                      <p className="text-gray-400 text-xs line-through">
-                        Valor: R$67
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Bônus 2 */}
-                <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
-                  <div className="flex items-start">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-6 w-6 text-[#ff6100] mr-3 flex-shrink-0 mt-1"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                      />
-                    </svg>
-                    <div>
-                      <h4 className="text-white font-bold mb-1">
-                        BÔNUS 2: Lista dos 10 Golpes Mais Comuns
-                      </h4>
-                      <p className="text-gray-300 text-sm mb-1">
-                        Conheça as fraudes mais aplicadas e como se proteger de
-                        cada uma
-                      </p>
-                      <p className="text-gray-400 text-xs line-through">
-                        Valor: R$87
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Bônus 3 */}
-                <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
-                  <div className="flex items-start">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-6 w-6 text-[#ff6100] mr-3 flex-shrink-0 mt-1"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                      />
-                    </svg>
-                    <div>
-                      <h4 className="text-white font-bold mb-1">
-                        BÔNUS 3: Garantia de Compra Segura
-                      </h4>
-                      <p className="text-gray-300 text-sm mb-1">
-                        Certificado de proteção ao comprar na CompreFi + suporte
-                        prioritário
-                      </p>
-                      <p className="text-gray-400 text-xs line-through">
-                        Valor: R$150
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Total */}
-                <div className="bg-gradient-to-r from-green-900 to-green-800 rounded-lg p-4 border-2 border-green-600">
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <p className="text-green-100 text-sm">VALOR TOTAL:</p>
-                      <p className="text-white text-2xl font-bold line-through">
-                        R$431
-                      </p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-green-100 text-sm">HOJE:</p>
-                      <p className="text-green-400 text-3xl font-bold">
-                        GRÁTIS
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Garantias */}
-              <div className="mt-8 space-y-3">
-                <div className="flex items-center text-gray-300">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-5 w-5 mr-2 text-green-400"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-                    />
-                  </svg>
-                  <span className="text-sm">Seus dados estão 100% seguros</span>
-                </div>
-                <div className="flex items-center text-gray-300">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-5 w-5 mr-2 text-green-400"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                    />
-                  </svg>
-                  <span className="text-sm">Acesso imediato por email</span>
-                </div>
-                <div className="flex items-center text-gray-300">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-5 w-5 mr-2 text-green-400"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"
-                    />
-                  </svg>
-                  <span className="text-sm">Sem spam, prometemos</span>
-                </div>
+              <div className="space-y-3">
+                <OptionCard
+                  icon={<Smartphone className="w-6 h-6 text-[#ff6100]" />}
+                  title="Um iPhone novo"
+                  subtitle="Quero trocar meu celular"
+                  onClick={() => handleCategorySelect("iphone")}
+                />
+                <OptionCard
+                  icon={<Monitor className="w-6 h-6 text-[#ff6100]" />}
+                  title="Um MacBook"
+                  subtitle="Preciso de um computador para trabalhar"
+                  onClick={() => handleCategorySelect("mac")}
+                />
+                <OptionCard
+                  icon={<Tablet className="w-6 h-6 text-[#ff6100]" />}
+                  title="Um iPad"
+                  subtitle="Quero algo portátil para criar ou estudar"
+                  onClick={() => handleCategorySelect("ipad")}
+                />
               </div>
             </div>
+          )}
 
-            {/* Coluna da direita - Formulário */}
-            <div className="bg-gray-900 rounded-xl p-8 border border-gray-800 shadow-lg sticky top-4">
-              <h2 className="text-2xl font-bold mb-6 text-white text-center">
-                🛡️ Proteja-se Agora Gratuitamente
-              </h2>
-              <p className="text-gray-300 mb-6 text-center">
-                Preencha o formulário e receba o guia completo + bônus por email
-                em menos de 2 minutos.
-              </p>
+          {/* ===== Q2: Uso ===== */}
+          {step === "q2" && (
+            <div>
+              <button onClick={() => setStep("q1")} className="flex items-center gap-1 text-gray-400 hover:text-white text-sm mb-4 transition-colors">
+                <ArrowLeft className="w-4 h-4" /> Voltar
+              </button>
+              <p className="text-[#ff6100] text-sm font-medium mb-2">Pergunta 2 de 3</p>
 
-              {submitSuccess ? (
-                <div className="bg-green-900/30 border border-green-500 rounded-lg p-6 text-center">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-12 w-12 mx-auto text-green-500 mb-4"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
-                  <h3 className="text-xl font-bold text-white mb-2">
-                    Cadastro realizado com sucesso!
-                  </h3>
-                  <p className="text-gray-300">
-                    Enviamos o guia anti-golpes + bônus para o seu e-mail.
-                    Verifique também sua caixa de spam.
-                  </p>
-                </div>
-              ) : (
-                <form onSubmit={handleSubmit} className="space-y-4">
-                  <div>
-                    <label htmlFor="nome" className="block text-gray-300 mb-2">
-                      Nome completo *
-                    </label>
-                    <input
-                      type="text"
-                      id="nome"
-                      name="nome"
-                      value={formData.nome}
-                      onChange={handleChange}
-                      required
-                      className="w-full bg-gray-800 border border-gray-700 rounded-md py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-[#ff6100] focus:border-transparent"
-                      placeholder="Seu nome completo"
-                    />
+              {answers.category === "mac" && (
+                <>
+                  <h2 className="text-2xl font-bold text-white mb-6">Como é o seu trabalho no dia a dia?</h2>
+                  <div className="space-y-3">
+                    <OptionCard icon={<span className="text-xl">📄</span>} title="Básico" subtitle="Planilhas, textos, navegação, e-mails" onClick={() => handleUsageSelect("basico")} />
+                    <OptionCard icon={<span className="text-xl">⚡</span>} title="Intermediário" subtitle="Muitas abas, edição leve, multitarefa" onClick={() => handleUsageSelect("intermediario")} />
+                    <OptionCard icon={<span className="text-xl">🚀</span>} title="Pesado" subtitle="Edição de vídeo 4K/8K, programação, 3D" onClick={() => handleUsageSelect("pesado")} />
                   </div>
+                </>
+              )}
 
-                  <div>
-                    <label htmlFor="email" className="block text-gray-300 mb-2">
-                      E-mail *
-                    </label>
-                    <input
-                      type="email"
-                      id="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleChange}
-                      required
-                      className="w-full bg-gray-800 border border-gray-700 rounded-md py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-[#ff6100] focus:border-transparent"
-                      placeholder="seu@email.com"
-                    />
+              {answers.category === "iphone" && (
+                <>
+                  <h2 className="text-2xl font-bold text-white mb-6">O que é mais importante para você?</h2>
+                  <div className="space-y-3">
+                    <OptionCard icon={<span className="text-xl">📸</span>} title="Câmera profissional" subtitle="Melhor câmera e máximo desempenho" onClick={() => handleUsageSelect("pro")} />
+                    <OptionCard icon={<span className="text-xl">🔋</span>} title="Tela grande e bateria" subtitle="Autonomia que dura o dia todo" onClick={() => handleUsageSelect("bateria")} />
+                    <OptionCard icon={<span className="text-xl">✨</span>} title="Equilíbrio" subtitle="Excelente celular, tamanho normal, bom preço" onClick={() => handleUsageSelect("normal")} />
                   </div>
+                </>
+              )}
 
-                  <div>
-                    <label
-                      htmlFor="whatsapp"
-                      className="block text-gray-300 mb-2"
-                    >
-                      WhatsApp *
-                    </label>
-                    <input
-                      type="tel"
-                      id="whatsapp"
-                      name="whatsapp"
-                      value={formData.whatsapp}
-                      onChange={handleChange}
-                      required
-                      className="w-full bg-gray-800 border border-gray-700 rounded-md py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-[#ff6100] focus:border-transparent"
-                      placeholder="(00) 00000-0000"
-                    />
+              {answers.category === "ipad" && (
+                <>
+                  <h2 className="text-2xl font-bold text-white mb-6">Como você pretende usar o iPad?</h2>
+                  <div className="space-y-3">
+                    <OptionCard icon={<span className="text-xl">🎨</span>} title="Criação profissional" subtitle="Desenho, edição, produção de conteúdo" onClick={() => handleUsageSelect("pro")} />
+                    <OptionCard icon={<span className="text-xl">📚</span>} title="Estudo e dia a dia" subtitle="Anotações, leitura, vídeos, navegação" onClick={() => handleUsageSelect("basico")} />
                   </div>
-
-                  {submitError && (
-                    <div className="bg-red-900/30 border border-red-500 rounded-lg p-4">
-                      <p className="text-red-300 text-sm">{submitError}</p>
-                    </div>
-                  )}
-
-                  <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="w-full bg-gradient-to-r from-[#ff6100] to-orange-600 hover:from-orange-600 hover:to-[#ff6100] text-white font-bold py-4 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none shadow-lg"
-                  >
-                    {isSubmitting
-                      ? "Enviando..."
-                      : "🛡️ Quero Me Proteger de Golpes Agora"}
-                  </button>
-
-                  <p className="text-gray-400 text-xs text-center">
-                    Ao se cadastrar, você concorda em receber comunicações da
-                    CompreFi. Você pode cancelar a qualquer momento.
-                  </p>
-                </form>
+                </>
               )}
             </div>
-          </div>
+          )}
 
-          {/* Depoimentos */}
-          <section className="testimonials-section py-16 px-4 bg-gray-900 rounded-xl mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-center text-white">
-              Veja Como Outras Pessoas Se Protegeram
-            </h2>
-            <p className="text-gray-300 text-center mb-12 max-w-2xl mx-auto">
-              Mais de 2.300 pessoas já evitaram golpes usando nosso guia
-            </p>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
-              {testimonials.map((testimonial, index) => (
-                <TestimonialCard
-                  key={index}
-                  name={testimonial.name}
-                  text={testimonial.text}
-                  rating={testimonial.rating}
-                />
-              ))}
-            </div>
-          </section>
-
-          {/* FAQ */}
-          <section className="faq-section py-16 px-4 bg-black rounded-xl">
-            <h2 className="text-3xl md:text-4xl font-bold mb-12 text-center text-white">
-              Perguntas Frequentes
-            </h2>
-            <div className="max-w-3xl mx-auto">
-              <div className="faq-container space-y-4">
-                {faqItems.map((item, index) => (
-                  <div
-                    key={index}
-                    className="faq-item bg-gray-900 rounded-lg border border-gray-800 overflow-hidden"
-                  >
-                    <details className="group">
-                      <summary className="cursor-pointer list-none p-6 flex justify-between items-center hover:bg-gray-800 transition-colors duration-200">
-                        <h3 className="text-lg font-semibold text-white pr-4">
-                          {item.question}
-                        </h3>
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="h-6 w-6 text-[#ff6100] flex-shrink-0 transform transition-transform duration-200 group-open:rotate-180"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M19 9l-7 7-7-7"
-                          />
-                        </svg>
-                      </summary>
-                      <div className="px-6 pb-6">
-                        <p className="text-gray-300 leading-relaxed">
-                          {item.answer}
-                        </p>
-                      </div>
-                    </details>
-                  </div>
-                ))}
+          {/* ===== Q3: Armazenamento ===== */}
+          {step === "q3" && (
+            <div>
+              <button onClick={() => setStep("q2")} className="flex items-center gap-1 text-gray-400 hover:text-white text-sm mb-4 transition-colors">
+                <ArrowLeft className="w-4 h-4" /> Voltar
+              </button>
+              <p className="text-[#ff6100] text-sm font-medium mb-2">Pergunta 3 de 3</p>
+              <h2 className="text-2xl font-bold text-white mb-6">
+                {answers.category === "mac" ? "Você guarda muitos arquivos pesados no computador?" : "Quanto espaço você precisa?"}
+              </h2>
+              <div className="space-y-3">
+                {answers.category === "mac" ? (
+                  <>
+                    <OptionCard icon={<span className="text-xl">☁️</span>} title="Uso muita nuvem" subtitle="Guardo pouca coisa localmente" onClick={() => handleStorageSelect("pouco")} />
+                    <OptionCard icon={<span className="text-xl">💾</span>} title="Preciso de muito espaço" subtitle="Projetos grandes, vídeos, arquivos pesados" onClick={() => handleStorageSelect("muito")} />
+                  </>
+                ) : (
+                  <>
+                    <OptionCard icon={<span className="text-xl">📱</span>} title="Básico" subtitle="Apps essenciais e algumas fotos" onClick={() => handleStorageSelect("pouco")} />
+                    <OptionCard icon={<span className="text-xl">📷</span>} title="Intermediário" subtitle="Bastante app, fotos e vídeos" onClick={() => handleStorageSelect("intermediario")} />
+                    <OptionCard icon={<span className="text-xl">🎬</span>} title="Muito espaço" subtitle="Gravo muito vídeo, não quero apagar nada" onClick={() => handleStorageSelect("muito")} />
+                  </>
+                )}
               </div>
             </div>
-          </section>
+          )}
 
-          {/* CTA Final */}
-          <div className="text-center mt-16 bg-gradient-to-r from-gray-900 to-black p-8 rounded-xl border border-gray-800">
-            <h3 className="text-2xl md:text-3xl font-bold text-white mb-4">
-              Não Seja a Próxima Vítima de Golpes
-            </h3>
-            <p className="text-gray-300 mb-6 max-w-2xl mx-auto">
-              Cadastre-se agora e receba o guia anti-golpes completo + 3 bônus
-              exclusivos gratuitamente
-            </p>
-            <a
-              href="#"
-              onClick={(e) => {
-                e.preventDefault();
-                document
-                  .querySelector("form")
-                  ?.scrollIntoView({ behavior: "smooth" });
-              }}
-              className="inline-block bg-gradient-to-r from-[#ff6100] to-orange-600 hover:from-orange-600 hover:to-[#ff6100] text-white font-bold py-4 px-8 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg"
-            >
-              Sim! Quero Me Proteger Agora →
-            </a>
-          </div>
+          {/* ===== CAPTURA ===== */}
+          {step === "capture" && (
+            <div>
+              <button onClick={() => setStep("q3")} className="flex items-center gap-1 text-gray-400 hover:text-white text-sm mb-4 transition-colors">
+                <ArrowLeft className="w-4 h-4" /> Voltar
+              </button>
+              <div className="text-center mb-8">
+                <CheckCircle2 className="w-12 h-12 text-green-500 mx-auto mb-4" />
+                <h2 className="text-2xl font-bold text-white mb-2">
+                  Encontramos o equipamento perfeito para você!
+                </h2>
+                <p className="text-gray-400">
+                  Preencha seus dados para ver a recomendação detalhada.
+                </p>
+              </div>
+              <form onSubmit={handleCapture} className="space-y-4">
+                <input
+                  type="text"
+                  placeholder="Seu nome"
+                  value={contactForm.nome}
+                  onChange={(e) => setContactForm({ ...contactForm, nome: e.target.value })}
+                  required
+                  className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#ff6100]"
+                />
+                <input
+                  type="tel"
+                  placeholder="WhatsApp (00) 00000-0000"
+                  value={contactForm.whatsapp}
+                  onChange={(e) => setContactForm({ ...contactForm, whatsapp: e.target.value })}
+                  required
+                  className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#ff6100]"
+                />
+                <input
+                  type="email"
+                  placeholder="Seu e-mail"
+                  value={contactForm.email}
+                  onChange={(e) => setContactForm({ ...contactForm, email: e.target.value })}
+                  required
+                  className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#ff6100]"
+                />
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="w-full bg-[#ff6100] hover:bg-[#e55a00] text-white font-bold py-4 px-6 rounded-lg transition-colors text-lg disabled:opacity-50"
+                >
+                  {isSubmitting ? "Carregando..." : "Ver Meu Resultado"}
+                </button>
+                <p className="text-gray-500 text-xs text-center">
+                  Seus dados são usados apenas para contato. Sem spam.
+                </p>
+              </form>
+            </div>
+          )}
+
+          {/* ===== RESULTADO ===== */}
+          {step === "result" && (
+            <div>
+              <div className="text-center mb-8">
+                <Sparkles className="w-10 h-10 text-[#ff6100] mx-auto mb-4" />
+                <p className="text-[#ff6100] text-sm font-medium uppercase tracking-wider mb-2">Sua Recomendação</p>
+              </div>
+
+              <div className="bg-gray-900 rounded-xl p-6 md:p-8 border border-gray-800 mb-8">
+                <h2 className="text-2xl font-bold text-white mb-4">
+                  {recommendation.product}
+                </h2>
+                <p className="text-gray-300 leading-relaxed">
+                  {recommendation.reason}
+                </p>
+              </div>
+
+              <div className="text-center">
+                <h3 className="text-xl font-bold text-white mb-3">
+                  Quer saber o preço e como comprar com tranquilidade?
+                </h3>
+                <p className="text-gray-400 mb-6 text-sm">
+                  Manda mensagem pro Gussoni. A gente te passa os valores, tira suas dúvidas
+                  e garante que você faça a melhor compra.
+                </p>
+                <a
+                  href={`${WHATSAPP_BASE}${encodeURIComponent(recommendation.whatsappText)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white font-bold py-4 px-8 rounded-lg transition-colors text-lg"
+                >
+                  <MessageCircle className="w-5 h-5" />
+                  Falar com o Gussoni
+                </a>
+                <p className="text-gray-500 text-sm mt-4 italic">
+                  "Você continua trabalhando. A gente cuida do resto."
+                </p>
+              </div>
+            </div>
+          )}
+
         </div>
       </div>
     </PageTransition>
