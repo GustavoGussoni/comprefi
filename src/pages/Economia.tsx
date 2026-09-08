@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import PageTransition from "../components/PageTransition";
+import { ApiError, apiService } from "../services/api";
 import {
   Truck,
   Shield,
@@ -15,29 +16,25 @@ import {
 } from "lucide-react";
 
 const WHATSAPP_URL = "https://wa.me/5534999252590?text=Oi%20Gussoni%2C%20vim%20pela%20p%C3%A1gina%20de%20economia%20e%20quero%20saber%20mais.";
-const WEBHOOK_URL = "https://api.datacrazy.io/v1/crm/api/crm/integrations/webhook/business/77af256e-7701-4254-8be1-77e266f3dc6d";
-
 const Economia: React.FC = () => {
   const [formData, setFormData] = useState({ nome: "", whatsapp: "", produto: "" });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSubmitError(null);
     setIsSubmitting(true);
     try {
-      await fetch(WEBHOOK_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...formData,
-          fonte: "economia-captura-suave",
-          dataEnvio: new Date().toISOString(),
-        }),
-      });
+      await apiService.submitEconomyCapture(formData);
       setSubmitted(true);
     } catch (err) {
-      console.error("Erro ao enviar:", err);
+      setSubmitError(
+        err instanceof ApiError
+          ? err.message
+          : "Não foi possível registrar seus dados agora. Tente novamente.",
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -363,6 +360,11 @@ const Economia: React.FC = () => {
                   <option value="AirPods">AirPods</option>
                   <option value="Outro">Outro / Não sei ainda</option>
                 </select>
+                {submitError && (
+                  <p role="alert" className="rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">
+                    {submitError}
+                  </p>
+                )}
                 <button
                   type="submit"
                   disabled={isSubmitting}

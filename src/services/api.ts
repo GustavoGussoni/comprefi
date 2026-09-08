@@ -207,6 +207,31 @@ export interface DataCrazyTradePayload extends Record<string, unknown> {
   questionarioId: string;
 }
 
+export interface QuizCaptureInput {
+  nome: string;
+  whatsapp: string;
+  email: string;
+  category: "iphone" | "mac" | "ipad";
+  usage: string;
+  storage: string;
+  screenSize?: string;
+  recomendacao: string;
+  website?: string;
+}
+
+export interface EconomyCaptureInput {
+  nome: string;
+  whatsapp: string;
+  produto: string;
+  website?: string;
+}
+
+export interface PublicCaptureResult {
+  sent: true;
+  externalId?: string;
+  externalUrl?: string;
+}
+
 export class ApiError extends Error {
   constructor(
     message: string,
@@ -358,6 +383,22 @@ class ApiService {
       `/trade/questionarios/${encodeURIComponent(questionarioId)}/contact`,
       { method: "POST", body: data },
     );
+  }
+
+  submitQuizCapture(data: QuizCaptureInput): Promise<PublicCaptureResult> {
+    return this.request<PublicCaptureResult>("/crm/captures/quiz", {
+      method: "POST",
+      body: data,
+    });
+  }
+
+  submitEconomyCapture(
+    data: EconomyCaptureInput,
+  ): Promise<PublicCaptureResult> {
+    return this.request<PublicCaptureResult>("/crm/captures/economia", {
+      method: "POST",
+      body: data,
+    });
   }
 
   getSimulations(

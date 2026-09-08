@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import PageTransition from "../components/PageTransition";
+import { ApiError, apiService } from "../services/api";
 import {
   Smartphone,
   Monitor,
@@ -12,8 +13,6 @@ import {
 } from "lucide-react";
 
 const WHATSAPP_BASE = "https://wa.me/5534999252590?text=";
-const WEBHOOK_URL = "https://api.datacrazy.io/v1/crm/api/crm/integrations/webhook/business/ddfbe711-a3c9-4730-827b-9218dd473b34";
-
 type ProductCategory = "iphone" | "mac" | "ipad";
 type Step = "intro" | "q1" | "q2" | "q3" | "q4_screen" | "capture" | "result";
 
@@ -145,6 +144,7 @@ const Captura: React.FC = () => {
   const [answers, setAnswers] = useState<QuizAnswer>({});
   const [contactForm, setContactForm] = useState({ nome: "", whatsapp: "", email: "" });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const handleCategorySelect = (category: ProductCategory) => {
     setAnswers({ ...answers, category });
@@ -174,25 +174,33 @@ const Captura: React.FC = () => {
 
   const handleCapture = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSubmitError(null);
+
+    if (!answers.category || !answers.usage || !answers.storage) {
+      setSubmitError("Não foi possível validar suas respostas. Volte uma etapa e tente novamente.");
+      return;
+    }
+
     setIsSubmitting(true);
     const recommendation = getRecommendation(answers);
     try {
-      await fetch(WEBHOOK_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...contactForm,
-          ...answers,
-          recomendacao: recommendation.product,
-          fonte: "quiz-teste-infalivel",
-          dataEnvio: new Date().toISOString(),
-        }),
+      await apiService.submitQuizCapture({
+        ...contactForm,
+        category: answers.category,
+        usage: answers.usage,
+        storage: answers.storage,
+        ...(answers.screenSize ? { screenSize: answers.screenSize } : {}),
+        recomendacao: recommendation.product,
       });
+      setStep("result");
     } catch (err) {
-      console.error("Erro webhook:", err);
+      setSubmitError(
+        err instanceof ApiError
+          ? err.message
+          : "Não foi possível registrar seus dados agora. Tente novamente.",
+      );
     } finally {
       setIsSubmitting(false);
-      setStep("result");
     }
   };
 
@@ -361,6 +369,7 @@ const Captura: React.FC = () => {
                 <input type="text" placeholder="Seu nome" value={contactForm.nome} onChange={(e) => setContactForm({ ...contactForm, nome: e.target.value })} required className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#ff6100]" />
                 <input type="tel" placeholder="WhatsApp (00) 00000-0000" value={contactForm.whatsapp} onChange={(e) => setContactForm({ ...contactForm, whatsapp: e.target.value })} required className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#ff6100]" />
                 <input type="email" placeholder="Seu e-mail" value={contactForm.email} onChange={(e) => setContactForm({ ...contactForm, email: e.target.value })} required className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#ff6100]" />
+                {submitError && <p role="alert" className="rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">{submitError}</p>}
                 <button type="submit" disabled={isSubmitting} className="w-full bg-[#ff6100] hover:bg-[#e55a00] text-white font-bold py-4 px-6 rounded-lg transition-colors text-lg disabled:opacity-50">
                   {isSubmitting ? "Carregando..." : "Ver Meu Resultado"}
                 </button>
