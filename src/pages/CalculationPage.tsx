@@ -12,36 +12,13 @@ import {
   AlertTriangle,
   Lightbulb,
 } from "lucide-react";
+import {
+  apiService,
+  TradeCalculationRequest,
+  TradeCalculationResult,
+} from "@/services/api";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
-
-// --- Interfaces (sem alterações) ---
-interface FunnelData {
-  modeloAtual: string;
-  capacidadeAtual: string;
-  corAtual: string;
-  bateriaAtual: number;
-  defeitos: string[];
-  pecasTrocadas: boolean;
-  quaisPecas: string;
-  modeloDesejado: string; // Este é o ID da variant (ProductVariant)
-  ondeOuviu: string;
-  tempoPensando: string;
-  urgenciaTroca: string;
-}
-interface TradeResult {
-  valorAparelho: number;
-  valorFinal: number;
-  temDefeito: boolean;
-  precisaCotacao: boolean;
-  valorBase: number;
-  depreciacaoBateria: number;
-  depreciacaoDefeitos: number;
-  precoProduto: number;
-  valorComDesconto: number;
-  cupomDesconto?: string;
-  produtoDesejado?: any;
-}
+type FunnelData = TradeCalculationRequest;
 
 const CalculationPage: React.FC = () => {
   const navigate = useNavigate();
@@ -138,46 +115,9 @@ const CalculationPage: React.FC = () => {
     }
   };
 
-  const calculateTrade = async (data: FunnelData): Promise<TradeResult> => {
-    // Envia o variant ID direto — o backend resolve o produto via ProductVariant + ProductGroup
-    const requestBody = {
-      modeloAtual: data.modeloAtual,
-      capacidadeAtual: data.capacidadeAtual,
-      corAtual: data.corAtual,
-      bateriaAtual: data.bateriaAtual,
-      defeitos: data.defeitos,
-      pecasTrocadas: data.pecasTrocadas,
-      quaisPecas: data.quaisPecas,
-      modeloDesejado: data.modeloDesejado, // variant ID direto
-    };
-
-    const response = await fetch(`${API_URL}/trade/calculate`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(requestBody),
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`API Error: ${errorText}`);
-    }
-
-    const apiResult = await response.json();
-
-    return {
-      valorAparelho: apiResult.valorAparelho,
-      valorFinal: apiResult.valorFinal,
-      temDefeito: apiResult.temDefeito,
-      precisaCotacao: apiResult.precisaCotacao,
-      valorBase: apiResult.valorBase,
-      depreciacaoBateria: apiResult.depreciacaoBateria,
-      depreciacaoDefeitos: apiResult.depreciacaoDefeitos,
-      precoProduto: apiResult.precoProduto,
-      valorComDesconto: apiResult.valorComDesconto,
-      cupomDesconto: apiResult.cupomDesconto || "",
-      produtoDesejado: apiResult.produtoDesejado,
-    };
-  };
+  const calculateTrade = (
+    data: FunnelData,
+  ): Promise<TradeCalculationResult> => apiService.calculateTrade(data);
 
   if (error) {
     return (
