@@ -42,9 +42,10 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
     "/trocar-de-iphone",
     "/calculo-troca",
     "/resultado-troca",
-    "/admin",
   ];
-  const shouldHideHeader = hideHeaderRoutes.includes(location.pathname);
+  const isAdminRoute = location.pathname.startsWith("/admin");
+  const shouldHideHeader =
+    isAdminRoute || hideHeaderRoutes.includes(location.pathname);
 
   // || location.pathname.startsWith("/produto/");
 
@@ -52,7 +53,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
     <div className="app bg-black text-white min-h-screen flex flex-col">
       {!shouldHideHeader && <Header />}
       <main className="flex-grow">{children}</main>
-      <Footer />
+      {!isAdminRoute && <Footer />}
     </div>
   );
 };
@@ -168,7 +169,7 @@ function App() {
             }
           />
           <Route
-            path="/admin"
+            path="/admin/*"
             element={
               <ProtectedRoute>
                 <Admin />
