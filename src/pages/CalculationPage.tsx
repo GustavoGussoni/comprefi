@@ -1,7 +1,7 @@
 // src/pages/CalculationPage.tsx
 
 import PageTransition from "@/components/PageTransition";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Database,
@@ -26,6 +26,7 @@ const CalculationPage: React.FC = () => {
   const [currentStep, setCurrentStep] = useState<number>(0);
   const [isComplete, setIsComplete] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const calculationStarted = useRef(false);
 
   const steps = [
     {
@@ -55,7 +56,11 @@ const CalculationPage: React.FC = () => {
   ];
 
   useEffect(() => {
-    loadDataAndCalculate();
+    if (calculationStarted.current) return;
+    calculationStarted.current = true;
+    void loadDataAndCalculate();
+    // A execução é intencionalmente única; o ref também bloqueia a repetição do StrictMode.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const loadDataAndCalculate = async () => {
