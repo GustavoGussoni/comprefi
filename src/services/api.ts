@@ -1,11 +1,20 @@
-// src/services/api.ts
-// Serviço para conectar o frontend à API NestJS com tipagem TypeScript
-// Versão atualizada com métodos para admin
+const API_BASE_URL = (
+  import.meta.env.VITE_API_URL || "http://localhost:3000"
+).replace(/\/$/, "");
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3000"; // URL da sua API NestJS
+export type UserRole = "ADMIN" | "SALES";
+export type CrmDeliveryStatus = "NOT_SENT" | "PENDING" | "SENT" | "FAILED";
 
-// Interface para o produto da API (como vem do backend)
-interface ApiProduct {
+export interface AuthUser {
+  id: string;
+  name: string;
+  email: string;
+  role: UserRole;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface ApiProduct {
   id: string;
   model: string;
   storage: string;
@@ -27,43 +36,24 @@ interface ApiProduct {
   updatedAt?: string;
 }
 
-// Interface para o produto usado nos componentes (compatível com ProductDetail)
-export interface Product {
-  id: string;
-  model: string;
-  storage: string;
-  color: string;
-  battery: string;
-  originalPrice: string;
-  installmentPrice: string;
-  pixPrice: string;
-  details: string;
-  image: string; // ← Sempre string, nunca undefined
-  realImages: string[];
-  category: string;
-  specs: string;
-  isNew?: boolean;
-  isActive?: boolean;
-  cost?: number;
-  freight?: number;
-  createdAt?: string;
-  updatedAt?: string;
+export interface Product extends Omit<ApiProduct, "image"> {
+  image: string;
 }
 
-interface ApiFilters {
+export interface ApiFilters {
   category?: string;
   isNew?: boolean;
   isActive?: boolean;
-  [key: string]: any;
+  [key: string]: string | number | boolean | undefined;
 }
 
-interface CalculatePricesRequest {
+export interface CalculatePricesRequest {
   cost: number;
   freight?: number;
   category?: string;
 }
 
-interface CalculatedPricesResponse {
+export interface CalculatedPricesResponse {
   pixPrice: string;
   installmentPrice: string;
   originalPrice: string;
@@ -74,262 +64,493 @@ interface CalculatedPricesResponse {
   };
 }
 
-interface RequestOptions {
-  method?: string;
-  headers?: Record<string, string>;
-  body?: string;
+export interface TradeCalculationRequest {
+  modeloAtual: string;
+  capacidadeAtual: string;
+  corAtual: string;
+  bateriaAtual: number;
+  valorManual?: number;
+  defeitos?: string[];
+  pecasTrocadas?: boolean;
+  quaisPecas?: string;
+  modeloDesejado: string;
+  ondeOuviu?: string;
+  tempoPensando?: string;
+  urgenciaTroca?: string;
+}
+
+export interface DesiredTradeProduct {
+  modelo: string;
+  pixPrice: string;
+  installmentPrice: string;
+  originalPrice: string;
+}
+
+export interface TradeCalculationResult {
+  questionarioId: string;
+  offerExpiresAt: string;
+  descontoPercentual: number;
+  valorBase: number;
+  depreciacaoBateria: number;
+  depreciacaoDefeitos: number;
+  valorAparelho: number;
+  precoProduto: number;
+  valorFinal: number;
+  valorComDesconto: number;
+  valorManualUsado: boolean;
+  produtoDesejado: DesiredTradeProduct;
+  temDefeito: boolean;
+  precisaCotacao: boolean;
+  cupomDesconto: string;
+  resumoDetalhado: string;
+}
+
+export interface TradeContactInput {
+  nome: string;
+  email: string;
+  whatsapp: string;
+  cep: string;
+  fonte?: string;
+}
+
+export interface CrmDeliveryResult {
+  questionarioId: string;
+  leadSaved: true;
+  crmSent: boolean;
+  crmStatus: CrmDeliveryStatus;
+  ofertaExpirada: boolean;
+  offerExpiresAt: string | null;
+}
+
+export interface TradeSimulation extends TradeCalculationResult {
+  id: string;
+  modeloAtual: string;
+  capacidadeAtual: string;
+  corAtual: string;
+  bateriaAtual: number;
+  defeitos: string[] | null;
+  pecasTrocadas: boolean;
+  quaisPecas: string | null;
+  modeloDesejado: string;
+  produtoDesejadoNome: string | null;
+  ondeOuviu: string | null;
+  tempoPensando: string | null;
+  urgenciaTroca: string | null;
+  nome: string | null;
+  email: string | null;
+  whatsapp: string | null;
+  cep: string | null;
+  mensagemFollowUp: string | null;
+  crmStatus: CrmDeliveryStatus;
+  crmAttempts: number;
+  crmLastAttemptAt: string | null;
+  crmSentAt: string | null;
+  crmLastError: string | null;
+  crmExternalId: string | null;
+  crmExternalUrl: string | null;
+  etapaAtual: number;
+  concluido: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface PaginatedResponse<T> {
+  data: T[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  };
+}
+
+export interface SimulationQuery {
+  page?: number;
+  limit?: number;
+  search?: string;
+  crmStatus?: CrmDeliveryStatus;
+  concluido?: boolean;
+  precisaCotacao?: boolean;
+  modeloAtual?: string;
+  modeloDesejado?: string;
+}
+
+export interface SimulationStats {
+  total: number;
+  concluidos: number;
+  pendentes: number;
+  precisamCotacao: number;
+  falhasCrm: number;
+  enviadosCrm: number;
+  ultimaSemana: number;
+  modelosDesejados: { modelo: string; count: number }[];
+  modelosAtuais: { modelo: string; count: number }[];
+  origens: { origem: string | null; count: number }[];
+  simulacoesECapturas: {
+    date: string;
+    simulacoes: number;
+    formularios: number;
+    enviadosCrm: number;
+  }[];
+}
+
+export interface UpdateSimulationInput {
+  concluido?: boolean;
+  precisaCotacao?: boolean;
+  valorAparelho?: number;
+  valorFinal?: number;
+  valorComDesconto?: number;
+  offerExpiresAt?: string;
+}
+
+export interface DataCrazyTradePayload extends Record<string, unknown> {
+  questionarioId: string;
+}
+
+export class ApiError extends Error {
+  constructor(
+    message: string,
+    readonly status: number,
+    readonly details?: unknown,
+  ) {
+    super(message);
+    this.name = "ApiError";
+  }
+}
+
+interface ApiRequestOptions extends Omit<RequestInit, "body"> {
+  body?: unknown;
 }
 
 class ApiService {
-  private authToken: string | null = null;
+  private authToken: string | null = this.getStoredToken();
 
-  // Função para normalizar produto da API para o formato usado nos componentes
   private normalizeProduct(apiProduct: ApiProduct): Product {
     return {
       ...apiProduct,
-      image: apiProduct.image || "", // ← Garantir que nunca seja undefined
-      realImages: apiProduct.realImages || [], // ← Garantir que seja array
+      image: apiProduct.image || "",
+      realImages: apiProduct.realImages || [],
     };
   }
 
-  // Função para normalizar array de produtos
   private normalizeProducts(apiProducts: ApiProduct[]): Product[] {
     return apiProducts.map((product) => this.normalizeProduct(product));
   }
 
-  // Método para definir token de autenticação
-  setAuthToken(token: string) {
+  private getStoredToken(): string | null {
+    return typeof window === "undefined"
+      ? null
+      : window.localStorage.getItem("admin_token");
+  }
+
+  setAuthToken(token: string): void {
     this.authToken = token;
+    window.localStorage.setItem("admin_token", token);
   }
 
-  // Método para remover token de autenticação
-  clearAuthToken() {
+  clearAuthToken(): void {
     this.authToken = null;
+    window.localStorage.removeItem("admin_token");
+    window.localStorage.removeItem("admin_user");
   }
 
-  // Método genérico para fazer requisições
-  async request<T = any>(
+  logout(): void {
+    this.clearAuthToken();
+  }
+
+  async request<T>(
     endpoint: string,
-    options: RequestOptions = {}
+    options: ApiRequestOptions = {},
   ): Promise<T> {
     const url = `${API_BASE_URL}${endpoint}`;
+    const headers = new Headers(options.headers);
+    headers.set("Accept", "application/json");
 
-    const headers: Record<string, string> = {
-      "Content-Type": "application/json",
-      ...options.headers,
-    };
+    let body: BodyInit | undefined;
+    if (options.body !== undefined) {
+      if (
+        typeof options.body === "string" ||
+        options.body instanceof FormData ||
+        options.body instanceof URLSearchParams ||
+        options.body instanceof Blob
+      ) {
+        body = options.body;
+      } else {
+        headers.set("Content-Type", "application/json");
+        body = JSON.stringify(options.body);
+      }
+    }
 
-    // Adicionar token de autenticação se disponível
     if (this.authToken) {
-      headers["Authorization"] = `Bearer ${this.authToken}`;
+      headers.set("Authorization", `Bearer ${this.authToken}`);
     }
 
-    const config: RequestInit = {
-      headers,
+    const response = await fetch(url, {
       ...options,
-    };
+      headers,
+      body,
+    });
+    const responseBody = await this.readResponse(response);
 
-    try {
-      const response = await fetch(url, config);
-
-      if (!response.ok) {
-        if (response.status === 401) {
-          this.clearAuthToken();
-          localStorage.removeItem("admin_token");
-          localStorage.removeItem("admin_user");
-          // Disparar evento para que o ProtectedRoute redirecione ao login
-          window.dispatchEvent(new Event("auth:expired"));
-          throw new Error("Token expirado. Faça login novamente.");
-        }
-        throw new Error(`HTTP error! status: ${response.status}`);
+    if (!response.ok) {
+      if (response.status === 401 && this.authToken) {
+        this.clearAuthToken();
+        window.dispatchEvent(new Event("auth:expired"));
       }
 
-      // Para DELETE que retorna 204, não tentar fazer parse do JSON
-      if (response.status === 204) {
-        return {} as T;
-      }
-
-      return await response.json();
-    } catch (error) {
-      console.error("API request failed:", error);
-      throw error;
+      throw new ApiError(
+        this.getErrorMessage(responseBody, response.status),
+        response.status,
+        responseBody,
+      );
     }
-  }
 
-  // ========================================
-  // MÉTODOS DE AUTENTICAÇÃO
-  // ========================================
+    return responseBody as T;
+  }
 
   async login(
     email: string,
-    password: string
-  ): Promise<{ access_token: string; user: any }> {
-    const result = await this.request<{ access_token: string; user: any }>(
-      "/auth/login",
-      {
-        method: "POST",
-        body: JSON.stringify({ email, password }),
-      }
-    );
+    password: string,
+  ): Promise<{ access_token: string; user: AuthUser }> {
+    const result = await this.request<{
+      access_token: string;
+      user: AuthUser;
+    }>("/auth/login", {
+      method: "POST",
+      body: { email, password },
+    });
 
     this.setAuthToken(result.access_token);
+    window.localStorage.setItem("admin_user", JSON.stringify(result.user));
     return result;
   }
 
-  async register(name: string, email: string, password: string): Promise<any> {
-    return this.request("/auth/register", {
+  me(): Promise<AuthUser> {
+    return this.request<AuthUser>("/auth/me");
+  }
+
+  register(input: {
+    name: string;
+    email: string;
+    password: string;
+    role?: UserRole;
+  }): Promise<AuthUser> {
+    return this.request<AuthUser>("/auth/register", {
       method: "POST",
-      body: JSON.stringify({ name, email, password }),
+      body: input,
     });
   }
 
-  // ========================================
-  // MÉTODOS DE PRODUTOS (PÚBLICOS)
-  // ========================================
-
-  // Buscar todos os produtos
-  async getAllProducts(): Promise<Product[]> {
-    const apiProducts = await this.request<ApiProduct[]>("/products");
-    return this.normalizeProducts(apiProducts);
+  calculateTrade(
+    data: TradeCalculationRequest,
+  ): Promise<TradeCalculationResult> {
+    return this.request<TradeCalculationResult>("/trade/calculate", {
+      method: "POST",
+      body: data,
+    });
   }
 
-  // Buscar produtos por categoria
-  async getProductsByCategory(category: string): Promise<Product[]> {
-    const apiProducts = await this.request<ApiProduct[]>(
-      `/products/category/${encodeURIComponent(category)}`
+  submitTradeContact(
+    questionarioId: string,
+    data: TradeContactInput,
+  ): Promise<CrmDeliveryResult> {
+    return this.request<CrmDeliveryResult>(
+      `/trade/questionarios/${encodeURIComponent(questionarioId)}/contact`,
+      { method: "POST", body: data },
     );
-    return this.normalizeProducts(apiProducts);
   }
 
-  // Buscar produto por ID
+  getSimulations(
+    query: SimulationQuery = {},
+  ): Promise<PaginatedResponse<TradeSimulation>> {
+    return this.request<PaginatedResponse<TradeSimulation>>(
+      `/trade/questionarios${this.toQueryString(query)}`,
+    );
+  }
+
+  getSimulationStats(): Promise<SimulationStats> {
+    return this.request<SimulationStats>("/trade/questionarios/stats");
+  }
+
+  getSimulation(id: string): Promise<TradeSimulation> {
+    return this.request<TradeSimulation>(
+      `/trade/questionarios/${encodeURIComponent(id)}`,
+    );
+  }
+
+  resendSimulation(id: string): Promise<CrmDeliveryResult> {
+    return this.request<CrmDeliveryResult>(
+      `/trade/questionarios/${encodeURIComponent(id)}/resend`,
+      { method: "POST" },
+    );
+  }
+
+  getSimulationPayload(id: string): Promise<DataCrazyTradePayload> {
+    return this.request<DataCrazyTradePayload>(
+      `/trade/questionarios/${encodeURIComponent(id)}/payload`,
+    );
+  }
+
+  updateSimulation(
+    id: string,
+    data: UpdateSimulationInput,
+  ): Promise<TradeSimulation> {
+    return this.request<TradeSimulation>(
+      `/trade/questionarios/${encodeURIComponent(id)}`,
+      { method: "PATCH", body: data },
+    );
+  }
+
+  deleteSimulation(id: string): Promise<void> {
+    return this.request<void>(
+      `/trade/questionarios/${encodeURIComponent(id)}`,
+      { method: "DELETE" },
+    );
+  }
+
+  async getAllProducts(): Promise<Product[]> {
+    return this.normalizeProducts(
+      await this.request<ApiProduct[]>("/products"),
+    );
+  }
+
+  async getProductsByCategory(category: string): Promise<Product[]> {
+    return this.normalizeProducts(
+      await this.request<ApiProduct[]>(
+        `/products/category/${encodeURIComponent(category)}`,
+      ),
+    );
+  }
+
   async getProductById(id: string | number): Promise<Product> {
-    const apiProduct = await this.request<ApiProduct>(`/products/${id}`);
-    return this.normalizeProduct(apiProduct);
+    return this.normalizeProduct(
+      await this.request<ApiProduct>(`/products/${id}`),
+    );
   }
 
-  // Buscar produtos com filtros
-  async getProductsWithFilters(filters: ApiFilters = {}): Promise<Product[]> {
-    const queryParams = new URLSearchParams();
-
-    Object.keys(filters).forEach((key) => {
-      if (
-        filters[key] !== undefined &&
-        filters[key] !== null &&
-        filters[key] !== ""
-      ) {
-        queryParams.append(key, String(filters[key]));
-      }
-    });
-
-    const queryString = queryParams.toString();
-    const endpoint = queryString ? `/products?${queryString}` : "/products";
-
-    const apiProducts = await this.request<ApiProduct[]>(endpoint);
-    return this.normalizeProducts(apiProducts);
+  async getProductsWithFilters(
+    filters: ApiFilters = {},
+  ): Promise<Product[]> {
+    const endpoint = `/products${this.toQueryString(filters)}`;
+    return this.normalizeProducts(
+      await this.request<ApiProduct[]>(endpoint),
+    );
   }
 
-  // Buscar categorias disponíveis
-  async getCategories(): Promise<string[]> {
+  getCategories(): Promise<string[]> {
     return this.request<string[]>("/products/categories");
   }
 
-  // ========================================
-  // MÉTODOS DE ADMIN (REQUEREM AUTENTICAÇÃO)
-  // ========================================
-
-  // Calcular preços
-  async calculatePrices(
-    data: CalculatePricesRequest
+  calculatePrices(
+    data: CalculatePricesRequest,
   ): Promise<CalculatedPricesResponse> {
     return this.request<CalculatedPricesResponse>(
       "/products/calculate-prices",
-      {
-        method: "POST",
-        body: JSON.stringify(data),
-      }
+      { method: "POST", body: data },
     );
   }
 
-  // Criar produto
   async createProduct(productData: Partial<Product>): Promise<Product> {
-    const apiProduct = await this.request<ApiProduct>("/products", {
-      method: "POST",
-      body: JSON.stringify(productData),
-    });
-    return this.normalizeProduct(apiProduct);
+    return this.normalizeProduct(
+      await this.request<ApiProduct>("/products", {
+        method: "POST",
+        body: productData,
+      }),
+    );
   }
 
-  // Atualizar produto
   async updateProduct(
     id: string,
-    productData: Partial<Product>
+    productData: Partial<Product>,
   ): Promise<Product> {
-    const apiProduct = await this.request<ApiProduct>(`/products/${id}`, {
-      method: "PATCH",
-      body: JSON.stringify(productData),
-    });
-    return this.normalizeProduct(apiProduct);
-  }
-
-  // Deletar produto
-  async deleteProduct(id: string): Promise<void> {
-    await this.request(`/products/${id}`, {
-      method: "DELETE",
-    });
-  }
-
-  // Criar múltiplos produtos
-  async bulkCreateProducts(
-    productsData: Partial<Product>[]
-  ): Promise<Product[]> {
-    const apiProducts = await this.request<ApiProduct[]>(
-      "/products/bulk-create",
-      {
-        method: "POST",
-        body: JSON.stringify(productsData),
-      }
+    return this.normalizeProduct(
+      await this.request<ApiProduct>(`/products/${id}`, {
+        method: "PATCH",
+        body: productData,
+      }),
     );
-    return this.normalizeProducts(apiProducts);
   }
 
-  // Sincronizar com Google Sheets
-  async syncFromGoogleSheets(): Promise<any> {
-    return this.request("/products/sync-from-sheet", {
-      method: "POST",
-    });
+  async deleteProduct(id: string): Promise<void> {
+    await this.request(`/products/${id}`, { method: "DELETE" });
   }
 
-  // ========================================
-  // MÉTODOS DE USUÁRIOS (ADMIN)
-  // ========================================
-
-  // Buscar todos os usuários
-  async getAllUsers(): Promise<any[]> {
-    return this.request<any[]>("/users");
+  async bulkCreateProducts(
+    productsData: Partial<Product>[],
+  ): Promise<Product[]> {
+    return this.normalizeProducts(
+      await this.request<ApiProduct[]>("/products/bulk-create", {
+        method: "POST",
+        body: productsData,
+      }),
+    );
   }
 
-  // Buscar usuário por ID
-  async getUserById(id: string): Promise<any> {
-    return this.request<any>(`/users/${id}`);
+  syncFromGoogleSheets(): Promise<unknown> {
+    return this.request("/products/sync-from-sheet", { method: "POST" });
   }
 
-  // Atualizar usuário
-  async updateUser(id: string, userData: any): Promise<any> {
-    return this.request<any>(`/users/${id}`, {
+  getAllUsers(): Promise<AuthUser[]> {
+    return this.request<AuthUser[]>("/users");
+  }
+
+  getUserById(id: string): Promise<AuthUser> {
+    return this.request<AuthUser>(`/users/${id}`);
+  }
+
+  updateUser(
+    id: string,
+    userData: Partial<Pick<AuthUser, "name" | "email" | "role">> & {
+      password?: string;
+    },
+  ): Promise<AuthUser> {
+    return this.request<AuthUser>(`/users/${id}`, {
       method: "PATCH",
-      body: JSON.stringify(userData),
+      body: userData,
     });
   }
 
-  // Deletar usuário
   async deleteUser(id: string): Promise<void> {
-    await this.request(`/users/${id}`, {
-      method: "DELETE",
+    await this.request(`/users/${id}`, { method: "DELETE" });
+  }
+
+  private async readResponse(response: Response): Promise<unknown> {
+    if (response.status === 204) return undefined;
+
+    const text = await response.text();
+    if (!text) return undefined;
+
+    try {
+      return JSON.parse(text) as unknown;
+    } catch {
+      return text;
+    }
+  }
+
+  private getErrorMessage(body: unknown, status: number): string {
+    if (body && typeof body === "object" && "message" in body) {
+      const message = (body as { message?: unknown }).message;
+      if (Array.isArray(message)) return message.join(". ");
+      if (typeof message === "string") return message;
+    }
+
+    return `Não foi possível concluir a solicitação (HTTP ${status}).`;
+  }
+
+  private toQueryString<T extends object>(values: T): string {
+    const query = new URLSearchParams();
+
+    Object.entries(values as Record<string, unknown>).forEach(([key, value]) => {
+      if (value !== undefined && value !== "") {
+        query.set(key, String(value));
+      }
     });
+
+    const result = query.toString();
+    return result ? `?${result}` : "";
   }
 }
 
-// Mapeamento de categorias para URLs
 export const categoryMapping: Record<string, string> = {
   "iPhones Seminovos": "iphones-seminovos",
   "iPhones Novos": "iphones-novos",
@@ -337,10 +558,8 @@ export const categoryMapping: Record<string, string> = {
   iPads: "ipads",
   "Apple Watch": "apple-watch",
   Acessórios: "acessorios",
-  //Acessorios: "acessorios", // Fallback para categoria sem acento
 };
 
-// Mapeamento reverso (URL para categoria)
 export const urlToCategoryMapping: Record<string, string> = {
   "iphones-seminovos": "iPhones Seminovos",
   "iphones-novos": "iPhones Novos",
@@ -350,11 +569,5 @@ export const urlToCategoryMapping: Record<string, string> = {
   acessorios: "Acessórios",
 };
 
-// Exportar tipos para uso em outros arquivos
-export type { ApiFilters, CalculatePricesRequest, CalculatedPricesResponse };
-
-// Exportar instância única do serviço
 export const apiService = new ApiService();
-
-// Exportar também a classe para casos específicos
 export default ApiService;
