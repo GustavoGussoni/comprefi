@@ -63,7 +63,9 @@ const ResultPage: React.FC = () => {
     const updateTimer = () => {
       const remaining = Math.max(
         0,
-        Math.ceil((new Date(result.offerExpiresAt).getTime() - Date.now()) / 1000),
+        Math.ceil(
+          (new Date(result.offerExpiresAt).getTime() - Date.now()) / 1000,
+        ),
       );
       setTimeLeft(remaining);
 
@@ -304,7 +306,9 @@ ${timeLeft > 0 ? `*Oferta de ${result?.descontoPercentual}% ativa até:* ${new D
               <h1 className="text-2xl font-bold text-funnel-text-primary mb-3">
                 Não foi possível abrir sua proposta
               </h1>
-              <p className="text-funnel-text-secondary mb-6">{errors.general}</p>
+              <p className="text-funnel-text-secondary mb-6">
+                {errors.general}
+              </p>
               <a
                 href="/trocar-de-iphone"
                 className="inline-flex rounded-md bg-funnel-primary px-5 py-3 font-semibold text-funnel-text-on-primary"
@@ -349,8 +353,8 @@ ${timeLeft > 0 ? `*Oferta de ${result?.descontoPercentual}% ativa até:* ${new D
                 </div>
                 {timeLeft > 0 ? (
                   <p className="text-orange-200 text-lg">
-                    Economia de {formatCurrency(calculateDiscount())} pelos próximos
-                    30 minutos.
+                    Preencha o formulário para conferir o desconto da sua
+                    proposta.
                   </p>
                 ) : (
                   <p className="text-red-300 text-sm mt-2">
@@ -362,13 +366,11 @@ ${timeLeft > 0 ? `*Oferta de ${result?.descontoPercentual}% ativa até:* ${new D
 
               <div className="bg-gradient-to-r from-green-900 to-emerald-900 rounded-lg p-6 mb-8 border border-green-700 text-center">
                 <h3 className="text-xl font-bold text-white mb-2">
-                  Você está a um passo de economizar
+                  Sua proposta de troca está pronta
                 </h3>
-                <div className="text-4xl font-bold text-green-400 mb-2">
-                  {formatCurrency(totalEconomy)}
-                </div>
                 <p className="text-green-200">
-                  na troca do seu {funnelData?.modeloAtual} por um <br></br>
+                  Desbloqueie os valores da troca do seu{" "}
+                  {funnelData?.modeloAtual} por um <br></br>
                   {result?.produtoDesejado?.modelo}
                 </p>
                 <div className="mt-4 p-4 bg-green-800 bg-opacity-50 rounded-lg text-left text-sm">
