@@ -654,75 +654,178 @@ ${timeLeft > 0 ? `*Oferta de ${result?.descontoPercentual}% ativa até:* ${new D
                 )}
               </div>
 
-              <div
-                role="status"
-                className={`mb-8 rounded-lg border p-6 text-center ${
-                  timeLeft > 0
-                    ? "border-orange-700 bg-gradient-to-r from-red-900 to-orange-900"
-                    : "border-funnel-surface-light bg-funnel-surface"
-                }`}
-              >
-                {timeLeft > 0 ? (
-                  <>
-                    <p className="text-lg font-semibold text-white">
-                      Seu desconto de {result.descontoPercentual}% termina em:
-                    </p>
-                    <p className="mt-2 text-4xl font-bold font-mono text-funnel-warning">
-                      {formatTime(timeLeft)}
-                    </p>
-                    <p className="mt-2 text-sm text-orange-100">
-                      Depois desse prazo, a diferença volta a{" "}
-                      {formatCurrency(result.valorFinal)}.
-                    </p>
-                  </>
-                ) : (
-                  <>
-                    <p className="text-lg font-semibold text-funnel-text-primary">
-                      Desconto de {result.descontoPercentual}% encerrado
-                    </p>
-                    <p className="mt-2 text-funnel-text-secondary">
-                      Valor a pagar sem desconto:{" "}
-                      {formatCurrency(result.valorFinal)}.
-                    </p>
-                  </>
-                )}
+              <section className="mb-8 rounded-xl border border-blue-700 bg-gradient-to-br from-blue-900 to-purple-900 p-6 sm:p-8">
+                <h2 className="mb-6 text-center text-2xl font-bold text-white">
+                  Sua proposta de troca
+                </h2>
+                <p className="mb-6 text-center text-lg font-medium text-white">
+                  {result.produtoDesejado.modelo}
+                </p>
+                <div className="space-y-4 border-b border-blue-500/70 pb-6 text-base sm:text-lg">
+                  <div className="flex flex-wrap justify-between gap-x-4 gap-y-1">
+                    <span className="text-blue-100">
+                      Preço à vista do aparelho
+                    </span>
+                    <span className="font-semibold text-white">
+                      {formatCurrency(result.precoProduto)}
+                    </span>
+                  </div>
+                  <div className="flex flex-wrap justify-between gap-x-4 gap-y-1">
+                    <span className="text-blue-100">
+                      Crédito pelo seu {funnelData?.modeloAtual}
+                    </span>
+                    <span className="font-semibold text-white">
+                      − {formatCurrency(result.valorAparelho)}
+                    </span>
+                  </div>
+                  <div className="flex flex-wrap justify-between gap-x-4 gap-y-1">
+                    <span className="text-blue-100">
+                      Diferença normal da troca
+                    </span>
+                    <span className="font-semibold text-white">
+                      {timeLeft > 0 ? (
+                        <del>{formatCurrency(result.valorFinal)}</del>
+                      ) : (
+                        formatCurrency(result.valorFinal)
+                      )}
+                    </span>
+                  </div>
+                </div>
+                <div className="pt-6 text-center">
+                  {timeLeft > 0 ? (
+                    <>
+                      <p className="text-lg font-medium text-blue-100">
+                        Você paga
+                      </p>
+                      <p className="my-2 text-4xl font-bold text-green-400 sm:text-5xl">
+                        {formatCurrency(getCurrentValue())}
+                      </p>
+                      <p className="text-base font-semibold text-white">
+                        {formatCurrency(calculateDiscount())} de desconto extra
+                      </p>
+                      <p className="mt-4 text-sm text-orange-100">
+                        Válido por mais{" "}
+                        <strong className="font-mono text-xl text-funnel-warning">
+                          {formatTime(timeLeft)}
+                        </strong>
+                      </p>
+                    </>
+                  ) : (
+                    <>
+                      <p
+                        className="text-lg font-semibold text-white"
+                        role="status"
+                      >
+                        Desconto de {result.descontoPercentual}% encerrado
+                      </p>
+                      <p className="my-2 text-4xl font-bold text-white sm:text-5xl">
+                        {formatCurrency(result.valorFinal)}
+                      </p>
+                      <p className="text-sm text-blue-100">
+                        Diferença atual da troca, sem o desconto temporário.
+                      </p>
+                    </>
+                  )}
+                </div>
+              </section>
+
+              <div className="text-center mb-8 bg-funnel-surface p-6 rounded-lg border border-funnel-surface-light">
+                <h3 className="text-2xl font-bold text-funnel-text-primary mb-4">
+                  Próximo Passo: Agende sua Troca
+                </h3>
+                <p className="text-funnel-text-secondary mb-6">
+                  Clique no botão abaixo para confirmar sua compra no WhatsApp e
+                  agendar a sua entrega.
+                </p>
+                <button
+                  onClick={handleWhatsAppRedirect}
+                  className="bg-funnel-success hover:opacity-90 text-white font-bold py-4 px-8 rounded-md transition-all"
+                >
+                  <MessageSquare className="w-6 h-6 mr-3" />
+                  Confirmar Troca no WhatsApp
+                </button>
+                <div className="text-left mt-6 space-y-2 text-funnel-text-secondary text-sm">
+                  <p>
+                    <strong>Como funciona:</strong>
+                  </p>
+                  <p>
+                    1. <strong>Confirme no WhatsApp:</strong> Nossa equipe irá
+                    validar sua proposta, tirar todas as suas dúvidas, e enviar
+                    o link de pagamento ou chave Pix.
+                  </p>
+                  <p>
+                    2. <strong>Agende a Visita:</strong> Combinaremos o melhor
+                    dia e horário para irmos até você.
+                  </p>
+                  <p>
+                    3. <strong>Receba e Troque:</strong> Entregamos seu novo
+                    iPhone em mãos e ajudamos na transferência de dados na hora.
+                    simples, rápido, seguro e Refinado.
+                  </p>
+                </div>
               </div>
 
-              <div className="bg-gradient-to-br from-blue-900 to-purple-900 rounded-lg p-8 border border-blue-700 mb-8">
-                <h3 className="text-2xl font-bold text-white mb-6 text-center">
-                  Resumo da Sua Oferta Refinada
+              <div className="bg-funnel-surface rounded-lg p-6 border border-funnel-surface-light mb-8">
+                <h3 className="text-xl font-bold text-funnel-text-primary mb-6 text-center flex items-center justify-center">
+                  <Gift className="w-6 h-6 mr-3 text-funnel-primary" />
+                  Seus Bônus Exclusivos Desbloqueados
                 </h3>
-                <div className="space-y-4 text-lg">
-                  <div className="flex justify-between items-center">
-                    <span className="text-blue-200">
-                      Crédito pelo seu {funnelData?.modeloAtual}:
-                    </span>
-                    <span className="font-bold text-white">
-                      {formatCurrency(result?.valorAparelho)}
-                    </span>
-                  </div>
-                  {timeLeft > 0 && (
-                    <div className="flex justify-between items-center">
-                      <span className="text-blue-200">
-                        Desconto Refinado Exclusivo:
-                      </span>
-                      <span className="font-bold text-white">
-                        - {formatCurrency(calculateDiscount())}
-                      </span>
+
+                <div className="space-y-4">
+                  <div className="flex items-start p-4 bg-funnel-surface-light rounded-lg">
+                    <ShieldCheck className="w-8 h-8 text-funnel-success mr-4 flex-shrink-0" />
+                    <div>
+                      <h4 className="font-semibold text-funnel-text-primary">
+                        Suporte Eterno
+                      </h4>
+                      <p className="text-sm text-funnel-text-secondary">
+                        Qualquer dúvida sobre o uso do seu aparelho ou
+                        necessidade de orientação, nossa equipe estará aqui para
+                        te ajudar. Para sempre e sem custo adicional.
+                      </p>
                     </div>
-                  )}
-                  <div className="flex justify-between items-center">
-                    <span className="text-blue-200">4 Bônus Exclusivos:</span>
-                    <span className="font-bold text-white">Inclusos</span>
                   </div>
-                  <hr className="border-blue-600" />
-                  <div className="flex justify-between items-center text-2xl">
-                    <span className="font-bold text-white">
-                      Valor a pagar pela troca:
-                    </span>
-                    <span className="font-bold text-green-400">
-                      {formatCurrency(getCurrentValue())}
-                    </span>
+
+                  <div className="flex items-start p-4 bg-funnel-surface-light rounded-lg">
+                    <Percent className="w-8 h-8 text-funnel-success mr-4 flex-shrink-0" />
+                    <div>
+                      <h4 className="font-semibold text-funnel-text-primary">
+                        Até 20% OFF em Acessórios Originais
+                      </h4>
+                      <p className="text-sm text-funnel-text-secondary">
+                        Como nosso cliente, você tem acesso a descontos
+                        exclusivos em toda a nossa linha de acessórios originais
+                        Apple.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start p-4 bg-funnel-surface-light rounded-lg">
+                    <Repeat className="w-8 h-8 text-funnel-success mr-4 flex-shrink-0" />
+                    <div>
+                      <h4 className="font-semibold text-funnel-text-primary">
+                        Garantia de Recompra Futura
+                      </h4>
+                      <p className="text-sm text-funnel-text-secondary">
+                        Quando decidir trocar este novo iPhone no futuro, nós
+                        garantimos a recompra dele, facilitando seu próximo
+                        upgrade e valorizando seu investimento.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start p-4 bg-funnel-surface-light rounded-lg">
+                    <Users className="w-8 h-8 text-funnel-success mr-4 flex-shrink-0" />
+                    <div>
+                      <h4 className="font-semibold text-funnel-text-primary">
+                        Acesso ao Programa de Indicações
+                      </h4>
+                      <p className="text-sm text-funnel-text-secondary">
+                        Indique amigos e acumule descontos para a sua próxima
+                        troca. Quanto mais amigos você traz, mais você economiza
+                        no futuro.
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -828,107 +931,6 @@ ${timeLeft > 0 ? `*Oferta de ${result?.descontoPercentual}% ativa até:* ${new D
                   confirmar as condições e garantir o valor mais justo para
                   você.
                 </p>
-              </div>
-
-              <div className="bg-funnel-surface rounded-lg p-6 border border-funnel-surface-light mb-8">
-                <h3 className="text-xl font-bold text-funnel-text-primary mb-6 text-center flex items-center justify-center">
-                  <Gift className="w-6 h-6 mr-3 text-funnel-primary" />
-                  Seus Bônus Exclusivos Desbloqueados
-                </h3>
-
-                <div className="space-y-4">
-                  <div className="flex items-start p-4 bg-funnel-surface-light rounded-lg">
-                    <ShieldCheck className="w-8 h-8 text-funnel-success mr-4 flex-shrink-0" />
-                    <div>
-                      <h4 className="font-semibold text-funnel-text-primary">
-                        Suporte Eterno
-                      </h4>
-                      <p className="text-sm text-funnel-text-secondary">
-                        Qualquer dúvida sobre o uso do seu aparelho ou
-                        necessidade de orientação, nossa equipe estará aqui para
-                        te ajudar. Para sempre e sem custo adicional.
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start p-4 bg-funnel-surface-light rounded-lg">
-                    <Percent className="w-8 h-8 text-funnel-success mr-4 flex-shrink-0" />
-                    <div>
-                      <h4 className="font-semibold text-funnel-text-primary">
-                        Até 20% OFF em Acessórios Originais
-                      </h4>
-                      <p className="text-sm text-funnel-text-secondary">
-                        Como nosso cliente, você tem acesso a descontos
-                        exclusivos em toda a nossa linha de acessórios originais
-                        Apple.
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start p-4 bg-funnel-surface-light rounded-lg">
-                    <Repeat className="w-8 h-8 text-funnel-success mr-4 flex-shrink-0" />
-                    <div>
-                      <h4 className="font-semibold text-funnel-text-primary">
-                        Garantia de Recompra Futura
-                      </h4>
-                      <p className="text-sm text-funnel-text-secondary">
-                        Quando decidir trocar este novo iPhone no futuro, nós
-                        garantimos a recompra dele, facilitando seu próximo
-                        upgrade e valorizando seu investimento.
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start p-4 bg-funnel-surface-light rounded-lg">
-                    <Users className="w-8 h-8 text-funnel-success mr-4 flex-shrink-0" />
-                    <div>
-                      <h4 className="font-semibold text-funnel-text-primary">
-                        Acesso ao Programa de Indicações
-                      </h4>
-                      <p className="text-sm text-funnel-text-secondary">
-                        Indique amigos e acumule descontos para a sua próxima
-                        troca. Quanto mais amigos você traz, mais você economiza
-                        no futuro.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="text-center mb-8 bg-funnel-surface p-6 rounded-lg border border-funnel-surface-light">
-                <h3 className="text-2xl font-bold text-funnel-text-primary mb-4">
-                  Próximo Passo: Agende sua Troca
-                </h3>
-                <p className="text-funnel-text-secondary mb-6">
-                  Clique no botão abaixo para confirmar sua compra no WhatsApp e
-                  agendar a sua entrega.
-                </p>
-                <button
-                  onClick={handleWhatsAppRedirect}
-                  className="bg-funnel-success hover:opacity-90 text-white font-bold py-4 px-8 rounded-md transition-all"
-                >
-                  <MessageSquare className="w-6 h-6 mr-3" />
-                  Confirmar Troca no WhatsApp
-                </button>
-                <div className="text-left mt-6 space-y-2 text-funnel-text-secondary text-sm">
-                  <p>
-                    <strong>Como funciona:</strong>
-                  </p>
-                  <p>
-                    1. <strong>Confirme no WhatsApp:</strong> Nossa equipe irá
-                    validar sua proposta, tirar todas as suas dúvidas, e enviar
-                    o link de pagamento ou chave Pix.
-                  </p>
-                  <p>
-                    2. <strong>Agende a Visita:</strong> Combinaremos o melhor
-                    dia e horário para irmos até você.
-                  </p>
-                  <p>
-                    3. <strong>Receba e Troque:</strong> Entregamos seu novo
-                    iPhone em mãos e ajudamos na transferência de dados na hora.
-                    simples, rápido, seguro e Refinado.
-                  </p>
-                </div>
               </div>
 
               <div className="bg-funnel-surface rounded-lg border border-funnel-surface-light">
