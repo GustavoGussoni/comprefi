@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import {
   apiService,
+  ApiError,
   TradeCalculationRequest,
   TradeCalculationResult,
 } from "@/services/api";
@@ -119,21 +120,30 @@ const CalculationPage: React.FC = () => {
       }
     }
 
-    // Marca todos os steps como concluídos visualmente
+    // A animação termina, mas o cálculo só está completo após a resposta da API.
     setCurrentStep(steps.length);
-    setIsComplete(true);
 
     try {
       const result = await calculateTrade(data);
       localStorage.setItem("tradeResult", JSON.stringify(result));
       localStorage.setItem("calculatedFunnelData", JSON.stringify(data));
+      setIsComplete(true);
       setTimeout(() => {
         navigate("/resultado-troca");
       }, 1500);
     } catch (error) {
       console.error("Erro no cálculo:", error);
+      const missingTradeValue =
+        error instanceof ApiError &&
+        error.status === 422 &&
+        typeof error.details === "object" &&
+        error.details !== null &&
+        "code" in error.details &&
+        error.details.code === "TRADE_VALUE_NOT_FOUND";
       setError(
-        "Não foi possível calcular sua proposta no momento. Por favor, tente novamente mais tarde.",
+        missingTradeValue
+          ? error.message
+          : "Não foi possível calcular sua proposta no momento. Por favor, tente novamente mais tarde.",
       );
     }
   };
