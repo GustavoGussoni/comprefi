@@ -141,6 +141,17 @@ const ResultPage: React.FC = () => {
           sessionStorage.removeItem("unlockedTradeContact");
         }
       }
+      setTimeLeft(
+        parsedResult.offerExpiresAt
+          ? Math.max(
+              0,
+              Math.ceil(
+                (new Date(parsedResult.offerExpiresAt).getTime() - Date.now()) /
+                  1000,
+              ),
+            )
+          : 0,
+      );
       setResult(parsedResult);
     } catch (err) {
       console.error("Erro ao carregar dados:", err);
@@ -375,8 +386,6 @@ ${timeLeft > 0 ? `*Oferta de ${result?.descontoPercentual}% ativa até:* ${new D
       </div>
     );
   }
-
-  const totalEconomy = Math.max(0, result.precoProduto - getCurrentValue());
 
   return (
     <div className="min-h-screen bg-funnel-background text-funnel-text-primary">
@@ -645,6 +654,40 @@ ${timeLeft > 0 ? `*Oferta de ${result?.descontoPercentual}% ativa até:* ${new D
                 )}
               </div>
 
+              <div
+                role="status"
+                className={`mb-8 rounded-lg border p-6 text-center ${
+                  timeLeft > 0
+                    ? "border-orange-700 bg-gradient-to-r from-red-900 to-orange-900"
+                    : "border-funnel-surface-light bg-funnel-surface"
+                }`}
+              >
+                {timeLeft > 0 ? (
+                  <>
+                    <p className="text-lg font-semibold text-white">
+                      Seu desconto de {result.descontoPercentual}% termina em:
+                    </p>
+                    <p className="mt-2 text-4xl font-bold font-mono text-funnel-warning">
+                      {formatTime(timeLeft)}
+                    </p>
+                    <p className="mt-2 text-sm text-orange-100">
+                      Depois desse prazo, a diferença volta a{" "}
+                      {formatCurrency(result.valorFinal)}.
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <p className="text-lg font-semibold text-funnel-text-primary">
+                      Desconto de {result.descontoPercentual}% encerrado
+                    </p>
+                    <p className="mt-2 text-funnel-text-secondary">
+                      Valor a pagar sem desconto:{" "}
+                      {formatCurrency(result.valorFinal)}.
+                    </p>
+                  </>
+                )}
+              </div>
+
               <div className="bg-gradient-to-br from-blue-900 to-purple-900 rounded-lg p-8 border border-blue-700 mb-8">
                 <h3 className="text-2xl font-bold text-white mb-6 text-center">
                   Resumo da Sua Oferta Refinada
@@ -675,10 +718,10 @@ ${timeLeft > 0 ? `*Oferta de ${result?.descontoPercentual}% ativa até:* ${new D
                   <hr className="border-blue-600" />
                   <div className="flex justify-between items-center text-2xl">
                     <span className="font-bold text-white">
-                      Sua Economia Total Hoje:
+                      Valor a pagar pela troca:
                     </span>
                     <span className="font-bold text-green-400">
-                      {formatCurrency(totalEconomy)}
+                      {formatCurrency(getCurrentValue())}
                     </span>
                   </div>
                 </div>
@@ -750,14 +793,16 @@ ${timeLeft > 0 ? `*Oferta de ${result?.descontoPercentual}% ativa até:* ${new D
                         </span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-gray-400">Preço original:</span>
+                        <span className="text-gray-400">
+                          Preço à vista do aparelho desejado:
+                        </span>
                         <span className="text-white">
                           {formatCurrency(result?.precoProduto)}
                         </span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-gray-400">
-                          Valor a pagar (original):
+                          Diferença sem desconto:
                         </span>
                         <span className="text-yellow-400">
                           {formatCurrency(result?.valorFinal)}
