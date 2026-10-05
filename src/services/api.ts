@@ -88,7 +88,7 @@ export interface DesiredTradeProduct {
 
 export interface TradeCalculationResult {
   questionarioId: string;
-  offerExpiresAt: string;
+  offerExpiresAt: string | null;
   descontoPercentual: number;
   valorBase: number;
   depreciacaoBateria: number;
@@ -469,13 +469,9 @@ class ApiService {
     );
   }
 
-  async getProductsWithFilters(
-    filters: ApiFilters = {},
-  ): Promise<Product[]> {
+  async getProductsWithFilters(filters: ApiFilters = {}): Promise<Product[]> {
     const endpoint = `/products${this.toQueryString(filters)}`;
-    return this.normalizeProducts(
-      await this.request<ApiProduct[]>(endpoint),
-    );
+    return this.normalizeProducts(await this.request<ApiProduct[]>(endpoint));
   }
 
   getCategories(): Promise<string[]> {
@@ -581,11 +577,13 @@ class ApiService {
   private toQueryString<T extends object>(values: T): string {
     const query = new URLSearchParams();
 
-    Object.entries(values as Record<string, unknown>).forEach(([key, value]) => {
-      if (value !== undefined && value !== "") {
-        query.set(key, String(value));
-      }
-    });
+    Object.entries(values as Record<string, unknown>).forEach(
+      ([key, value]) => {
+        if (value !== undefined && value !== "") {
+          query.set(key, String(value));
+        }
+      },
+    );
 
     const result = query.toString();
     return result ? `?${result}` : "";

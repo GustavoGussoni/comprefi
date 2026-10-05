@@ -73,6 +73,23 @@ const CalculationPage: React.FC = () => {
         return;
       }
       const data: FunnelData = JSON.parse(funnelDataStr);
+      const cachedResultStr = localStorage.getItem("tradeResult");
+      if (
+        localStorage.getItem("calculatedFunnelData") === JSON.stringify(data) &&
+        cachedResultStr
+      ) {
+        try {
+          const cachedResult = JSON.parse(
+            cachedResultStr,
+          ) as TradeCalculationResult;
+          if (cachedResult.questionarioId && "offerExpiresAt" in cachedResult) {
+            navigate("/resultado-troca", { replace: true });
+            return;
+          }
+        } catch {
+          // Um resultado local inválido não deve bloquear um cálculo novo.
+        }
+      }
       await simulateCalculation(data);
     } catch (err) {
       console.error("Erro ao carregar dados:", err);
@@ -109,6 +126,7 @@ const CalculationPage: React.FC = () => {
     try {
       const result = await calculateTrade(data);
       localStorage.setItem("tradeResult", JSON.stringify(result));
+      localStorage.setItem("calculatedFunnelData", JSON.stringify(data));
       setTimeout(() => {
         navigate("/resultado-troca");
       }, 1500);
@@ -120,9 +138,8 @@ const CalculationPage: React.FC = () => {
     }
   };
 
-  const calculateTrade = (
-    data: FunnelData,
-  ): Promise<TradeCalculationResult> => apiService.calculateTrade(data);
+  const calculateTrade = (data: FunnelData): Promise<TradeCalculationResult> =>
+    apiService.calculateTrade(data);
 
   if (error) {
     return (

@@ -58,14 +58,16 @@ const ResultPage: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (!result?.offerExpiresAt) return;
+    const expiresAt = result?.offerExpiresAt;
+    if (!expiresAt) {
+      setTimeLeft(0);
+      return;
+    }
 
     const updateTimer = () => {
       const remaining = Math.max(
         0,
-        Math.ceil(
-          (new Date(result.offerExpiresAt).getTime() - Date.now()) / 1000,
-        ),
+        Math.ceil((new Date(expiresAt).getTime() - Date.now()) / 1000),
       );
       setTimeLeft(remaining);
 
@@ -112,7 +114,7 @@ const ResultPage: React.FC = () => {
       }
 
       const parsedResult = JSON.parse(resultStr) as TradeResult;
-      if (!parsedResult.questionarioId || !parsedResult.offerExpiresAt) {
+      if (!parsedResult.questionarioId || !("offerExpiresAt" in parsedResult)) {
         setErrors((prev) => ({
           ...prev,
           general: "Sua simulação está desatualizada. Refaça o questionário.",
@@ -120,6 +122,25 @@ const ResultPage: React.FC = () => {
         return;
       }
 
+      // Reaproveita a simulação já calculada mesmo em abas abertas antes do deploy.
+      if (funnelDataStr && !localStorage.getItem("calculatedFunnelData")) {
+        localStorage.setItem("calculatedFunnelData", funnelDataStr);
+      }
+      const unlockedStr = sessionStorage.getItem("unlockedTradeContact");
+      if (unlockedStr) {
+        try {
+          const unlocked = JSON.parse(unlockedStr) as {
+            questionarioId: string;
+            nome: string;
+          };
+          if (unlocked.questionarioId === parsedResult.questionarioId) {
+            setContactForm((prev) => ({ ...prev, nome: unlocked.nome }));
+            setShowResult(true);
+          }
+        } catch {
+          sessionStorage.removeItem("unlockedTradeContact");
+        }
+      }
       setResult(parsedResult);
     } catch (err) {
       console.error("Erro ao carregar dados:", err);
@@ -258,6 +279,25 @@ const ResultPage: React.FC = () => {
         },
       );
 
+      // O prazo do servidor prevalece sobre o prazo gerado no cálculo inicial.
+      const effectiveResult = {
+        ...result,
+        offerExpiresAt: delivery.offerExpiresAt,
+      };
+      localStorage.setItem("tradeResult", JSON.stringify(effectiveResult));
+      setResult(effectiveResult);
+      setTimeLeft(
+        delivery.offerExpiresAt
+          ? Math.max(
+              0,
+              Math.ceil(
+                (new Date(delivery.offerExpiresAt).getTime() - Date.now()) /
+                  1000,
+              ),
+            )
+          : 0,
+      );
+
       if (!delivery.crmSent) {
         setErrors((prev) => ({
           ...prev,
@@ -266,6 +306,13 @@ const ResultPage: React.FC = () => {
         }));
       }
 
+      sessionStorage.setItem(
+        "unlockedTradeContact",
+        JSON.stringify({
+          questionarioId: result.questionarioId,
+          nome: contactForm.nome,
+        }),
+      );
       setShowResult(true);
     } catch (err) {
       const message =
@@ -295,6 +342,8 @@ ${timeLeft > 0 ? `*Oferta de ${result?.descontoPercentual}% ativa até:* ${new D
     window.open(whatsappUrl, "_blank");
     localStorage.removeItem("funnelData");
     localStorage.removeItem("tradeResult");
+    localStorage.removeItem("calculatedFunnelData");
+    sessionStorage.removeItem("unlockedTradeContact");
   };
 
   if (!result) {
