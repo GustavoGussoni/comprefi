@@ -500,7 +500,11 @@ const NewProductForm: React.FC<{
 // ============================================
 // Main Component
 // ============================================
-const CatalogTable: React.FC = () => {
+interface CatalogTableProps {
+  readOnly?: boolean;
+}
+
+const CatalogTable: React.FC<CatalogTableProps> = ({ readOnly = false }) => {
   const [products, setProducts] = useState<ProductGroup[]>([]);
   const [stats, setStats] = useState<CatalogStats | null>(null);
   const [loading, setLoading] = useState(true);
@@ -966,7 +970,7 @@ const CatalogTable: React.FC = () => {
               />
               <span className="text-xs">Inativos</span>
             </label>
-            <button
+            {!readOnly && <button
               onClick={() => setShowConfig(!showConfig)}
               className={`p-2 rounded-md transition-colors ${
                 showConfig
@@ -976,7 +980,7 @@ const CatalogTable: React.FC = () => {
               title="Configuracoes"
             >
               <Settings className="w-4 h-4" />
-            </button>
+            </button>}
             <button
               onClick={loadData}
               className="p-2 bg-gray-800 hover:bg-gray-700 rounded-md transition-colors"
@@ -985,7 +989,7 @@ const CatalogTable: React.FC = () => {
               <RefreshCw className="w-4 h-4 text-gray-400" />
             </button>
           </div>
-          <div>
+          {!readOnly && <div>
             <button
               onClick={() => setShowNewProduct(!showNewProduct)}
               className="w-full flex items-center justify-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md text-sm transition-colors"
@@ -993,12 +997,12 @@ const CatalogTable: React.FC = () => {
               <Plus className="w-4 h-4" />
               <span>Novo Produto</span>
             </button>
-          </div>
+          </div>}
         </div>
       </div>
 
       {/* Config Panel */}
-      {showConfig && (
+      {!readOnly && showConfig && (
         <ConfigPanel
           margins={margins}
           freight={freight}
@@ -1009,7 +1013,7 @@ const CatalogTable: React.FC = () => {
       )}
 
       {/* New Product Form */}
-      {showNewProduct && (
+      {!readOnly && showNewProduct && (
         <NewProductForm
           categories={
             categories.length > 0 ? categories : Object.keys(categoryLabels)
@@ -1100,7 +1104,7 @@ const CatalogTable: React.FC = () => {
                       {product.isActive ? "Ativo" : "Inativo"}
                     </span>
 
-                    <div
+                    {!readOnly && <div
                       className="flex items-center space-x-1"
                       onClick={(e) => e.stopPropagation()}
                     >
@@ -1124,12 +1128,12 @@ const CatalogTable: React.FC = () => {
                           <Power className="w-3.5 h-3.5 text-green-400" />
                         )}
                       </button>
-                    </div>
+                    </div>}
                   </div>
                 </div>
 
                 {/* Edit Product Form */}
-                {editingProduct === product.slug && (
+                {!readOnly && editingProduct === product.slug && (
                   <div
                     className="px-4 pb-4 space-y-3 border-t border-gray-800"
                     onClick={(e) => e.stopPropagation()}
@@ -1237,7 +1241,7 @@ const CatalogTable: React.FC = () => {
                             return parseSize(b.storage) - parseSize(a.storage);
                           }).map((variant) => {
                             const isEditing =
-                              editingVariant?.variantId === variant.id;
+                              !readOnly && editingVariant?.variantId === variant.id;
 
                             return (
                               <tr
@@ -1308,11 +1312,9 @@ const CatalogTable: React.FC = () => {
                                   <>
                                     {/* Custo - clicável para entrar em edição */}
                                     <td
-                                      className="px-4 py-2 text-gray-500 text-xs cursor-pointer hover:text-yellow-400 hover:bg-gray-800/50 transition-colors"
-                                      onClick={() =>
-                                        startEditVariant(product.slug, variant)
-                                      }
-                                      title="Clique para editar precos"
+                                      className={`px-4 py-2 text-gray-500 text-xs ${readOnly ? "" : "cursor-pointer hover:text-yellow-400 hover:bg-gray-800/50 transition-colors"}`}
+                                      onClick={readOnly ? undefined : () => startEditVariant(product.slug, variant)}
+                                      title={readOnly ? "Consulta" : "Clique para editar preços"}
                                     >
                                       <span className="flex items-center space-x-1">
                                         <Calculator className="w-3 h-3" />
@@ -1332,18 +1334,18 @@ const CatalogTable: React.FC = () => {
                                 )}
 
                                 <td className="px-4 py-2 text-center">
-                                  <button
-                                    onClick={() =>
-                                      toggleVariantActive(product.slug, variant)
-                                    }
-                                    className={`text-xs px-2 py-0.5 rounded ${
-                                      variant.isActive
-                                        ? "bg-green-900/50 text-green-400 hover:bg-green-800/50"
-                                        : "bg-red-900/50 text-red-400 hover:bg-red-800/50"
-                                    }`}
-                                  >
-                                    {variant.isActive ? "Ativo" : "Inativo"}
-                                  </button>
+                                  {readOnly ? (
+                                    <span className={`text-xs px-2 py-0.5 rounded ${variant.isActive ? "bg-green-900/50 text-green-400" : "bg-red-900/50 text-red-400"}`}>
+                                      {variant.isActive ? "Ativo" : "Inativo"}
+                                    </span>
+                                  ) : (
+                                    <button
+                                      onClick={() => toggleVariantActive(product.slug, variant)}
+                                      className={`text-xs px-2 py-0.5 rounded ${variant.isActive ? "bg-green-900/50 text-green-400 hover:bg-green-800/50" : "bg-red-900/50 text-red-400 hover:bg-red-800/50"}`}
+                                    >
+                                      {variant.isActive ? "Ativo" : "Inativo"}
+                                    </button>
+                                  )}
                                 </td>
                                 <td className="px-4 py-2 text-center">
                                   {isEditing ? (
@@ -1363,13 +1365,13 @@ const CatalogTable: React.FC = () => {
                                         <X className="w-3.5 h-3.5 text-gray-400" />
                                       </button>
                                     </div>
+                                  ) : readOnly ? (
+                                    <span className="text-xs text-gray-600">—</span>
                                   ) : (
                                     <button
-                                      onClick={() =>
-                                        startEditVariant(product.slug, variant)
-                                      }
+                                      onClick={() => startEditVariant(product.slug, variant)}
                                       className="p-1 hover:bg-gray-700 rounded opacity-40 hover:opacity-100 transition-opacity"
-                                      title="Editar precos"
+                                      title="Editar preços"
                                     >
                                       <DollarSign className="w-3.5 h-3.5 text-yellow-400" />
                                     </button>
@@ -1383,7 +1385,7 @@ const CatalogTable: React.FC = () => {
                     </div>
 
                     {/* Add Variant */}
-                    <div className="px-4 py-3 border-t border-gray-800/50">
+                    {!readOnly && <div className="px-4 py-3 border-t border-gray-800/50">
                       {addingVariantSlug === product.slug ? (
                         <div className="flex items-center space-x-3">
                           <input
@@ -1458,12 +1460,13 @@ const CatalogTable: React.FC = () => {
                           <span>Adicionar variante</span>
                         </button>
                       )}
-                    </div>
+                    </div>}
 
                     {product.variants.length === 0 && (
                       <div className="px-4 py-6 text-center text-gray-500 text-sm">
-                        Nenhuma variante cadastrada. Clique em "Adicionar
-                        variante".
+                        {readOnly
+                          ? "Nenhuma variante cadastrada."
+                          : 'Nenhuma variante cadastrada. Clique em "Adicionar variante".'}
                       </div>
                     )}
                   </div>

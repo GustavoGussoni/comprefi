@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 // src/pages/ResultPage.tsx
 
 import {
@@ -11,35 +10,15 @@ import {
   Users,
 } from "lucide-react";
 import React, { useState, useEffect, useRef } from "react";
+import {
+  apiService,
+  ApiError,
+  TradeCalculationRequest,
+  TradeCalculationResult,
+} from "@/services/api";
 
-// --- Interfaces ---
-interface FunnelData {
-  modeloAtual: string;
-  capacidadeAtual: string;
-  corAtual: string;
-  bateriaAtual: number;
-  defeitos: string[];
-  pecasTrocadas: boolean;
-  quaisPecas: string;
-  modeloDesejado: string;
-  ondeOuviu: string;
-  tempoPensando: string;
-  urgenciaTroca: string;
-}
-
-interface TradeResult {
-  valorAparelho: number;
-  valorFinal: number;
-  valorBase: number;
-  depreciacaoBateria: number;
-  depreciacaoDefeitos: number;
-  precoProduto: number;
-  valorComDesconto: number;
-  temDefeito: boolean;
-  precisaCotacao: boolean;
-  cupomDesconto?: string;
-  produtoDesejado?: any;
-}
+type FunnelData = TradeCalculationRequest;
+type TradeResult = TradeCalculationResult;
 
 // --- INTERFACE ATUALIZADA ---
 interface ContactForm {
@@ -70,28 +49,44 @@ const ResultPage: React.FC = () => {
   });
   const [loading, setLoading] = useState<boolean>(false);
   const [showResult, setShowResult] = useState<boolean>(false);
-  const [timeLeft, setTimeLeft] = useState<number>(() => {
-    const stored = localStorage.getItem("comprefi_timer_start");
-    if (stored) {
-      const elapsed = Math.floor((Date.now() - parseInt(stored, 10)) / 1000);
-      const remaining = 1800 - elapsed;
-      return remaining > 0 ? remaining : 0;
-    }
-    return 1800;
-  });
+  const [timeLeft, setTimeLeft] = useState<number>(0);
   const [showFAQ, setShowFAQ] = useState<boolean>(false);
   const [errors, setErrors] = useState<{ [key: string]: string | null }>({});
 
   useEffect(() => {
     loadData();
-    startTimer();
+  }, []);
+
+  useEffect(() => {
+    const expiresAt = result?.offerExpiresAt;
+    if (!expiresAt) {
+      setTimeLeft(0);
+      return;
+    }
+
+    const updateTimer = () => {
+      const remaining = Math.max(
+        0,
+        Math.ceil((new Date(expiresAt).getTime() - Date.now()) / 1000),
+      );
+      setTimeLeft(remaining);
+
+      if (remaining === 0 && timerRef.current) {
+        clearInterval(timerRef.current);
+        timerRef.current = null;
+      }
+    };
+
+    updateTimer();
+    timerRef.current = setInterval(updateTimer, 1000);
 
     return () => {
       if (timerRef.current) {
         clearInterval(timerRef.current);
+        timerRef.current = null;
       }
     };
-  }, []);
+  }, [result?.offerExpiresAt]);
 
   useEffect(() => {
     if (showResult) {
@@ -110,38 +105,61 @@ const ResultPage: React.FC = () => {
       }
 
       const resultStr = localStorage.getItem("tradeResult");
-      if (resultStr) {
-        setResult(JSON.parse(resultStr));
+      if (!resultStr) {
+        setErrors((prev) => ({
+          ...prev,
+          general: "Não encontramos sua simulação. Refaça o questionário.",
+        }));
+        return;
       }
+
+      const parsedResult = JSON.parse(resultStr) as TradeResult;
+      if (!parsedResult.questionarioId || !("offerExpiresAt" in parsedResult)) {
+        setErrors((prev) => ({
+          ...prev,
+          general: "Sua simulação está desatualizada. Refaça o questionário.",
+        }));
+        return;
+      }
+
+      // Reaproveita a simulação já calculada mesmo em abas abertas antes do deploy.
+      if (funnelDataStr && !localStorage.getItem("calculatedFunnelData")) {
+        localStorage.setItem("calculatedFunnelData", funnelDataStr);
+      }
+      const unlockedStr = sessionStorage.getItem("unlockedTradeContact");
+      if (unlockedStr) {
+        try {
+          const unlocked = JSON.parse(unlockedStr) as {
+            questionarioId: string;
+            nome: string;
+          };
+          if (unlocked.questionarioId === parsedResult.questionarioId) {
+            setContactForm((prev) => ({ ...prev, nome: unlocked.nome }));
+            setShowResult(true);
+          }
+        } catch {
+          sessionStorage.removeItem("unlockedTradeContact");
+        }
+      }
+      setTimeLeft(
+        parsedResult.offerExpiresAt
+          ? Math.max(
+              0,
+              Math.ceil(
+                (new Date(parsedResult.offerExpiresAt).getTime() - Date.now()) /
+                  1000,
+              ),
+            )
+          : 0,
+      );
+      setResult(parsedResult);
     } catch (err) {
       console.error("Erro ao carregar dados:", err);
+      setErrors((prev) => ({
+        ...prev,
+        general: "Não foi possível carregar sua proposta.",
+      }));
     }
-  };
-
-  const startTimer = () => {
-    // Persistir o momento de início no localStorage
-    if (!localStorage.getItem("comprefi_timer_start")) {
-      localStorage.setItem("comprefi_timer_start", Date.now().toString());
-    }
-
-    if (timerRef.current) {
-      clearInterval(timerRef.current);
-    }
-
-    // Se já expirou, não iniciar o intervalo
-    if (timeLeft <= 0) return;
-
-    timerRef.current = setInterval(() => {
-      setTimeLeft((prev) => {
-        if (prev <= 1) {
-          if (timerRef.current) {
-            clearInterval(timerRef.current);
-          }
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
   };
 
   const formatTime = (seconds: number): string => {
@@ -161,8 +179,13 @@ const ResultPage: React.FC = () => {
   };
 
   const calculateDiscount = (): number => {
-    if (!result?.valorFinal) return 0;
-    return result.valorFinal * 0.03;
+    if (!result) return 0;
+    return Math.max(0, result.valorFinal - result.valorComDesconto);
+  };
+
+  const getCurrentValue = (): number => {
+    if (!result) return 0;
+    return timeLeft > 0 ? result.valorComDesconto : result.valorFinal;
   };
 
   // --- FUNÇÃO DE VALIDAÇÃO ATUALIZADA ---
@@ -238,7 +261,6 @@ const ResultPage: React.FC = () => {
     }
   };
 
-  // --- SUBMIT ATUALIZADO ---
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const isNameValid = validateField("nome", contactForm.nome);
@@ -246,117 +268,124 @@ const ResultPage: React.FC = () => {
     const isWhatsappValid = validateField("whatsapp", contactForm.whatsapp);
     const isCepValid = validateField("cep", contactForm.cep);
 
-    if (!isNameValid || !isEmailValid || !isWhatsappValid || !isCepValid) {
+    if (
+      !isNameValid ||
+      !isEmailValid ||
+      !isWhatsappValid ||
+      !isCepValid ||
+      !result
+    ) {
       return;
     }
 
     setLoading(true);
+    setErrors((prev) => ({ ...prev, general: null }));
+
     try {
-      // Enviar dados para o webhook do CRM
-      const webhookUrl =
-        "https://api.datacrazy.io/v1/crm/api/crm/integrations/webhook/business/54169891-77a1-4507-a932-cb0556e7a6a7";
-
-      const discount = calculateDiscount();
-      const mensagemFollowUp = `CONFIRMAÇÃO DE TROCA - CompreFi\n\nCliente: ${contactForm.nome}\nEmail: ${contactForm.email}\nWhatsApp: ${contactForm.whatsapp}\nCEP: ${contactForm.cep}\n\nTROCA CONFIRMADA:\n* De: ${funnelData?.modeloAtual || ""} ${funnelData?.capacidadeAtual || ""}\n* Para: ${result?.produtoDesejado?.modelo || ""}\n\nVALORES FINAIS:\n* Valor do seu aparelho: ${formatCurrency(result?.valorAparelho)}\n* Valor a pagar: ${formatCurrency(result?.valorComDesconto)}\n${timeLeft > 0 ? `* Desconto Refinado Exclusivo: ${formatCurrency(discount)}` : "* Valor original (sem desconto)"}\n${result?.cupomDesconto ? `* Cupom: ${result.cupomDesconto}` : ""}\n\nConfirmado em: ${new Date().toLocaleString("pt-BR")}`;
-
-      const webhookData = {
-        // Dados de contato
-        nome: contactForm.nome,
-        email: contactForm.email,
-        whatsapp: contactForm.whatsapp,
-        cep: contactForm.cep,
-        // Dados do aparelho atual
-        modeloAtual: funnelData?.modeloAtual || "",
-        capacidadeAtual: funnelData?.capacidadeAtual || "",
-        corAtual: funnelData?.corAtual || "",
-        bateriaAtual: funnelData?.bateriaAtual || 0,
-        defeitos: funnelData?.defeitos || [],
-        pecasTrocadas: funnelData?.pecasTrocadas || false,
-        quaisPecas: funnelData?.quaisPecas || "",
-        // Dados de qualificação
-        ondeOuviu: funnelData?.ondeOuviu || "",
-        tempoPensando: funnelData?.tempoPensando || "",
-        urgenciaTroca: funnelData?.urgenciaTroca || "",
-        // Produto desejado
-        modeloDesejado: result?.produtoDesejado?.modelo || funnelData?.modeloDesejado || "",
-        // Valores calculados
-        valorBase: result?.valorBase || 0,
-        valorAparelho: result?.valorAparelho || 0,
-        depreciacaoBateria: result?.depreciacaoBateria || 0,
-        depreciacaoDefeitos: result?.depreciacaoDefeitos || 0,
-        valorFinal: result?.valorFinal || 0,
-        valorComDesconto: result?.valorComDesconto || 0,
-        cupomDesconto: result?.cupomDesconto || "",
-        valorTotal: (result?.valorComDesconto || 0) + (result?.valorAparelho || 0),
-        precisaCotacao: result?.precisaCotacao || false,
-        // Mensagem pronta para follow-up via CRM
-        mensagemFollowUp,
-        // Metadata
-        fonte: "funil-troca",
-        dataEnvio: new Date().toISOString(),
-      };
-
-      await fetch(webhookUrl, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      const delivery = await apiService.submitTradeContact(
+        result.questionarioId,
+        {
+          ...contactForm,
+          fonte: "funil-troca",
         },
-        body: JSON.stringify(webhookData),
-      }).catch((err) => console.error("Erro ao enviar webhook:", err));
+      );
 
+      // O prazo do servidor prevalece sobre o prazo gerado no cálculo inicial.
+      const effectiveResult = {
+        ...result,
+        offerExpiresAt: delivery.offerExpiresAt,
+      };
+      localStorage.setItem("tradeResult", JSON.stringify(effectiveResult));
+      setResult(effectiveResult);
+      setTimeLeft(
+        delivery.offerExpiresAt
+          ? Math.max(
+              0,
+              Math.ceil(
+                (new Date(delivery.offerExpiresAt).getTime() - Date.now()) /
+                  1000,
+              ),
+            )
+          : 0,
+      );
+
+      if (!delivery.crmSent) {
+        setErrors((prev) => ({
+          ...prev,
+          general:
+            "Recebemos seus dados. O envio ao nosso CRM ficou pendente, mas sua solicitação está salva e nossa equipe poderá reenviá-la.",
+        }));
+      }
+
+      sessionStorage.setItem(
+        "unlockedTradeContact",
+        JSON.stringify({
+          questionarioId: result.questionarioId,
+          nome: contactForm.nome,
+        }),
+      );
       setShowResult(true);
     } catch (err) {
-      console.error("Erro ao enviar:", err);
-      setErrors((prev) => ({
-        ...prev,
-        general: "Erro ao enviar dados. Tente novamente.",
-      }));
+      const message =
+        err instanceof ApiError
+          ? err.message
+          : "Não foi possível salvar seus dados. Tente novamente.";
+      setErrors((prev) => ({ ...prev, general: message }));
     } finally {
       setLoading(false);
     }
   };
 
-  // --- MENSAGEM WHATSAPP ATUALIZADA ---
   const handleWhatsAppRedirect = () => {
-    const discount = calculateDiscount();
     const message = `
-*CONFIRMAÇÃO DE TROCA - CompreFi*
+*QUERO CONFIRMAR MINHA TROCA — CompreFi*
 
 *Cliente:* ${contactForm.nome}
-*Email:* ${contactForm.email}
-*WhatsApp:* ${contactForm.whatsapp}
-*CEP:* ${contactForm.cep}
+*De:* ${funnelData?.modeloAtual} ${funnelData?.capacidadeAtual}
+*Para:* ${result?.produtoDesejado?.modelo}
 
-*TROCA CONFIRMADA:*
-• De: ${funnelData?.modeloAtual} ${funnelData?.capacidadeAtual}
-• Para: ${result?.produtoDesejado?.modelo}
-
-*VALORES FINAIS:*
-• Valor do seu aparelho: ${formatCurrency(result?.valorAparelho)}
-• Valor a pagar: ${formatCurrency(result?.valorComDesconto)}
-${timeLeft > 0 ? `• Desconto Refinado Exclusivo: ${formatCurrency(discount)}` : "• Valor original (sem desconto)"}
-
-*Confirmado em:* ${new Date().toLocaleString("pt-BR")}
+*Valor do aparelho:* ${formatCurrency(result?.valorAparelho)}
+*Valor a pagar:* ${formatCurrency(getCurrentValue())}
+${timeLeft > 0 ? `*Oferta de ${result?.descontoPercentual}% ativa até:* ${new Date(result?.offerExpiresAt || "").toLocaleString("pt-BR")}` : "*Oferta temporária expirada; valor original aplicado.*"}
+*Simulação:* ${result?.questionarioId}
     `.trim();
     const whatsappUrl = `https://wa.me/5534999252590?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, "_blank");
     localStorage.removeItem("funnelData");
     localStorage.removeItem("tradeResult");
+    localStorage.removeItem("calculatedFunnelData");
+    sessionStorage.removeItem("unlockedTradeContact");
   };
 
   if (!result) {
     return (
-      <div className="min-h-screen bg-funnel-background flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-funnel-primary mx-auto mb-4"></div>
-          <p className="text-funnel-text-primary">Carregando...</p>
+      <div className="min-h-screen bg-funnel-background flex items-center justify-center px-4">
+        <div className="max-w-md text-center">
+          {errors.general ? (
+            <>
+              <h1 className="text-2xl font-bold text-funnel-text-primary mb-3">
+                Não foi possível abrir sua proposta
+              </h1>
+              <p className="text-funnel-text-secondary mb-6">
+                {errors.general}
+              </p>
+              <a
+                href="/trocar-de-iphone"
+                className="inline-flex rounded-md bg-funnel-primary px-5 py-3 font-semibold text-funnel-text-on-primary"
+              >
+                Refazer simulação
+              </a>
+            </>
+          ) : (
+            <>
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-funnel-primary mx-auto mb-4"></div>
+              <p className="text-funnel-text-primary">Carregando...</p>
+            </>
+          )}
         </div>
       </div>
     );
   }
-
-  const totalEconomy =
-    (result?.precoProduto || 0) - (result?.valorComDesconto || 0);
 
   return (
     <div className="min-h-screen bg-funnel-background text-funnel-text-primary">
@@ -382,8 +411,8 @@ ${timeLeft > 0 ? `• Desconto Refinado Exclusivo: ${formatCurrency(discount)}` 
                 </div>
                 {timeLeft > 0 ? (
                   <p className="text-orange-200 text-lg">
-                    Economia de {formatCurrency(calculateDiscount())} • Apenas
-                    hoje!
+                    Preencha o formulário para conferir o desconto da sua
+                    proposta.
                   </p>
                 ) : (
                   <p className="text-red-300 text-sm mt-2">
@@ -395,13 +424,11 @@ ${timeLeft > 0 ? `• Desconto Refinado Exclusivo: ${formatCurrency(discount)}` 
 
               <div className="bg-gradient-to-r from-green-900 to-emerald-900 rounded-lg p-6 mb-8 border border-green-700 text-center">
                 <h3 className="text-xl font-bold text-white mb-2">
-                  Você está a um passo de economizar
+                  Sua proposta de troca está pronta
                 </h3>
-                <div className="text-4xl font-bold text-green-400 mb-2">
-                  {formatCurrency(totalEconomy)}
-                </div>
                 <p className="text-green-200">
-                  na troca do seu {funnelData?.modeloAtual} por um <br></br>
+                  Desbloqueie os valores da troca do seu{" "}
+                  {funnelData?.modeloAtual} por um <br></br>
                   {result?.produtoDesejado?.modelo}
                 </p>
                 <div className="mt-4 p-4 bg-green-800 bg-opacity-50 rounded-lg text-left text-sm">
@@ -481,6 +508,15 @@ ${timeLeft > 0 ? `• Desconto Refinado Exclusivo: ${formatCurrency(discount)}` 
                 <p className="text-funnel-text-secondary mb-6 text-center">
                   Preencha para ver os detalhes e garantir seus bônus.
                 </p>
+
+                {errors.general && (
+                  <div
+                    role="alert"
+                    className="mb-6 rounded-md border border-funnel-error/50 bg-funnel-error/10 p-4 text-sm text-funnel-text-primary"
+                  >
+                    {errors.general}
+                  </div>
+                )}
 
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div>
@@ -611,43 +647,185 @@ ${timeLeft > 0 ? `• Desconto Refinado Exclusivo: ${formatCurrency(discount)}` 
                 <p className="text-funnel-text-secondary text-lg">
                   Sua proposta exclusiva foi desbloqueada. Veja os detalhes:
                 </p>
+                {errors.general && (
+                  <p className="mt-4 rounded-md border border-funnel-warning/50 bg-funnel-warning/10 p-3 text-sm text-funnel-text-primary">
+                    {errors.general}
+                  </p>
+                )}
               </div>
 
-              <div className="bg-gradient-to-br from-blue-900 to-purple-900 rounded-lg p-8 border border-blue-700 mb-8">
-                <h3 className="text-2xl font-bold text-white mb-6 text-center">
-                  Resumo da Sua Oferta Refinada
-                </h3>
-                <div className="space-y-4 text-lg">
-                  <div className="flex justify-between items-center">
-                    <span className="text-blue-200">
-                      Crédito pelo seu {funnelData?.modeloAtual}:
+              <section className="mb-8 rounded-xl border border-blue-700 bg-gradient-to-br from-blue-900 to-purple-900 p-6 sm:p-8">
+                <h2 className="mb-6 text-center text-2xl font-bold text-white">
+                  Sua proposta de troca
+                </h2>
+                <p className="mb-6 text-center text-lg font-medium text-white">
+                  {result.produtoDesejado.modelo}
+                </p>
+                <div className="space-y-4 border-b border-blue-500/70 pb-6 text-base sm:text-lg">
+                  <div className="flex flex-wrap justify-between gap-x-4 gap-y-1">
+                    <span className="text-blue-100">
+                      Preço à vista do aparelho
                     </span>
-                    <span className="font-bold text-white">
-                      {formatCurrency(result?.valorAparelho)}
+                    <span className="font-semibold text-white">
+                      {formatCurrency(result.precoProduto)}
                     </span>
                   </div>
-                  {timeLeft > 0 && (
-                    <div className="flex justify-between items-center">
-                      <span className="text-blue-200">
-                        Desconto Refinado Exclusivo:
-                      </span>
-                      <span className="font-bold text-white">
-                        - {formatCurrency(calculateDiscount())}
-                      </span>
-                    </div>
+                  <div className="flex flex-wrap justify-between gap-x-4 gap-y-1">
+                    <span className="text-blue-100">
+                      Crédito pelo seu {funnelData?.modeloAtual}
+                    </span>
+                    <span className="font-semibold text-white">
+                      − {formatCurrency(result.valorAparelho)}
+                    </span>
+                  </div>
+                  <div className="flex flex-wrap justify-between gap-x-4 gap-y-1">
+                    <span className="text-blue-100">
+                      Diferença normal da troca
+                    </span>
+                    <span className="font-semibold text-white">
+                      {timeLeft > 0 ? (
+                        <del>{formatCurrency(result.valorFinal)}</del>
+                      ) : (
+                        formatCurrency(result.valorFinal)
+                      )}
+                    </span>
+                  </div>
+                </div>
+                <div className="pt-6 text-center">
+                  {timeLeft > 0 ? (
+                    <>
+                      <p className="text-lg font-medium text-blue-100">
+                        Você paga
+                      </p>
+                      <p className="my-2 text-4xl font-bold text-green-400 sm:text-5xl">
+                        {formatCurrency(getCurrentValue())}
+                      </p>
+                      <p className="text-base font-semibold text-white">
+                        {formatCurrency(calculateDiscount())} de desconto extra
+                      </p>
+                      <p className="mt-4 text-sm text-orange-100">
+                        Válido por mais{" "}
+                        <strong className="font-mono text-xl text-funnel-warning">
+                          {formatTime(timeLeft)}
+                        </strong>
+                      </p>
+                    </>
+                  ) : (
+                    <>
+                      <p
+                        className="text-lg font-semibold text-white"
+                        role="status"
+                      >
+                        Desconto de {result.descontoPercentual}% encerrado
+                      </p>
+                      <p className="my-2 text-4xl font-bold text-white sm:text-5xl">
+                        {formatCurrency(result.valorFinal)}
+                      </p>
+                      <p className="text-sm text-blue-100">
+                        Diferença atual da troca, sem o desconto temporário.
+                      </p>
+                    </>
                   )}
-                  <div className="flex justify-between items-center">
-                    <span className="text-blue-200">4 Bônus Exclusivos:</span>
-                    <span className="font-bold text-white">Inclusos</span>
+                </div>
+              </section>
+
+              <div className="text-center mb-8 bg-funnel-surface p-6 rounded-lg border border-funnel-surface-light">
+                <h3 className="text-2xl font-bold text-funnel-text-primary mb-4">
+                  Próximo Passo: Agende sua Troca
+                </h3>
+                <p className="text-funnel-text-secondary mb-6">
+                  Clique no botão abaixo para confirmar sua compra no WhatsApp e
+                  agendar a sua entrega.
+                </p>
+                <button
+                  onClick={handleWhatsAppRedirect}
+                  className="bg-funnel-success hover:opacity-90 text-white font-bold py-4 px-8 rounded-md transition-all"
+                >
+                  <MessageSquare className="w-6 h-6 mr-3" />
+                  Confirmar Troca no WhatsApp
+                </button>
+                <div className="text-left mt-6 space-y-2 text-funnel-text-secondary text-sm">
+                  <p>
+                    <strong>Como funciona:</strong>
+                  </p>
+                  <p>
+                    1. <strong>Confirme no WhatsApp:</strong> Nossa equipe irá
+                    validar sua proposta, tirar todas as suas dúvidas, e enviar
+                    o link de pagamento ou chave Pix.
+                  </p>
+                  <p>
+                    2. <strong>Agende a Visita:</strong> Combinaremos o melhor
+                    dia e horário para irmos até você.
+                  </p>
+                  <p>
+                    3. <strong>Receba e Troque:</strong> Entregamos seu novo
+                    iPhone em mãos e ajudamos na transferência de dados na hora.
+                    simples, rápido, seguro e Refinado.
+                  </p>
+                </div>
+              </div>
+
+              <div className="bg-funnel-surface rounded-lg p-6 border border-funnel-surface-light mb-8">
+                <h3 className="text-xl font-bold text-funnel-text-primary mb-6 text-center flex items-center justify-center">
+                  <Gift className="w-6 h-6 mr-3 text-funnel-primary" />
+                  Seus Bônus Exclusivos Desbloqueados
+                </h3>
+
+                <div className="space-y-4">
+                  <div className="flex items-start p-4 bg-funnel-surface-light rounded-lg">
+                    <ShieldCheck className="w-8 h-8 text-funnel-success mr-4 flex-shrink-0" />
+                    <div>
+                      <h4 className="font-semibold text-funnel-text-primary">
+                        Suporte Eterno
+                      </h4>
+                      <p className="text-sm text-funnel-text-secondary">
+                        Qualquer dúvida sobre o uso do seu aparelho ou
+                        necessidade de orientação, nossa equipe estará aqui para
+                        te ajudar. Para sempre e sem custo adicional.
+                      </p>
+                    </div>
                   </div>
-                  <hr className="border-blue-600" />
-                  <div className="flex justify-between items-center text-2xl">
-                    <span className="font-bold text-white">
-                      Sua Economia Total Hoje:
-                    </span>
-                    <span className="font-bold text-green-400">
-                      {formatCurrency(totalEconomy)}
-                    </span>
+
+                  <div className="flex items-start p-4 bg-funnel-surface-light rounded-lg">
+                    <Percent className="w-8 h-8 text-funnel-success mr-4 flex-shrink-0" />
+                    <div>
+                      <h4 className="font-semibold text-funnel-text-primary">
+                        Até 20% OFF em Acessórios Originais
+                      </h4>
+                      <p className="text-sm text-funnel-text-secondary">
+                        Como nosso cliente, você tem acesso a descontos
+                        exclusivos em toda a nossa linha de acessórios originais
+                        Apple.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start p-4 bg-funnel-surface-light rounded-lg">
+                    <Repeat className="w-8 h-8 text-funnel-success mr-4 flex-shrink-0" />
+                    <div>
+                      <h4 className="font-semibold text-funnel-text-primary">
+                        Garantia de Recompra Futura
+                      </h4>
+                      <p className="text-sm text-funnel-text-secondary">
+                        Quando decidir trocar este novo iPhone no futuro, nós
+                        garantimos a recompra dele, facilitando seu próximo
+                        upgrade e valorizando seu investimento.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start p-4 bg-funnel-surface-light rounded-lg">
+                    <Users className="w-8 h-8 text-funnel-success mr-4 flex-shrink-0" />
+                    <div>
+                      <h4 className="font-semibold text-funnel-text-primary">
+                        Acesso ao Programa de Indicações
+                      </h4>
+                      <p className="text-sm text-funnel-text-secondary">
+                        Indique amigos e acumule descontos para a sua próxima
+                        troca. Quanto mais amigos você traz, mais você economiza
+                        no futuro.
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -718,14 +896,16 @@ ${timeLeft > 0 ? `• Desconto Refinado Exclusivo: ${formatCurrency(discount)}` 
                         </span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-gray-400">Preço original:</span>
+                        <span className="text-gray-400">
+                          Preço à vista do aparelho desejado:
+                        </span>
                         <span className="text-white">
                           {formatCurrency(result?.precoProduto)}
                         </span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-gray-400">
-                          Valor a pagar (original):
+                          Diferença sem desconto:
                         </span>
                         <span className="text-yellow-400">
                           {formatCurrency(result?.valorFinal)}
@@ -751,107 +931,6 @@ ${timeLeft > 0 ? `• Desconto Refinado Exclusivo: ${formatCurrency(discount)}` 
                   confirmar as condições e garantir o valor mais justo para
                   você.
                 </p>
-              </div>
-
-              <div className="bg-funnel-surface rounded-lg p-6 border border-funnel-surface-light mb-8">
-                <h3 className="text-xl font-bold text-funnel-text-primary mb-6 text-center flex items-center justify-center">
-                  <Gift className="w-6 h-6 mr-3 text-funnel-primary" />
-                  Seus Bônus Exclusivos Desbloqueados
-                </h3>
-
-                <div className="space-y-4">
-                  <div className="flex items-start p-4 bg-funnel-surface-light rounded-lg">
-                    <ShieldCheck className="w-8 h-8 text-funnel-success mr-4 flex-shrink-0" />
-                    <div>
-                      <h4 className="font-semibold text-funnel-text-primary">
-                        Suporte Eterno
-                      </h4>
-                      <p className="text-sm text-funnel-text-secondary">
-                        Qualquer dúvida sobre o uso do seu aparelho ou
-                        necessidade de orientação, nossa equipe estará aqui para
-                        te ajudar. Para sempre e sem custo adicional.
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start p-4 bg-funnel-surface-light rounded-lg">
-                    <Percent className="w-8 h-8 text-funnel-success mr-4 flex-shrink-0" />
-                    <div>
-                      <h4 className="font-semibold text-funnel-text-primary">
-                        Até 20% OFF em Acessórios Originais
-                      </h4>
-                      <p className="text-sm text-funnel-text-secondary">
-                        Como nosso cliente, você tem acesso a descontos
-                        exclusivos em toda a nossa linha de acessórios originais
-                        Apple.
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start p-4 bg-funnel-surface-light rounded-lg">
-                    <Repeat className="w-8 h-8 text-funnel-success mr-4 flex-shrink-0" />
-                    <div>
-                      <h4 className="font-semibold text-funnel-text-primary">
-                        Garantia de Recompra Futura
-                      </h4>
-                      <p className="text-sm text-funnel-text-secondary">
-                        Quando decidir trocar este novo iPhone no futuro, nós
-                        garantimos a recompra dele, facilitando seu próximo
-                        upgrade e valorizando seu investimento.
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start p-4 bg-funnel-surface-light rounded-lg">
-                    <Users className="w-8 h-8 text-funnel-success mr-4 flex-shrink-0" />
-                    <div>
-                      <h4 className="font-semibold text-funnel-text-primary">
-                        Acesso ao Programa de Indicações
-                      </h4>
-                      <p className="text-sm text-funnel-text-secondary">
-                        Indique amigos e acumule descontos para a sua próxima
-                        troca. Quanto mais amigos você traz, mais você economiza
-                        no futuro.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="text-center mb-8 bg-funnel-surface p-6 rounded-lg border border-funnel-surface-light">
-                <h3 className="text-2xl font-bold text-funnel-text-primary mb-4">
-                  Próximo Passo: Agende sua Troca
-                </h3>
-                <p className="text-funnel-text-secondary mb-6">
-                  Clique no botão abaixo para confirmar sua compra no WhatsApp e
-                  agendar a sua entrega.
-                </p>
-                <button
-                  onClick={handleWhatsAppRedirect}
-                  className="bg-funnel-success hover:opacity-90 text-white font-bold py-4 px-8 rounded-md transition-all"
-                >
-                  <MessageSquare className="w-6 h-6 mr-3" />
-                  Confirmar Troca no WhatsApp
-                </button>
-                <div className="text-left mt-6 space-y-2 text-funnel-text-secondary text-sm">
-                  <p>
-                    <strong>Como funciona:</strong>
-                  </p>
-                  <p>
-                    1. <strong>Confirme no WhatsApp:</strong> Nossa equipe irá
-                    validar sua proposta, tirar todas as suas dúvidas, e enviar
-                    o link de pagamento ou chave Pix.
-                  </p>
-                  <p>
-                    2. <strong>Agende a Visita:</strong> Combinaremos o melhor
-                    dia e horário para irmos até você.
-                  </p>
-                  <p>
-                    3. <strong>Receba e Troque:</strong> Entregamos seu novo
-                    iPhone em mãos e ajudamos na transferência de dados na hora.
-                    simples, rápido, seguro e Refinado.
-                  </p>
-                </div>
               </div>
 
               <div className="bg-funnel-surface rounded-lg border border-funnel-surface-light">

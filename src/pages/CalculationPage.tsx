@@ -1,7 +1,7 @@
 // src/pages/CalculationPage.tsx
 
 import PageTransition from "@/components/PageTransition";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Database,
@@ -12,36 +12,14 @@ import {
   AlertTriangle,
   Lightbulb,
 } from "lucide-react";
+import {
+  apiService,
+  ApiError,
+  TradeCalculationRequest,
+  TradeCalculationResult,
+} from "@/services/api";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
-
-// --- Interfaces (sem alterações) ---
-interface FunnelData {
-  modeloAtual: string;
-  capacidadeAtual: string;
-  corAtual: string;
-  bateriaAtual: number;
-  defeitos: string[];
-  pecasTrocadas: boolean;
-  quaisPecas: string;
-  modeloDesejado: string; // Este é o ID da variant (ProductVariant)
-  ondeOuviu: string;
-  tempoPensando: string;
-  urgenciaTroca: string;
-}
-interface TradeResult {
-  valorAparelho: number;
-  valorFinal: number;
-  temDefeito: boolean;
-  precisaCotacao: boolean;
-  valorBase: number;
-  depreciacaoBateria: number;
-  depreciacaoDefeitos: number;
-  precoProduto: number;
-  valorComDesconto: number;
-  cupomDesconto?: string;
-  produtoDesejado?: any;
-}
+type FunnelData = TradeCalculationRequest;
 
 const CalculationPage: React.FC = () => {
   const navigate = useNavigate();
@@ -49,6 +27,7 @@ const CalculationPage: React.FC = () => {
   const [currentStep, setCurrentStep] = useState<number>(0);
   const [isComplete, setIsComplete] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const calculationStarted = useRef(false);
 
   const steps = [
     {
@@ -78,7 +57,11 @@ const CalculationPage: React.FC = () => {
   ];
 
   useEffect(() => {
-    loadDataAndCalculate();
+    if (calculationStarted.current) return;
+    calculationStarted.current = true;
+    void loadDataAndCalculate();
+    // A execução é intencionalmente única; o ref também bloqueia a repetição do StrictMode.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const loadDataAndCalculate = async () => {
@@ -91,6 +74,23 @@ const CalculationPage: React.FC = () => {
         return;
       }
       const data: FunnelData = JSON.parse(funnelDataStr);
+      const cachedResultStr = localStorage.getItem("tradeResult");
+      if (
+        localStorage.getItem("calculatedFunnelData") === JSON.stringify(data) &&
+        cachedResultStr
+      ) {
+        try {
+          const cachedResult = JSON.parse(
+            cachedResultStr,
+          ) as TradeCalculationResult;
+          if (cachedResult.questionarioId && "offerExpiresAt" in cachedResult) {
+            navigate("/resultado-troca", { replace: true });
+            return;
+          }
+        } catch {
+          // Um resultado local inválido não deve bloquear um cálculo novo.
+        }
+      }
       await simulateCalculation(data);
     } catch (err) {
       console.error("Erro ao carregar dados:", err);
@@ -120,64 +120,36 @@ const CalculationPage: React.FC = () => {
       }
     }
 
-    // Marca todos os steps como concluídos visualmente
+    // A animação termina, mas o cálculo só está completo após a resposta da API.
     setCurrentStep(steps.length);
-    setIsComplete(true);
 
     try {
       const result = await calculateTrade(data);
       localStorage.setItem("tradeResult", JSON.stringify(result));
+      localStorage.setItem("calculatedFunnelData", JSON.stringify(data));
+      setIsComplete(true);
       setTimeout(() => {
         navigate("/resultado-troca");
       }, 1500);
     } catch (error) {
       console.error("Erro no cálculo:", error);
+      const missingTradeValue =
+        error instanceof ApiError &&
+        error.status === 422 &&
+        typeof error.details === "object" &&
+        error.details !== null &&
+        "code" in error.details &&
+        error.details.code === "TRADE_VALUE_NOT_FOUND";
       setError(
-        "Não foi possível calcular sua proposta no momento. Por favor, tente novamente mais tarde.",
+        missingTradeValue
+          ? error.message
+          : "Não foi possível calcular sua proposta no momento. Por favor, tente novamente mais tarde.",
       );
     }
   };
 
-  const calculateTrade = async (data: FunnelData): Promise<TradeResult> => {
-    // Envia o variant ID direto — o backend resolve o produto via ProductVariant + ProductGroup
-    const requestBody = {
-      modeloAtual: data.modeloAtual,
-      capacidadeAtual: data.capacidadeAtual,
-      corAtual: data.corAtual,
-      bateriaAtual: data.bateriaAtual,
-      defeitos: data.defeitos,
-      pecasTrocadas: data.pecasTrocadas,
-      quaisPecas: data.quaisPecas,
-      modeloDesejado: data.modeloDesejado, // variant ID direto
-    };
-
-    const response = await fetch(`${API_URL}/trade/calculate`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(requestBody),
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`API Error: ${errorText}`);
-    }
-
-    const apiResult = await response.json();
-
-    return {
-      valorAparelho: apiResult.valorAparelho,
-      valorFinal: apiResult.valorFinal,
-      temDefeito: apiResult.temDefeito,
-      precisaCotacao: apiResult.precisaCotacao,
-      valorBase: apiResult.valorBase,
-      depreciacaoBateria: apiResult.depreciacaoBateria,
-      depreciacaoDefeitos: apiResult.depreciacaoDefeitos,
-      precoProduto: apiResult.precoProduto,
-      valorComDesconto: apiResult.valorComDesconto,
-      cupomDesconto: apiResult.cupomDesconto || "",
-      produtoDesejado: apiResult.produtoDesejado,
-    };
-  };
+  const calculateTrade = (data: FunnelData): Promise<TradeCalculationResult> =>
+    apiService.calculateTrade(data);
 
   if (error) {
     return (
