@@ -69,7 +69,6 @@ export interface TradeCalculationRequest {
   capacidadeAtual: string;
   corAtual: string;
   bateriaAtual: number;
-  valorManual?: number;
   defeitos?: string[];
   pecasTrocadas?: boolean;
   quaisPecas?: string;
