@@ -440,11 +440,12 @@ const TradeFunnel: React.FC = () => {
             <div className="mt-8 p-6 bg-gradient-to-r from-blue-900 to-purple-900 rounded-lg border border-blue-700">
               <div className="text-center">
                 <h3 className="text-xl font-bold text-white mb-2">
-                  Bônus Especial de Primeira Compra!
+                  Sua proposta de troca, com desconto por tempo limitado
                 </h3>
                 <p className="text-blue-200">
-                  Responda este questionário e ganhe um desconto especial que
-                  não expira! Use quando quiser na sua troca.
+                  Complete as etapas e desbloqueie sua proposta. O desconto
+                  extra de 3% vale por 30 minutos; depois, permanece o valor
+                  original da troca.
                 </p>
               </div>
             </div>
