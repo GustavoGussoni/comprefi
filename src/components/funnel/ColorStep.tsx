@@ -56,6 +56,11 @@ const ColorStep: React.FC<ColorStepProps> = ({
       "Laranja-cósmico": "#E97631",
       "Azul-intenso": "#314665",
 
+      // ── iPhone Air (amostras ilustrativas) ──
+      "Branco-nuvem": "#F2F3F0",
+      "Dourado-claro": "#E8D8AF",
+      "Azul-céu": "#C5D9E5",
+
       // ── iPhone 16 Pro Max / 16 Pro ──
       "Titânio Natural": "#C2BCB2",
       "Titânio-deserto": "#BFA48F",
