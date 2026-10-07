@@ -92,10 +92,10 @@ export interface TradeCalculationResult {
   valorBase: number;
   depreciacaoBateria: number;
   depreciacaoDefeitos: number;
-  valorAparelho: number;
+  valorAparelho: number | null;
   precoProduto: number;
-  valorFinal: number;
-  valorComDesconto: number;
+  valorFinal: number | null;
+  valorComDesconto: number | null;
   valorManualUsado: boolean;
   produtoDesejado: DesiredTradeProduct;
   temDefeito: boolean;

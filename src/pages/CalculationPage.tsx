@@ -26,6 +26,7 @@ const CalculationPage: React.FC = () => {
   const [progress, setProgress] = useState<number>(0);
   const [currentStep, setCurrentStep] = useState<number>(0);
   const [isComplete, setIsComplete] = useState<boolean>(false);
+  const [needsManualQuote, setNeedsManualQuote] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const calculationStarted = useRef(false);
 
@@ -48,9 +49,9 @@ const CalculationPage: React.FC = () => {
     },
     {
       id: 3,
-      title: "Calculando sua oferta de troca personalizada",
+      title: "Preparando sua análise de troca",
       description:
-        "Combinando todos os dados para gerar a melhor proposta de troca possível para você.",
+        "Combinando os dados para identificar os próximos passos para a sua troca.",
       duration: 2000,
       icon: <Calculator size={24} />,
     },
@@ -127,6 +128,7 @@ const CalculationPage: React.FC = () => {
       const result = await calculateTrade(data);
       localStorage.setItem("tradeResult", JSON.stringify(result));
       localStorage.setItem("calculatedFunnelData", JSON.stringify(data));
+      setNeedsManualQuote(result.precisaCotacao);
       setIsComplete(true);
       setTimeout(() => {
         navigate("/resultado-troca");
@@ -182,11 +184,11 @@ const CalculationPage: React.FC = () => {
               </div>
             </div>
             <h1 className="text-3xl font-bold text-funnel-text-primary mb-4">
-              Calculando sua proposta...
+              Analisando sua troca...
             </h1>
             <p className="text-funnel-text-secondary text-lg">
-              Estamos analisando seus dados para gerar a melhor oferta para
-              você!
+              Estamos analisando os dados do seu aparelho para indicar o
+              próximo passo.
             </p>
           </div>
 
@@ -261,7 +263,9 @@ const CalculationPage: React.FC = () => {
               <div className="inline-flex items-center space-x-2 bg-funnel-success/10 border border-funnel-success/50 rounded-lg px-6 py-3">
                 <Check className="w-6 h-6 text-funnel-success" />
                 <p className="text-funnel-success font-medium">
-                  Cálculo concluído! Redirecionando para sua proposta...
+                  {needsManualQuote
+                    ? "Análise concluída! Redirecionando para sua cotação..."
+                    : "Cálculo concluído! Redirecionando para sua proposta..."}
                 </p>
               </div>
             </div>
