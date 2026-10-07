@@ -11,6 +11,7 @@ import WhyChooseSection from "../components/WhyChooseCompreFi";
 import FAQ from "../components/FAQ";
 import ImageLoader from "../components/ImageLoader";
 import ZoomableLightbox from "../components/ZoomableLightbox";
+import CompreFiClubBanner from "../components/CompreFiClubBanner";
 import { useCatalogPrices, mergePricing } from "../hooks/useCatalogPrices";
 
 // ============================================
@@ -233,6 +234,8 @@ const CategoryPage: React.FC = () => {
         <p className="text-xl text-gray-300 mb-8 text-center">
           {config.subtitle}
         </p>
+
+        {categorySlug === "iphones-seminovos" && <CompreFiClubBanner />}
 
         {/* Conteúdo por tipo */}
 

@@ -450,7 +450,7 @@ const Home: React.FC<HomeProps> = ({ isMobile }) => {
           <CategoryCard
             title="iPhones Seminovos"
             link="/iphones-seminovos"
-            description="Aparelhos em excelente estado com garantia de 120 dias"
+            description="Aparelhos testados e originais com 6 meses de garantia CompreFi"
           />
           <CategoryCard
             title="iPhones Novos"
