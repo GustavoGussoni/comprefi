@@ -1,5 +1,19 @@
 import { GroupedProduct } from "../../types/product";
 
+// Fotos fornecidas do 18 Pro Max, reutilizadas no 18 Pro conforme solicitado.
+import iphone18BordoTraseira from "../../assets/new-images/iphones-novos/18-pro-max/18-pro-max-bordo-traseira.webp";
+import iphone18Bordo2 from "../../assets/new-images/iphones-novos/18-pro-max/18-pro-max-bordo-2.webp";
+import iphone18Bordo3 from "../../assets/new-images/iphones-novos/18-pro-max/18-pro-max-bordo-3.webp";
+import iphone18GlacialTraseira from "../../assets/new-images/iphones-novos/18-pro-max/18-pro-max-glacial-traseira.webp";
+import iphone18Glacial2 from "../../assets/new-images/iphones-novos/18-pro-max/18-pro-max-glacial-2.webp";
+import iphone18Glacial3 from "../../assets/new-images/iphones-novos/18-pro-max/18-pro-max-glacial-3.webp";
+import iphone18PrataTraseira from "../../assets/new-images/iphones-novos/18-pro-max/18-pro-max-prata-traseira.webp";
+import iphone18Prata2 from "../../assets/new-images/iphones-novos/18-pro-max/18-pro-max-prata-2.webp";
+import iphone18Prata3 from "../../assets/new-images/iphones-novos/18-pro-max/18-pro-max-prata-3.webp";
+import iphone18PretoTraseira from "../../assets/new-images/iphones-novos/18-pro-max/18-pro-max-preto-traseira.webp";
+import iphone18Preto2 from "../../assets/new-images/iphones-novos/18-pro-max/18-pro-max-preto-2.webp";
+import iphone18Preto3 from "../../assets/new-images/iphones-novos/18-pro-max/18-pro-max-preto-3.webp";
+
 // 17 Pro Max - Laranja
 import iphone17PMLTraseira from "../../assets/new-images/iphones-novos/17-pm-l/iphone-17-pro-finish-select-202509-6-9inch-cosmicorange.webp";
 import iphone17PML1 from "../../assets/new-images/iphones-novos/17-pm-l/iphone-17-pro-finish-select-202509-6-9inch-cosmicorange_AV1.webp";
@@ -84,7 +98,74 @@ import iphone15PTraseiraNovo from "../../assets/new-images/iphones-novos/15/15-p
 import iphone15ATraseira from "../../assets/new-images/iphones-novos/15/15-azul-traseira.webp";
 // import iphone15RTraseira from "../../assets/new-images/iphones-novos/15/15-rosa-traseira.webp";
 
+const iphone18Storages = ["256GB", "512GB", "1TB", "2TB"];
+const iphone18Colors: GroupedProduct["colors"] = [
+  {
+    name: "Bordô",
+    hex: "#612938",
+    image: iphone18BordoTraseira,
+    gallery: [iphone18Bordo2, iphone18Bordo3],
+  },
+  {
+    name: "Glacial",
+    hex: "#DCE6EC",
+    image: iphone18GlacialTraseira,
+    gallery: [iphone18Glacial2, iphone18Glacial3],
+  },
+  {
+    name: "Prata",
+    hex: "#C0C0C0",
+    image: iphone18PrataTraseira,
+    gallery: [iphone18Prata2, iphone18Prata3],
+  },
+  {
+    name: "Preto",
+    hex: "#262626",
+    image: iphone18PretoTraseira,
+    gallery: [iphone18Preto2, iphone18Preto3],
+  },
+];
+
+// Custo R$ 9.500 + frete R$ 100; fórmula padrão do admin: PIX / 0,9,
+// original / 0,84; 12x = PIX / 0,877 / 12. A API sobrescreve estes preços.
+const iphone18Pricing: GroupedProduct["pricing"] = Object.fromEntries(
+  iphone18Storages.flatMap((storage) =>
+    iphone18Colors.map((color) => [
+      `${storage}-${color.name}`,
+      {
+        originalPrice: "R$ 11.428,57",
+        installmentPrice: "R$ 1.013,56",
+        pixPrice: "R$ 10.666,67",
+      },
+    ]),
+  ),
+);
+
 export const iphonesNovosProducts: GroupedProduct[] = [
+  {
+    slug: "iphone-18-pro-max",
+    model: "iPhone 18 Pro Max",
+    category: "iPhones Novos",
+    details: "aparelho novo",
+    battery: "100%",
+    specs:
+      "O iPhone 18 Pro Max (lançado em setembro de 2026) reúne tela Super Retina XDR de 6,9 polegadas com ProMotion até 120 Hz, chip A20 Pro e sistema de câmeras Fusion de 48 MP com abertura variável na principal. Conta com Dynamic Island, Ceramic Shield 2 na frente, iOS 27 e quatro acabamentos: Bordô, Glacial, Prata e Preto.",
+    storages: iphone18Storages,
+    colors: iphone18Colors,
+    pricing: iphone18Pricing,
+  },
+  {
+    slug: "iphone-18-pro",
+    model: "iPhone 18 Pro",
+    category: "iPhones Novos",
+    details: "aparelho novo",
+    battery: "100%",
+    specs:
+      "O iPhone 18 Pro (lançado em setembro de 2026) combina tela Super Retina XDR de 6,3 polegadas com ProMotion até 120 Hz, chip A20 Pro e sistema de câmeras Fusion de 48 MP com abertura variável na principal. Conta com Dynamic Island, Ceramic Shield 2 na frente, iOS 27 e quatro acabamentos: Bordô, Glacial, Prata e Preto.",
+    storages: iphone18Storages,
+    colors: iphone18Colors,
+    pricing: iphone18Pricing,
+  },
   {
     slug: "iphone-17-pro-max",
     model: "iPhone 17 Pro Max",
