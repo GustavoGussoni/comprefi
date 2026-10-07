@@ -19,9 +19,11 @@ const ModelStep: React.FC<ModelStepProps> = ({
       const generation = model.match(/^iPhone (\d+)(?:\s|$)/);
       const key = generation
         ? `iPhone ${generation[1]}`
-        : model.startsWith("iPhone SE")
-          ? "iPhone SE"
-          : null;
+        : model === "iPhone Air"
+          ? "iPhone Air"
+          : model.startsWith("iPhone SE")
+            ? "iPhone SE"
+            : null;
       if (!key) return;
       if (!series[key]) series[key] = [];
       series[key].push(model);
@@ -47,6 +49,9 @@ const ModelStep: React.FC<ModelStepProps> = ({
 
   const modelSeries = organizeModels(availableModels);
   const seriesOrder = Object.keys(modelSeries).sort((a, b) => {
+    if (a === b) return 0;
+    if (a === "iPhone Air") return -1;
+    if (b === "iPhone Air") return 1;
     if (a === "iPhone SE") return 1;
     if (b === "iPhone SE") return -1;
     return Number(b.slice(7)) - Number(a.slice(7));
@@ -144,6 +149,7 @@ const ModelStep: React.FC<ModelStepProps> = ({
 };
 
 const getModelDescription = (model: string): string => {
+  if (model === "iPhone Air") return "Fino e leve";
   if (model.includes("Pro Max")) return "Tela maior, câmeras Pro";
   if (model.includes("Pro")) return "Câmeras profissionais";
   if (model.includes("Plus")) return "Tela maior";

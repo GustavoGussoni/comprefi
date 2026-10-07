@@ -23,12 +23,12 @@ export default function HomeTradeInvite() {
               className="mt-5 max-w-2xl text-3xl font-bold leading-tight tracking-tight text-white sm:text-4xl"
             >
               Sem tempo para vender seu iPhone antigo?
-              <span className="block text-[#FF6100]">A gente cuida disso.</span>
+              <span className="block text-[#FF6100]">Ele entra na troca.</span>
             </h2>
             <p className="mt-4 max-w-xl text-base leading-relaxed text-gray-300 sm:text-lg">
               Seu iPhone atual pode entrar na troca pelo próximo. Sem precisar
-              anunciar, negociar e perder tempo. Você segue com o seu dia; a
-              CompreFi cuida da proposta.
+              anunciar, negociar e perder tempo. Você continua trabalhando, a
+              gente cuida do resto.
             </p>
             <Link
               to="/trocar-de-iphone"
