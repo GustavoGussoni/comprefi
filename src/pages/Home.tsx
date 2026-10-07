@@ -12,6 +12,7 @@ import HeroBanner from "@/components/HeroBanner";
 import ContrastSection from "@/components/ContrastSection";
 import HowItWorksSection from "@/components/HowItWorksSection";
 import SocialProofSection from "@/components/SocialProofSection";
+import HomeTradeInvite from "@/components/HomeTradeInvite";
 
 interface HomeProps {
   isMobile: boolean;
@@ -479,6 +480,8 @@ const Home: React.FC<HomeProps> = ({ isMobile }) => {
           />
         </div>
       </section>
+
+      <HomeTradeInvite />
 
       {/* Por que escolher a CompreFi */}
       <section className="why-choose-section py-16 px-4">

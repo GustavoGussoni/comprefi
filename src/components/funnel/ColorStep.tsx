@@ -49,6 +49,13 @@ const ColorStep: React.FC<ColorStepProps> = ({
    */
   const getColorHex = (colorName: string): string => {
     const colorMap: { [key: string]: string } = {
+      // ── iPhone 17 e 17 Pro (amostras ilustrativas) ──
+      "Azul-névoa": "#BCD8DE",
+      Sálvia: "#B6C7B3",
+      Lavanda: "#D4C9E3",
+      "Laranja-cósmico": "#E97631",
+      "Azul-intenso": "#314665",
+
       // ── iPhone 16 Pro Max / 16 Pro ──
       "Titânio Natural": "#C2BCB2",
       "Titânio-deserto": "#BFA48F",
