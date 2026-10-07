@@ -179,13 +179,16 @@ const ResultPage: React.FC = () => {
   };
 
   const calculateDiscount = (): number => {
-    if (!result) return 0;
-    return Math.max(0, result.valorFinal - result.valorComDesconto);
+    if (!result || result.precisaCotacao) return 0;
+    return Math.max(
+      0,
+      (result.valorFinal ?? 0) - (result.valorComDesconto ?? 0),
+    );
   };
 
   const getCurrentValue = (): number => {
-    if (!result) return 0;
-    return timeLeft > 0 ? result.valorComDesconto : result.valorFinal;
+    if (!result || result.precisaCotacao) return 0;
+    return (timeLeft > 0 ? result.valorComDesconto : result.valorFinal) ?? 0;
   };
 
   // --- FUNÇÃO DE VALIDAÇÃO ATUALIZADA ---
@@ -337,7 +340,18 @@ const ResultPage: React.FC = () => {
   };
 
   const handleWhatsAppRedirect = () => {
-    const message = `
+    const message = result?.precisaCotacao
+      ? `
+*SOLICITO COTAÇÃO MANUAL — CompreFi*
+
+*Cliente:* ${contactForm.nome}
+*De:* ${funnelData?.modeloAtual} ${funnelData?.capacidadeAtual}
+*Para:* ${result.produtoDesejado?.modelo}
+
+Meu aparelho precisa de avaliação individual. Gostaria de saber o crédito e a diferença a pagar.
+*Simulação:* ${result.questionarioId}
+      `.trim()
+      : `
 *QUERO CONFIRMAR MINHA TROCA — CompreFi*
 
 *Cliente:* ${contactForm.nome}
@@ -395,69 +409,88 @@ ${timeLeft > 0 ? `*Oferta de ${result?.descontoPercentual}% ativa até:* ${new D
             <>
               <div className="text-center mb-8">
                 <h1 className="text-4xl font-bold text-funnel-text-primary mb-4">
-                  Sua Troca Personalizada Está Pronta!
+                  {result.precisaCotacao
+                    ? "Seu aparelho precisa de avaliação individual"
+                    : "Sua Troca Personalizada Está Pronta!"}
                 </h1>
                 <p className="text-funnel-text-secondary text-lg">
-                  Complete seus dados para desbloquear sua proposta exclusiva.
+                  {result.precisaCotacao
+                    ? "Informe seus dados para que nossa equipe prepare uma cotação da troca. Nenhum valor foi definido ainda."
+                    : "Complete seus dados para desbloquear sua proposta exclusiva."}
                 </p>
               </div>
 
-              <div className="bg-gradient-to-r from-red-900 to-orange-900 rounded-lg p-8 mb-8 border border-red-700 text-center">
-                <h3 className="text-2xl font-bold text-white mb-3">
-                  Desconto Refinado Exclusivo Expira Em:
-                </h3>
-                <div className="text-5xl font-mono font-bold text-funnel-warning mb-3">
-                  {formatTime(timeLeft)}
+              {!result.precisaCotacao && (
+                <div className="bg-gradient-to-r from-red-900 to-orange-900 rounded-lg p-8 mb-8 border border-red-700 text-center">
+                  <h3 className="text-2xl font-bold text-white mb-3">
+                    Desconto Refinado Exclusivo Expira Em:
+                  </h3>
+                  <div className="text-5xl font-mono font-bold text-funnel-warning mb-3">
+                    {formatTime(timeLeft)}
+                  </div>
+                  {timeLeft > 0 ? (
+                    <p className="text-orange-200 text-lg">
+                      Preencha o formulário para conferir o desconto da sua
+                      proposta.
+                    </p>
+                  ) : (
+                    <p className="text-red-300 text-sm mt-2">
+                      Você perdeu o desconto exclusivo, mas ainda pode garantir
+                      os 4 bônus se fechar hoje. Não perca!
+                    </p>
+                  )}
                 </div>
-                {timeLeft > 0 ? (
-                  <p className="text-orange-200 text-lg">
-                    Preencha o formulário para conferir o desconto da sua
-                    proposta.
-                  </p>
-                ) : (
-                  <p className="text-red-300 text-sm mt-2">
-                    Você perdeu o desconto exclusivo, mas ainda pode garantir os
-                    4 bônus se fechar hoje. Não perca!
-                  </p>
-                )}
-              </div>
+              )}
 
               <div className="bg-gradient-to-r from-green-900 to-emerald-900 rounded-lg p-6 mb-8 border border-green-700 text-center">
                 <h3 className="text-xl font-bold text-white mb-2">
-                  Sua proposta de troca está pronta
+                  {result.precisaCotacao
+                    ? "Solicite sua cotação personalizada"
+                    : "Sua proposta de troca está pronta"}
                 </h3>
                 <p className="text-green-200">
-                  Desbloqueie os valores da troca do seu{" "}
+                  {result.precisaCotacao
+                    ? "Nossa equipe vai avaliar a troca do seu "
+                    : "Desbloqueie os valores da troca do seu "}
                   {funnelData?.modeloAtual} por um <br></br>
                   {result?.produtoDesejado?.modelo}
                 </p>
-                <div className="mt-4 p-4 bg-green-800 bg-opacity-50 rounded-lg text-left text-sm">
-                  <p className="text-green-300 font-semibold mb-2">
-                    Ao desbloquear, você verá:
+                {result.precisaCotacao ? (
+                  <p className="mt-4 text-sm text-green-100">
+                    O crédito pelo seu aparelho e a diferença a pagar serão
+                    informados após a avaliação individual. Não há oferta com
+                    prazo em andamento.
                   </p>
-                  <ul className="space-y-1 text-green-200">
-                    <li className="flex items-start">
-                      <span className="mr-2">✓</span>
-                      <span>O valor exato que pagaremos no seu iPhone.</span>
-                    </li>
-                    <li className="flex items-start">
-                      <span className="mr-2">✓</span>
-                      <span>
-                        O cálculo detalhado da depreciação (100% transparente).
-                      </span>
-                    </li>
-                    <li className="flex items-start">
-                      <span className="mr-2">✓</span>
-                      <span>
-                        O valor final com seu Desconto Refinado Exclusivo.
-                      </span>
-                    </li>
-                    <li className="flex items-start">
-                      <span className="mr-2">✓</span>
-                      <span>Acesso a 4 Bônus Exclusivos da CompreFi.</span>
-                    </li>
-                  </ul>
-                </div>
+                ) : (
+                  <div className="mt-4 p-4 bg-green-800 bg-opacity-50 rounded-lg text-left text-sm">
+                    <p className="text-green-300 font-semibold mb-2">
+                      Ao desbloquear, você verá:
+                    </p>
+                    <ul className="space-y-1 text-green-200">
+                      <li className="flex items-start">
+                        <span className="mr-2">✓</span>
+                        <span>O valor exato que pagaremos no seu iPhone.</span>
+                      </li>
+                      <li className="flex items-start">
+                        <span className="mr-2">✓</span>
+                        <span>
+                          O cálculo detalhado da depreciação (100%
+                          transparente).
+                        </span>
+                      </li>
+                      <li className="flex items-start">
+                        <span className="mr-2">✓</span>
+                        <span>
+                          O valor final com seu Desconto Refinado Exclusivo.
+                        </span>
+                      </li>
+                      <li className="flex items-start">
+                        <span className="mr-2">✓</span>
+                        <span>Acesso a 4 Bônus Exclusivos da CompreFi.</span>
+                      </li>
+                    </ul>
+                  </div>
+                )}
               </div>
 
               <div className="mb-12 space-y-6">
@@ -503,10 +536,14 @@ ${timeLeft > 0 ? `*Oferta de ${result?.descontoPercentual}% ativa até:* ${new D
 
               <div className="bg-funnel-surface rounded-lg p-8 border border-funnel-surface-light">
                 <h3 className="text-2xl font-bold text-funnel-text-primary mb-2 text-center">
-                  Desbloqueie Sua Proposta
+                  {result.precisaCotacao
+                    ? "Peça sua avaliação individual"
+                    : "Desbloqueie Sua Proposta"}
                 </h3>
                 <p className="text-funnel-text-secondary mb-6 text-center">
-                  Preencha para ver os detalhes e garantir seus bônus.
+                  {result.precisaCotacao
+                    ? "Preencha seus dados para nossa equipe retornar com uma cotação, sem compromisso."
+                    : "Preencha para ver os detalhes e garantir seus bônus."}
                 </p>
 
                 {errors.general && (
@@ -622,6 +659,8 @@ ${timeLeft > 0 ? `*Oferta de ${result?.descontoPercentual}% ativa até:* ${new D
                         <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white mr-3"></div>
                         Desbloqueando...
                       </>
+                    ) : result.precisaCotacao ? (
+                      "Solicitar minha cotação"
                     ) : (
                       "Desbloquear Minha Proposta Completa"
                     )}
@@ -634,6 +673,86 @@ ${timeLeft > 0 ? `*Oferta de ${result?.descontoPercentual}% ativa até:* ${new D
                   </p>
                 </div>
               </div>
+            </>
+          ) : result.precisaCotacao ? (
+            <>
+              <header className="mb-8 text-center">
+                <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-funnel-success">
+                  <CheckCircle2 className="h-12 w-12 text-white" />
+                </div>
+                <h1 className="mb-4 text-4xl font-bold text-funnel-text-primary">
+                  Recebemos sua solicitação, {contactForm.nome.split(" ")[0]}!
+                </h1>
+                <p className="text-lg text-funnel-text-secondary">
+                  Sua troca precisa de cotação manual. Nossa equipe avaliará seu
+                  aparelho antes de apresentar um valor.
+                </p>
+                {errors.general && (
+                  <p className="mt-4 rounded-md border border-funnel-warning/50 bg-funnel-warning/10 p-3 text-sm text-funnel-text-primary">
+                    {errors.general}
+                  </p>
+                )}
+              </header>
+
+              <section className="mb-8 rounded-xl border border-blue-700 bg-gradient-to-br from-blue-900 to-purple-900 p-6 sm:p-8">
+                <h2 className="mb-6 text-center text-2xl font-bold text-white">
+                  Cotação manual em análise
+                </h2>
+                <dl className="space-y-4 text-base text-blue-100 sm:text-lg">
+                  <div className="flex flex-wrap justify-between gap-2">
+                    <dt>Seu aparelho atual</dt>
+                    <dd className="font-semibold text-white">
+                      {funnelData?.modeloAtual} {funnelData?.capacidadeAtual}
+                    </dd>
+                  </div>
+                  <div className="flex flex-wrap justify-between gap-2">
+                    <dt>Aparelho desejado</dt>
+                    <dd className="font-semibold text-white">
+                      {result.produtoDesejado.modelo}
+                    </dd>
+                  </div>
+                  <div className="flex flex-wrap justify-between gap-2">
+                    <dt>Preço à vista do aparelho desejado</dt>
+                    <dd className="font-semibold text-white">
+                      {formatCurrency(result.precoProduto)}
+                    </dd>
+                  </div>
+                  <div className="flex flex-wrap justify-between gap-2 border-t border-blue-500/70 pt-4">
+                    <dt>Crédito pelo seu aparelho</dt>
+                    <dd className="font-semibold text-funnel-warning">
+                      Aguardando avaliação
+                    </dd>
+                  </div>
+                  <div className="flex flex-wrap justify-between gap-2">
+                    <dt>Diferença a pagar</dt>
+                    <dd className="font-semibold text-funnel-warning">
+                      A definir
+                    </dd>
+                  </div>
+                </dl>
+                <p className="mt-6 text-center text-sm text-blue-100">
+                  Ainda não há proposta final, desconto ou prazo de oferta. A
+                  equipe confirmará as condições antes de informar os valores.
+                </p>
+              </section>
+
+              <section className="rounded-lg border border-funnel-surface-light bg-funnel-surface p-6 text-center">
+                <h2 className="mb-3 text-2xl font-bold text-funnel-text-primary">
+                  Próximo passo: conversar sobre sua cotação
+                </h2>
+                <p className="mb-6 text-funnel-text-secondary">
+                  Seu contato foi recebido. Se preferir, fale conosco agora para
+                  agilizar a avaliação individual.
+                </p>
+                <button
+                  type="button"
+                  onClick={handleWhatsAppRedirect}
+                  className="inline-flex items-center justify-center gap-3 rounded-md bg-funnel-success px-8 py-4 font-bold text-white hover:opacity-90"
+                >
+                  <MessageSquare className="h-6 w-6" />
+                  Conversar sobre minha cotação no WhatsApp
+                </button>
+              </section>
             </>
           ) : (
             <>
