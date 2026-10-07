@@ -16,28 +16,15 @@ const ModelStep: React.FC<ModelStepProps> = ({
     const series: { [key: string]: string[] } = {};
 
     models.forEach((model) => {
-      if (model.includes("iPhone 16")) {
-        if (!series["iPhone 16"]) series["iPhone 16"] = [];
-        series["iPhone 16"].push(model);
-      } else if (model.includes("iPhone 15")) {
-        if (!series["iPhone 15"]) series["iPhone 15"] = [];
-        series["iPhone 15"].push(model);
-      } else if (model.includes("iPhone 14")) {
-        if (!series["iPhone 14"]) series["iPhone 14"] = [];
-        series["iPhone 14"].push(model);
-      } else if (model.includes("iPhone 13")) {
-        if (!series["iPhone 13"]) series["iPhone 13"] = [];
-        series["iPhone 13"].push(model);
-      } else if (model.includes("iPhone 12")) {
-        if (!series["iPhone 12"]) series["iPhone 12"] = [];
-        series["iPhone 12"].push(model);
-      } else if (model.includes("iPhone 11")) {
-        if (!series["iPhone 11"]) series["iPhone 11"] = [];
-        series["iPhone 11"].push(model);
-      } else if (model.includes("iPhone SE")) {
-        if (!series["iPhone SE"]) series["iPhone SE"] = [];
-        series["iPhone SE"].push(model);
-      }
+      const generation = model.match(/^iPhone (\d+)(?:\s|$)/);
+      const key = generation
+        ? `iPhone ${generation[1]}`
+        : model.startsWith("iPhone SE")
+          ? "iPhone SE"
+          : null;
+      if (!key) return;
+      if (!series[key]) series[key] = [];
+      series[key].push(model);
     });
 
     // Ordenar modelos dentro de cada série
@@ -59,15 +46,11 @@ const ModelStep: React.FC<ModelStepProps> = ({
   };
 
   const modelSeries = organizeModels(availableModels);
-  const seriesOrder = [
-    "iPhone 16",
-    "iPhone 15",
-    "iPhone 14",
-    "iPhone 13",
-    "iPhone 12",
-    "iPhone 11",
-    "iPhone SE",
-  ];
+  const seriesOrder = Object.keys(modelSeries).sort((a, b) => {
+    if (a === "iPhone SE") return 1;
+    if (b === "iPhone SE") return -1;
+    return Number(b.slice(7)) - Number(a.slice(7));
+  });
 
   return (
     <div className="space-y-6">
