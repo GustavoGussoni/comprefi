@@ -215,7 +215,7 @@ const FlatProductView: React.FC<{ product: FlatProduct }> = ({ product }) => {
     `${product.model} ${product.storage || ""} ${product.color || ""}`.trim();
   const isSeminovo = product.category.toLowerCase().includes("seminov");
   const warranty = isSeminovo
-    ? "Garantia de 120 dias"
+    ? "Garantia CompreFi de 6 meses"
     : "1 ano de garantia Apple";
 
   const handleBuy = () => {

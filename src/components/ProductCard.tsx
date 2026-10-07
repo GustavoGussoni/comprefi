@@ -138,7 +138,7 @@ const FlatProductCard: React.FC<{
         <div className="flex justify-between items-center mb-3">
           <span className="text-gray-300 text-xs">
             {product.category.toLowerCase().includes("seminov")
-              ? "Garantia 120 dias"
+              ? "Garantia CompreFi: 6 meses"
               : "1 ano garantia"}
           </span>
           <div className="bg-gray-800 px-2 py-1 rounded text-xs text-white">

@@ -29,7 +29,7 @@ const WhyChooseSection: React.FC<WhyChooseSectionProps> = ({
       title = `Por que comprar ${category} na CompreFi?`;
       points = [
         "Todos os aparelhos passam por rigorosa inspeção de qualidade",
-        "Garantia de 120 dias para sua tranquilidade",
+        "6 meses de garantia CompreFi para sua tranquilidade",
         "Suporte vitalício para todos os produtos adquiridos",
         "Programa de indicações com desconto acumulativo",
         "Economia de até 40% em comparação com aparelhos novos",

@@ -73,7 +73,7 @@ export const categoryRegistry: Record<string, CategoryConfig> = {
       "Bateria com no mínimo 80% de saúde garantida",
       "Suporte vitalício para todos os produtos adquiridos",
       "Programa de indicações com desconto acumulativo",
-      "Garantia CompreFi em todos os seminovos",
+      "6 meses de garantia CompreFi em todos os seminovos",
     ],
   },
 
