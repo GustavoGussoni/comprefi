@@ -13,6 +13,7 @@ import ImageLoader from "../components/ImageLoader";
 import ZoomableLightbox from "../components/ZoomableLightbox";
 import CompreFiClubBanner from "../components/CompreFiClubBanner";
 import { useCatalogPrices, mergePricing } from "../hooks/useCatalogPrices";
+import { sellableMacbook } from "../lib/sellableMacbook";
 
 // ============================================
 // Carrossel de fotos reais por produto (seminovos)
@@ -106,7 +107,8 @@ const CategoryPage: React.FC = () => {
   const location = useLocation();
   const categorySlug = location.pathname.replace(/^\//, "");
   const config = categorySlug ? getCategoryBySlug(categorySlug) : undefined;
-  const { pricingBySlug, inactiveSlugs } = useCatalogPrices(categorySlug);
+  const { pricingBySlug, activeProductsBySlug, inactiveSlugs, loading, error } =
+    useCatalogPrices(categorySlug);
   const seo = seoBySlug[categorySlug];
   // Estado para pagamento (flat products)
   const [selectedPaymentMethods, setSelectedPaymentMethods] = useState<{
@@ -190,32 +192,37 @@ const CategoryPage: React.FC = () => {
     </div>
   );
 
-  // ---- Renderizar grid de produtos agrupados ----
-  const renderGroupedGrid = (products: GroupedProduct[]) => {
-    // Filtrar produtos inativos no backend
-    const activeProducts = products.filter((p) => !inactiveSlugs.has(p.slug));
-
-    return (
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-        {activeProducts.map((product) => {
-          // Mesclar preços do backend (se disponíveis)
-          const mergedProduct = pricingBySlug[product.slug]
-            ? {
-                ...product,
-                pricing: mergePricing(
-                  product.pricing,
-                  pricingBySlug[product.slug],
-                ),
-              }
-            : product;
-
-          return (
-            <ProductCard key={mergedProduct.slug} product={mergedProduct} />
+  // MacBooks respeitam a disponibilidade e as variantes vendáveis da API.
+  const visibleGroupedProducts = (
+    products: GroupedProduct[],
+  ): GroupedProduct[] =>
+    categorySlug === "macbooks"
+      ? products
+          .map((product) =>
+            sellableMacbook(product, activeProductsBySlug[product.slug]),
+          )
+          .filter((product): product is GroupedProduct => product !== null)
+      : products
+          .filter((product) => !inactiveSlugs.has(product.slug))
+          .map((product) =>
+            pricingBySlug[product.slug]
+              ? {
+                  ...product,
+                  pricing: mergePricing(
+                    product.pricing,
+                    pricingBySlug[product.slug],
+                  ),
+                }
+              : product,
           );
-        })}
-      </div>
-    );
-  };
+
+  const renderGroupedGrid = (products: GroupedProduct[]) => (
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+      {products.map((product) => (
+        <ProductCard key={product.slug} product={product} />
+      ))}
+    </div>
+  );
 
   return (
     <div className="bg-black min-h-screen">
@@ -239,23 +246,37 @@ const CategoryPage: React.FC = () => {
 
         {/* Conteúdo por tipo */}
 
-        {/* Grouped sem seções (ex: iPhones Novos) */}
-        {config.type === "grouped" &&
-          !config.groupedSections &&
-          config.groupedProducts &&
-          renderGroupedGrid(config.groupedProducts)}
-
-        {/* Grouped com seções (ex: MacBooks M5 / M4 / M3) */}
-        {config.type === "grouped" && config.groupedSections && (
+        {categorySlug === "macbooks" && (loading || error) ? (
+          <p role="status" className="py-12 text-center text-gray-300">
+            {loading
+              ? "Consultando a disponibilidade dos MacBooks..."
+              : "Não foi possível consultar os MacBooks agora. Tente novamente em instantes."}
+          </p>
+        ) : (
           <>
-            {config.groupedSections.map((section, idx) => (
-              <div key={idx} className={idx > 0 ? "mt-12" : ""}>
-                <h2 className="text-2xl font-bold mb-6 text-white border-b border-gray-800 pb-2">
-                  {section.title}
-                </h2>
-                {renderGroupedGrid(section.products)}
-              </div>
-            ))}
+            {/* Grouped sem seções (ex: iPhones Novos) */}
+            {config.type === "grouped" &&
+              !config.groupedSections &&
+              config.groupedProducts &&
+              renderGroupedGrid(visibleGroupedProducts(config.groupedProducts))}
+
+            {/* Grouped com seções (ex: MacBooks M5 / M4 / M3) */}
+            {config.type === "grouped" &&
+              config.groupedSections &&
+              config.groupedSections
+                .map((section) => ({
+                  ...section,
+                  products: visibleGroupedProducts(section.products),
+                }))
+                .filter((section) => section.products.length > 0)
+                .map((section, idx) => (
+                  <div key={section.title} className={idx > 0 ? "mt-12" : ""}>
+                    <h2 className="text-2xl font-bold mb-6 text-white border-b border-gray-800 pb-2">
+                      {section.title}
+                    </h2>
+                    {renderGroupedGrid(section.products)}
+                  </div>
+                ))}
           </>
         )}
 

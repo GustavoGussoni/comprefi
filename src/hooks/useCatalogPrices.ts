@@ -25,6 +25,8 @@ interface BackendProduct {
 interface CatalogPricesResult {
   /** Map de slug → pricing atualizado do backend */
   pricingBySlug: Record<string, PricingMap>;
+  /** Somente produtos ativos devolvidos pela API pública */
+  activeProductsBySlug: Record<string, BackendProduct>;
   /** Slugs de produtos inativos no backend */
   inactiveSlugs: Set<string>;
   /** Se está carregando */
@@ -36,6 +38,9 @@ interface CatalogPricesResult {
 export function useCatalogPrices(category: string): CatalogPricesResult {
   const [pricingBySlug, setPricingBySlug] = useState<
     Record<string, PricingMap>
+  >({});
+  const [activeProductsBySlug, setActiveProductsBySlug] = useState<
+    Record<string, BackendProduct>
   >({});
   const [inactiveSlugs, setInactiveSlugs] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(true);
@@ -57,6 +62,7 @@ export function useCatalogPrices(category: string): CatalogPricesResult {
         if (cancelled) return;
 
         const newPricing: Record<string, PricingMap> = {};
+        const newActive: Record<string, BackendProduct> = {};
         const newInactive = new Set<string>();
 
         for (const product of products) {
@@ -64,24 +70,23 @@ export function useCatalogPrices(category: string): CatalogPricesResult {
             newInactive.add(product.slug);
             continue;
           }
+          newActive[product.slug] = product;
 
           // Só sobrescreve se tem pricing válido
-          if (
-            product.pricing &&
-            Object.keys(product.pricing).length > 0
-          ) {
+          if (product.pricing && Object.keys(product.pricing).length > 0) {
             newPricing[product.slug] = product.pricing;
           }
         }
 
         setPricingBySlug(newPricing);
+        setActiveProductsBySlug(newActive);
         setInactiveSlugs(newInactive);
         setError(false);
       } catch (err) {
         // Falha silenciosa — frontend continua com dados locais
         console.warn(
           "[CompreFi] Não foi possível atualizar preços do backend:",
-          err
+          err,
         );
         if (!cancelled) {
           setError(true);
@@ -100,7 +105,7 @@ export function useCatalogPrices(category: string): CatalogPricesResult {
     };
   }, [category]);
 
-  return { pricingBySlug, inactiveSlugs, loading, error };
+  return { pricingBySlug, activeProductsBySlug, inactiveSlugs, loading, error };
 }
 
 /**
@@ -109,7 +114,7 @@ export function useCatalogPrices(category: string): CatalogPricesResult {
  */
 export function mergePricing(
   localPricing: PricingMap,
-  backendPricing: PricingMap | undefined
+  backendPricing: PricingMap | undefined,
 ): PricingMap {
   if (!backendPricing || Object.keys(backendPricing).length === 0) {
     return localPricing;

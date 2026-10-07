@@ -5,11 +5,25 @@ import {
   findGroupedProductBySlug,
 } from "../data/categories";
 import { useCatalogPrices, mergePricing } from "../hooks/useCatalogPrices";
+import { sellableMacbook } from "../lib/sellableMacbook";
 
 const ProductPage: React.FC = () => {
   const { category, id } = useParams<{ category: string; id: string }>();
   const navigate = useNavigate();
-  const { pricingBySlug } = useCatalogPrices(category || "");
+  const { pricingBySlug, activeProductsBySlug, loading, error } =
+    useCatalogPrices(category || "");
+
+  if (category === "macbooks" && (loading || error)) {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center px-4">
+        <p role="status" className="text-center text-gray-300">
+          {loading
+            ? "Consultando a disponibilidade do MacBook..."
+            : "Não foi possível consultar este MacBook agora. Tente novamente em instantes."}
+        </p>
+      </div>
+    );
+  }
 
   if (!category || !id) {
     return (
@@ -41,18 +55,26 @@ const ProductPage: React.FC = () => {
   // Tentar buscar como slug (GroupedProduct)
   const groupedResult = findGroupedProductBySlug(id);
   if (groupedResult) {
-    // Mesclar preços do backend (se disponíveis)
-    const mergedProduct = pricingBySlug[groupedResult.product.slug]
-      ? {
-          ...groupedResult.product,
-          pricing: mergePricing(
-            groupedResult.product.pricing,
-            pricingBySlug[groupedResult.product.slug],
-          ),
-        }
-      : groupedResult.product;
+    if (category === "macbooks") {
+      const product = sellableMacbook(
+        groupedResult.product,
+        activeProductsBySlug[groupedResult.product.slug],
+      );
+      if (product) return <ProductDetail product={product} />;
+    } else {
+      // Mesclar preços do backend (se disponíveis)
+      const mergedProduct = pricingBySlug[groupedResult.product.slug]
+        ? {
+            ...groupedResult.product,
+            pricing: mergePricing(
+              groupedResult.product.pricing,
+              pricingBySlug[groupedResult.product.slug],
+            ),
+          }
+        : groupedResult.product;
 
-    return <ProductDetail product={mergedProduct} />;
+      return <ProductDetail product={mergedProduct} />;
+    }
   }
 
   // Produto não encontrado

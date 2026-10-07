@@ -398,10 +398,13 @@ const GroupedProductView: React.FC<{ product: GroupedProduct }> = ({
   const [selectedStorage, setSelectedStorage] = useState(initialStorage);
   const [selectedColor, setSelectedColor] = useState(initialColor);
   const [paymentMethod, setPaymentMethod] = useState<"pix" | "card">("pix");
+  const effectiveStorage = product.storages.includes(selectedStorage)
+    ? selectedStorage
+    : product.storages[0];
 
   // Cores disponíveis para o storage selecionado
   const availableColors = product.colorsByStorage
-    ? product.colorsByStorage[selectedStorage] ||
+    ? product.colorsByStorage[effectiveStorage] ||
       product.colors.map((c) => c.name)
     : product.colors.map((c) => c.name);
 
@@ -414,7 +417,7 @@ const GroupedProductView: React.FC<{ product: GroupedProduct }> = ({
 
   const price = getVariantPrice(
     product.pricing,
-    selectedStorage,
+    effectiveStorage,
     effectiveColor,
   );
 
@@ -424,16 +427,16 @@ const GroupedProductView: React.FC<{ product: GroupedProduct }> = ({
   // Atualizar query params
   useEffect(() => {
     setSearchParams(
-      { storage: selectedStorage, color: effectiveColor },
+      { storage: effectiveStorage, color: effectiveColor },
       { replace: true },
     );
-  }, [selectedStorage, effectiveColor, setSearchParams]);
+  }, [effectiveStorage, effectiveColor, setSearchParams]);
 
   const handleBuy = () => {
     if (!price) return;
     const msg = buildWhatsAppMessageGrouped(
       product.model,
-      selectedStorage,
+      effectiveStorage,
       effectiveColor,
       paymentMethod,
       price.pixPrice,
@@ -469,7 +472,7 @@ const GroupedProductView: React.FC<{ product: GroupedProduct }> = ({
               {product.model}
             </h1>
             <p className="text-xl text-gray-300 mb-6">
-              {selectedStorage} • {effectiveColor}
+              {effectiveStorage} • {effectiveColor}
             </p>
 
             {/* Seletor de Cor */}
@@ -525,7 +528,7 @@ const GroupedProductView: React.FC<{ product: GroupedProduct }> = ({
                       key={storage}
                       onClick={() => setSelectedStorage(storage)}
                       className={`px-4 py-2 rounded-lg border-2 text-sm font-medium transition-all ${
-                        selectedStorage === storage
+                        effectiveStorage === storage
                           ? "border-[#ff6100] bg-[#ff610015] text-white"
                           : "border-gray-700 text-gray-300 hover:border-gray-500"
                       }`}
