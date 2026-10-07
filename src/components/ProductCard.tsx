@@ -196,7 +196,9 @@ const GroupedProductCard: React.FC<{ product: GroupedProduct }> = ({
   const [selectedStorage, setSelectedStorage] = useState(0);
   const [paymentMethod, setPaymentMethod] = useState<"pix" | "card">("pix");
 
-  const currentStorage = product.storages[selectedStorage];
+  const safeStorageIndex =
+    selectedStorage < product.storages.length ? selectedStorage : 0;
+  const currentStorage = product.storages[safeStorageIndex];
 
   // Filtrar cores disponíveis para o storage selecionado
   const availableColors = product.colorsByStorage
@@ -335,7 +337,7 @@ const GroupedProductCard: React.FC<{ product: GroupedProduct }> = ({
             <button
               key={storage}
               className={`flex-1 py-1 rounded-md text-xs transition-colors ${
-                idx === selectedStorage
+                idx === safeStorageIndex
                   ? "bg-[#ff6100] text-white"
                   : "bg-gray-800 text-gray-300 hover:bg-gray-700"
               }`}
