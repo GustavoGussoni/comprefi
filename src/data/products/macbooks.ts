@@ -533,24 +533,6 @@ export const macbooksProducts: GroupedProduct[] = [
     storages: ["256GB"],
     colors: [
       {
-        name: "Midnight",
-        hex: "#1C1C2E",
-        image: macAirMid,
-        gallery: [macAirMid1, macAirMid2, macAirMid3],
-      },
-      {
-        name: "Silver",
-        hex: "#C0C0C0",
-        image: macAirSlv,
-        gallery: [macAirSlv1, macAirSlv2, macAirSlv3],
-      },
-      {
-        name: "Starlight",
-        hex: "#F5E6D3",
-        image: macAirSlght,
-        gallery: [macAirSlght1, macAirSlght2, macAirSlght3],
-      },
-      {
         name: "Skyblue",
         hex: "#87CEEB",
         image: macAirSkyB,
@@ -559,89 +541,7 @@ export const macbooksProducts: GroupedProduct[] = [
     ],
     // 512GB removido (indisponível no momento)
     pricing: {
-      "256GB-Midnight": {
-        originalPrice: "R$ 9.322,00",
-        installmentPrice: "R$ 807,08",
-        pixPrice: "R$ 8.494",
-      },
-      "256GB-Silver": {
-        originalPrice: "R$ 9.322,00",
-        installmentPrice: "R$ 807,08",
-        pixPrice: "R$ 8.494",
-      },
-      "256GB-Starlight": {
-        originalPrice: "R$ 9.322,00",
-        installmentPrice: "R$ 807,08",
-        pixPrice: "R$ 8.494",
-      },
       "256GB-Skyblue": {
-        originalPrice: "R$ 9.322,00",
-        installmentPrice: "R$ 807,08",
-        pixPrice: "R$ 8.494",
-      },
-    },
-  },
-  {
-    slug: "macbook-air-13-m4-16gb",
-    model: 'MacBook Air 13" M4 16GB',
-    category: "Macbooks",
-    details: "aparelho novo",
-    battery: "100%",
-    specs:
-      'Tela Liquid Retina 13.6", Chip M4 (10-core CPU, 10-core GPU), 16 GB de memória unificada, 2x Thunderbolt / USB 4, MagSafe 3, Wi-Fi 6E.',
-    storages: ["256GB", "512GB"],
-    colors: [
-      {
-        name: "Midnight",
-        hex: "#1C1C2E",
-        image: macAirMid,
-        gallery: [macAirMid1, macAirMid2, macAirMid3],
-      },
-      {
-        name: "Silver",
-        hex: "#C0C0C0",
-        image: macAirSlv,
-        gallery: [macAirSlv1, macAirSlv2, macAirSlv3],
-      },
-      {
-        name: "Starlight",
-        hex: "#F5E6D3",
-        image: macAirSlght,
-        gallery: [macAirSlght1, macAirSlght2, macAirSlght3],
-      },
-      {
-        name: "Skyblue",
-        hex: "#87CEEB",
-        image: macAirSkyB,
-        gallery: [macAirSkyB1, macAirSkyB2, macAirSkyB3],
-      },
-    ],
-    colorsByStorage: {
-      "256GB": ["Skyblue"],
-      "512GB": ["Midnight", "Silver", "Starlight", "Skyblue"],
-    },
-    pricing: {
-      "256GB-Skyblue": {
-        originalPrice: "R$ 8.347,00",
-        installmentPrice: "R$ 722,61",
-        pixPrice: "R$ 7.605",
-      },
-      "512GB-Midnight": {
-        originalPrice: "R$ 9.322,00",
-        installmentPrice: "R$ 807,08",
-        pixPrice: "R$ 8.494",
-      },
-      "512GB-Silver": {
-        originalPrice: "R$ 9.322,00",
-        installmentPrice: "R$ 807,08",
-        pixPrice: "R$ 8.494",
-      },
-      "512GB-Starlight": {
-        originalPrice: "R$ 9.322,00",
-        installmentPrice: "R$ 807,08",
-        pixPrice: "R$ 8.494",
-      },
-      "512GB-Skyblue": {
         originalPrice: "R$ 9.322,00",
         installmentPrice: "R$ 807,08",
         pixPrice: "R$ 8.494",
