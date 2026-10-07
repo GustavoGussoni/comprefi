@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useAdminAuth } from "@/contexts/AdminAuthContext";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
@@ -20,6 +21,7 @@ interface ValorTrocaStats {
 }
 
 const ValorTrocaTable: React.FC = () => {
+  const { user } = useAdminAuth();
   const [valores, setValores] = useState<ValorTroca[]>([]);
   const [stats, setStats] = useState<ValorTrocaStats | null>(null);
   const [loading, setLoading] = useState(true);
@@ -43,6 +45,16 @@ const ValorTrocaTable: React.FC = () => {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     };
+  };
+
+  const requireSuccess = (response: Response) => {
+    if (!response.ok) {
+      throw new Error(
+        response.status === 403
+          ? "Sua conta não tem permissão para esta ação."
+          : "Não foi possível salvar a alteração. Tente novamente.",
+      );
+    }
   };
 
   const loadData = async () => {
@@ -103,34 +115,37 @@ const ValorTrocaTable: React.FC = () => {
 
   const handleSaveEdit = async (id: string) => {
     try {
-      await fetch(`${API_URL}/trade/valores/${id}`, {
+      const response = await fetch(`${API_URL}/trade/valores/${id}`, {
         method: "PATCH",
         headers: getAuthHeaders(),
         body: JSON.stringify({ valorBase: editValue }),
       });
+      requireSuccess(response);
       setEditingId(null);
       loadData();
     } catch (err) {
-      alert("Erro ao atualizar valor");
+      alert(err instanceof Error ? err.message : "Erro ao atualizar valor");
       console.error(err);
     }
   };
 
   const handleToggleAtivo = async (valor: ValorTroca) => {
     try {
-      await fetch(`${API_URL}/trade/valores/${valor.id}`, {
+      const response = await fetch(`${API_URL}/trade/valores/${valor.id}`, {
         method: "PATCH",
         headers: getAuthHeaders(),
         body: JSON.stringify({ ativo: !valor.ativo }),
       });
+      requireSuccess(response);
       loadData();
     } catch (err) {
-      alert("Erro ao atualizar status");
+      alert(err instanceof Error ? err.message : "Erro ao atualizar status");
       console.error(err);
     }
   };
 
   const handleDelete = async (id: string, modelo: string, capacidade: string) => {
+    if (user.role !== "ADMIN") return;
     if (!confirm(`Deletar ${modelo} ${capacidade}? Essa ação não pode ser desfeita.`))
       return;
 
@@ -153,7 +168,7 @@ const ValorTrocaTable: React.FC = () => {
     }
 
     try {
-      await fetch(`${API_URL}/trade/valores`, {
+      const response = await fetch(`${API_URL}/trade/valores`, {
         method: "POST",
         headers: getAuthHeaders(),
         body: JSON.stringify({
@@ -162,13 +177,14 @@ const ValorTrocaTable: React.FC = () => {
           valorBase: newValorBase,
         }),
       });
+      requireSuccess(response);
       setShowAddForm(false);
       setNewModelo("");
       setNewCapacidade("");
       setNewValorBase(0);
       loadData();
     } catch (err) {
-      alert("Erro ao criar valor. Verifique se a combinação modelo+capacidade já existe.");
+      alert(err instanceof Error ? err.message : "Erro ao criar valor. Verifique se a combinação modelo+capacidade já existe.");
       console.error(err);
     }
   };
@@ -419,12 +435,14 @@ const ValorTrocaTable: React.FC = () => {
                               >
                                 Editar
                               </button>
-                              <button
-                                onClick={() => handleDelete(valor.id, valor.modelo, valor.capacidade)}
-                                className="text-red-400 hover:text-red-300 text-sm"
-                              >
-                                Deletar
-                              </button>
+                              {user.role === "ADMIN" && (
+                                <button
+                                  onClick={() => handleDelete(valor.id, valor.modelo, valor.capacidade)}
+                                  className="text-red-400 hover:text-red-300 text-sm"
+                                >
+                                  Deletar
+                                </button>
+                              )}
                             </div>
                           </td>
                         </tr>
