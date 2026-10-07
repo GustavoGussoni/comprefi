@@ -20,6 +20,7 @@ import SimulationsCrm from "@/components/admin/SimulationsCrm";
 import SimuladorTaxas from "@/components/admin/SimuladorTaxas";
 import ValorTrocaTable from "@/components/admin/ValorTrocaTable";
 import { useAdminAuth } from "@/contexts/AdminAuthContext";
+import { canManageTradeValues } from "@/lib/tradeValueAccess";
 import type { UserRole } from "@/services/api";
 
 interface NavigationItem {
@@ -34,7 +35,7 @@ const navigation: NavigationItem[] = [
   { path: "/admin", label: "Visão geral", icon: LayoutDashboard, roles: ["ADMIN", "SALES"] },
   { path: "/admin/simulacoes", label: "Simulações e CRM", icon: UserRoundSearch, roles: ["ADMIN", "SALES"] },
   { path: "/admin/catalogo", label: "Catálogo", icon: Package, roles: ["ADMIN", "SALES"] },
-  { path: "/admin/valores-troca", label: "Valores de troca", icon: ArrowLeftRight, roles: ["ADMIN"] },
+  { path: "/admin/valores-troca", label: "Valores de troca", icon: ArrowLeftRight, roles: ["ADMIN", "SALES"] },
   { path: "/admin/calculadora", label: "Calculadora de preços", icon: Calculator, roles: ["ADMIN", "SALES"], section: "Ferramentas" },
   { path: "/admin/simulador-taxas", label: "Simulador de taxas", icon: CreditCard, roles: ["ADMIN", "SALES"] },
 ];
@@ -43,7 +44,7 @@ function AccessDenied() {
   return (
     <div className="rounded-xl border border-orange-500/20 bg-orange-500/5 p-8">
       <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#ff7a1a]">Acesso restrito</p>
-      <h1 className="mt-2 text-2xl font-semibold text-white">Esta área é exclusiva do administrador.</h1>
+      <h1 className="mt-2 text-2xl font-semibold text-white">Sua conta não tem acesso a esta área.</h1>
       <p className="mt-3 text-sm text-zinc-400">Sua conta permanece ativa para consultas e ferramentas comerciais.</p>
     </div>
   );
@@ -57,8 +58,11 @@ const Admin: React.FC = () => {
 
   const activePath = location.pathname.replace(/\/$/, "") || "/admin";
   const activeItem = navigation.find((item) => item.path === activePath) || navigation[0];
-  const canAccess = activeItem.roles.includes(user.role);
-  const visibleNavigation = navigation.filter((item) => item.roles.includes(user.role));
+  const isAllowed = (item: NavigationItem) =>
+    item.roles.includes(user.role) &&
+    (item.path !== "/admin/valores-troca" || canManageTradeValues(user));
+  const canAccess = isAllowed(activeItem);
+  const visibleNavigation = navigation.filter(isAllowed);
 
   const navigateTo = (path: string) => {
     navigate(path);
