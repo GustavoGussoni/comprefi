@@ -7,7 +7,9 @@ Branch: `feat/ficha-venda-preview-20261027`. Base: `16497a0082f4b6249834f3345e13
 Prévia frontend isolada para revisão de experiência, copy e campos. Não adiciona rotas ao App atual, não muda a autenticação existente nem o build normal do site. O admin demonstrativo usa Iago fictício, sem login: não é um desvio de autenticação do admin real, é uma entrada independente, sem dados de produção.
 
 - Lista de fichas, filtros e painel lateral.
-- Nova ficha com produto, WhatsApp do atendimento, condições finais de PIX/cartão/misto, parcelas e acréscimo discriminado.
+- Nova ficha com vários itens do catálogo, WhatsApp do atendimento, condições finais de PIX/cartão/misto, parcelas e acréscimo discriminado.
+- Cada item guarda ID da variante, modelo, cor, armazenamento, condição, quantidade e foto. O cliente visualiza os itens sem editá-los, e o PDF enumera todos os produtos.
+- O total financeiro da ficha continua manual e único. Selecionar, adicionar, remover ou mudar a quantidade dos produtos não soma preços da tabela nem reaplica crédito da troca.
 - Registro do seminovo e crédito já abatido na volta, sem desconto em duplicidade.
 - Entrega padrão de 1 a 15 dias úteis após confirmação do pagamento ou data máxima manual.
 - Formulário do cliente em três etapas: identificação, endereço e conferência.
@@ -38,6 +40,8 @@ Use o botão **Usar exemplo fictício** na criação, ou abra a visão do client
 Os dados existem apenas na memória desta aba. Recarregar apaga as novas fichas e restaura os exemplos. O link copiado não é um link de atendimento real nem compartilha dados entre aparelhos/abas. A cópia serve só para revisar a ação; o link real persistente e seguro depende da implementação backend futura. Não enviar a clientes reais.
 
 A entrada demonstrativa não importa o cliente da API e não contém analytics, webhook, autenticação, upload ou integração de pagamentos. Não inserir dados pessoais reais. O PDF é criado localmente apenas para testar o download e os campos, não reproduz o modelo jurídico ou assinaturas do contrato enviado pelo proprietário.
+
+Para esta revisão, `catalogProducts.ts` contém uma cópia de leitura do catálogo público de produção consultado em 27/10/2026, sem preços. As fotos usam os assets públicos existentes da vitrine, mapeados por slug e cor; nenhuma imagem foi movida para um armazenamento novo. O navegador solicita apenas essas fotos, sem enviar dados da ficha à API. A consulta em tempo real será conectada na V1, mantendo apenas produtos/variantes ativos. Se um produto não constar do catálogo, a opção manual o registra somente na ficha, sem criar produto no banco nem inventar foto.
 
 ## Fora do escopo desta prévia
 

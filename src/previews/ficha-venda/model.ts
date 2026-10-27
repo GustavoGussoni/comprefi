@@ -1,4 +1,46 @@
+import { catalogProducts, type CatalogVariant } from "./catalogProducts";
+
 export type Payment = "pix" | "card" | "mixed";
+export type SaleItem = {
+  lineId: string;
+  variantId: string | null;
+  groupSlug: string;
+  product: string;
+  color: string;
+  storage: string;
+  condition: string;
+  quantity: number;
+  image: string;
+};
+export const newItem = (): SaleItem => ({
+  lineId: crypto.randomUUID(),
+  variantId: null,
+  groupSlug: "",
+  product: "",
+  color: "",
+  storage: "",
+  condition: "Novo e lacrado",
+  quantity: 1,
+  image: "",
+});
+export const itemFromCatalog = (
+  variant: CatalogVariant,
+  previous?: SaleItem
+): SaleItem => ({
+  lineId: previous?.lineId || crypto.randomUUID(),
+  variantId: variant.id,
+  groupSlug: variant.groupSlug,
+  product: variant.model,
+  color: variant.color,
+  storage: variant.storage,
+  condition: variant.condition,
+  quantity: previous?.quantity || 1,
+  image: variant.image,
+});
+export const itemTitle = (sale: Sale) =>
+  sale.items.map(i => i.product || "Produto a selecionar").join(" + ");
+export const unitCount = (sale: Sale) =>
+  sale.items.reduce((sum, item) => sum + item.quantity, 0);
 export type Client = {
   name: string;
   cpf: string;
@@ -19,11 +61,7 @@ export type Sale = {
   reference: string;
   createdAt: string;
   whatsapp: string;
-  product: string;
-  color: string;
-  storage: string;
-  condition: string;
-  quantity: number;
+  items: SaleItem[];
   base: number;
   payment: Payment;
   pix: number;
@@ -84,11 +122,7 @@ export const newSale = (): Sale => ({
   reference: "NOVA",
   createdAt: new Date().toISOString(),
   whatsapp: "",
-  product: "",
-  color: "",
-  storage: "256 GB",
-  condition: "Novo e lacrado",
-  quantity: 1,
+  items: [newItem()],
   base: 0,
   payment: "pix",
   pix: 0,
@@ -109,15 +143,32 @@ export const newSale = (): Sale => ({
   pdf: "waiting",
   revoked: false,
 });
+const sampleItem = (
+  slug: string,
+  preferredColor: string,
+  preferredStorage: string
+): SaleItem => {
+  const options = catalogProducts.filter(v => v.groupSlug === slug);
+  const match =
+    options.find(
+      v =>
+        v.color === preferredColor &&
+        v.storage.replace(/\s/g, "") === preferredStorage
+    ) ||
+    options.find(v => v.color === preferredColor) ||
+    options[0];
+  return match ? itemFromCatalog(match) : newItem();
+};
 export const exampleSale = (): Sale => ({
   ...newSale(),
   id: "exemplo",
   reference: "CF-2026-0042",
   createdAt: "2026-10-27T15:30:00.000Z",
   whatsapp: "(00) 90000-0000",
-  product: "iPhone Duo",
-  color: "Night Sky",
-  storage: "512 GB",
+  items: [
+    sampleItem("iphone-18-pro-max", "Bordô", "512GB"),
+    sampleItem("iphone-18-pro", "Prata", "256GB"),
+  ],
   base: 18700,
   pix: 18700,
   hasTrade: true,
@@ -126,7 +177,7 @@ export const exampleSale = (): Sale => ({
   tradeColor: "Bordô",
   credit: 9500,
   tradeNotes:
-    "Avaliação aprovada. Identificação e recebimento junto com a entrega do novo.",
+    "Avaliação aprovada. Identificação e recebimento junto com a entrega dos produtos.",
 });
 export const initialSales = (): Sale[] => [
   exampleSale(),
@@ -134,9 +185,7 @@ export const initialSales = (): Sale[] => [
     ...exampleSale(),
     id: "concluida",
     reference: "CF-2026-0041",
-    product: "iPhone 18 Pro",
-    color: "Bordô",
-    storage: "256 GB",
+    items: [sampleItem("iphone-18-pro", "Bordô", "256GB")],
     base: 4200,
     pix: 0,
     payment: "card",
@@ -148,6 +197,37 @@ export const initialSales = (): Sale[] => [
   },
 ];
 export function validateSale(s: Sale): string | null {
+  if (!s.items.length || s.items.length > 20)
+    return "Inclua entre 1 e 20 itens na ficha.";
+  for (let index = 0; index < s.items.length; index++) {
+    const item = s.items[index];
+    if (
+      !item.product.trim() ||
+      !item.color.trim() ||
+      !item.storage.trim() ||
+      !item.condition.trim()
+    )
+      return `Complete modelo, cor, armazenamento e condição do item ${index + 1}.`;
+    if (
+      !Number.isInteger(item.quantity) ||
+      item.quantity < 1 ||
+      item.quantity > 20
+    )
+      return `Informe uma quantidade entre 1 e 20 para o item ${index + 1}.`;
+    if (
+      item.variantId &&
+      !catalogProducts.some(
+        v =>
+          v.id === item.variantId &&
+          v.groupSlug === item.groupSlug &&
+          v.model === item.product &&
+          v.color === item.color &&
+          v.storage === item.storage &&
+          v.condition === item.condition
+      )
+    )
+      return `Selecione uma combinação válida do catálogo para o item ${index + 1}.`;
+  }
   if (digits(s.whatsapp).length < 10 || digits(s.whatsapp).length > 13)
     return "Informe o WhatsApp do atendimento com DDD.";
   if (
@@ -172,7 +252,10 @@ export function validateSale(s: Sale): string | null {
     return "Escolha uma quantidade válida de parcelas.";
   if (
     s.hasTrade &&
-    (!s.tradeModel.trim() || !s.tradeColor.trim() || s.credit <= 0)
+    (!s.tradeModel.trim() ||
+      !s.tradeColor.trim() ||
+      !s.tradeStorage.trim() ||
+      s.credit <= 0)
   )
     return "Complete o aparelho da troca e seu crédito aprovado.";
   if (

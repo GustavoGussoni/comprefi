@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from "react";
 import { ArrowLeft, ArrowRight, Link2, Info } from "lucide-react";
 import { Button, Field, Select, Panel, Summary } from "./ui";
+import ProductItemsEditor from "./ProductItemsEditor";
 import {
   newSale,
   exampleSale,
@@ -81,7 +82,7 @@ export default function SaleEditor({
         <div className="cf-stack">
           <Panel
             number="01"
-            title="Atendimento e produto"
+            title="Atendimento e produtos"
             subtitle="O WhatsApp mantém a referência da conversa no DataCrazy."
           >
             <div className="cf-fields">
@@ -99,44 +100,11 @@ export default function SaleEditor({
                 value="Iago · vendedor (prévia)"
                 readOnly
               />
-              <Field
-                label="Produto vendido"
-                required
-                value={sale.product}
-                onChange={e => update("product", e.target.value)}
-                placeholder="Ex.: iPhone Duo"
-              />
-              <Field
-                label="Cor"
-                required
-                value={sale.color}
-                onChange={e => update("color", e.target.value)}
-                placeholder="Ex.: Night Sky"
-              />
-              <Field
-                label="Armazenamento"
-                required
-                value={sale.storage}
-                onChange={e => update("storage", e.target.value)}
-              />
-              <Select
-                label="Condição"
-                value={sale.condition}
-                onChange={e => update("condition", e.target.value)}
-              >
-                <option>Novo e lacrado</option>
-                <option>Seminovo</option>
-              </Select>
-              <Field
-                label="Quantidade"
-                type="number"
-                min="1"
-                max="20"
-                required
-                value={sale.quantity}
-                onChange={e => update("quantity", Number(e.target.value))}
-              />
             </div>
+            <ProductItemsEditor
+              items={sale.items}
+              onChange={items => update("items", items)}
+            />
           </Panel>
           <Panel
             number="02"

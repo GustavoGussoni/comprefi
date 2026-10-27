@@ -3,6 +3,7 @@ import type {
   InputHTMLAttributes,
   SelectHTMLAttributes,
 } from "react";
+import { useState } from "react";
 import {
   ArrowUpRight,
   ShieldCheck,
@@ -16,6 +17,8 @@ import {
   paymentName,
   total,
   cardFee,
+  unitCount,
+  type SaleItem,
   type Sale,
 } from "./model";
 
@@ -87,7 +90,9 @@ export function Select({
   return (
     <label className="cf-field">
       <span>{label}</span>
-      <select {...props}>{children}</select>
+      <select aria-label={label} {...props}>
+        {children}
+      </select>
     </label>
   );
 }
@@ -129,6 +134,27 @@ export function Badge({
     </span>
   );
 }
+export function ProductThumbnail({ item }: { item: SaleItem }) {
+  const [failedSource, setFailedSource] = useState("");
+  return (
+    <span className="cf-product-photo">
+      {item.image && failedSource !== item.image ? (
+        <img
+          src={item.image}
+          alt={`${item.product} — ${item.color}`}
+          loading="lazy"
+          referrerPolicy="no-referrer"
+          onError={() => setFailedSource(item.image)}
+        />
+      ) : (
+        <span className="cf-photo-empty">
+          <Smartphone size={27} strokeWidth={1.3} />
+          <small>Sem foto</small>
+        </span>
+      )}
+    </span>
+  );
+}
 export function Summary({
   sale,
   compact = false,
@@ -142,18 +168,25 @@ export function Summary({
         <span className="cf-eyebrow">SUA NEGOCIAÇÃO</span>
         <ShieldCheck size={17} />
       </div>
-      <div className="cf-product">
-        <span className="cf-product-icon">
-          <Smartphone size={32} strokeWidth={1.3} />
-        </span>
-        <div>
-          <h3>{sale.product || "Seu próximo produto"}</h3>
-          <p>
-            {sale.storage} <span>·</span> {sale.color || "Cor a definir"}
-          </p>
-          <small>{sale.condition}</small>
-        </div>
+      <div className="cf-items-summary-heading">
+        <span>Produtos da ficha</span>
+        <small>{unitCount(sale)} unidade(s)</small>
       </div>
+      {sale.items.map(item => (
+        <div className="cf-product cf-product-line" key={item.lineId}>
+          <ProductThumbnail item={item} />
+          <div>
+            <h3>{item.product || "Produto a selecionar"}</h3>
+            <p>
+              {item.storage || "Capacidade a definir"} <span>·</span>{" "}
+              {item.color || "Cor a definir"}
+            </p>
+            <small>
+              {item.condition} <span>·</span> {item.quantity} unidade(s)
+            </small>
+          </div>
+        </div>
+      ))}
       {sale.hasTrade && (
         <div className="cf-trade-summary">
           <RefreshCw size={16} />

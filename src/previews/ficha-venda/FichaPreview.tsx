@@ -27,7 +27,15 @@ import {
 import SaleEditor from "./SaleEditor";
 import CustomerForm from "./CustomerForm";
 import { Badge, Brand, Button, Summary } from "./ui";
-import { initialSales, money, total, type Sale, type Client } from "./model";
+import {
+  initialSales,
+  money,
+  total,
+  itemTitle,
+  unitCount,
+  type Sale,
+  type Client,
+} from "./model";
 import { downloadDemoPdf } from "./demoPdf";
 import "./preview.css";
 
@@ -118,7 +126,7 @@ export default function FichaPreview() {
   const matches = sales.filter(
     s =>
       (!query ||
-        `${s.reference} ${s.product} ${s.customer?.name || ""}`
+        `${s.reference} ${itemTitle(s)} ${s.customer?.name || ""}`
           .toLowerCase()
           .includes(query.toLowerCase())) &&
       (filter === "all" || (filter === "pending" ? !s.customer : !!s.customer))
@@ -391,9 +399,15 @@ export default function FichaPreview() {
                                 <small>{s.reference} · Iago</small>
                               </td>
                               <td>
-                                <strong>{s.product}</strong>
+                                <strong>
+                                  {s.items[0]?.product ||
+                                    "Produto a selecionar"}
+                                  {s.items.length > 1
+                                    ? ` + ${s.items.length - 1} produto(s)`
+                                    : ""}
+                                </strong>
                                 <small>
-                                  {s.storage} · {money(total(s))}
+                                  {unitCount(s)} unidade(s) · {money(total(s))}
                                   {s.hasTrade ? " de volta" : ""}
                                 </small>
                               </td>

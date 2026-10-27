@@ -44,9 +44,11 @@ export function downloadDemoPdf(sale: Sale) {
   text(
     `Endereco: ${c.street}, ${c.number}${c.complement ? ` - ${c.complement}` : ""}\nBairro: ${c.district} | Cidade: ${c.city}/${c.state} | CEP: ${c.cep}`
   );
-  section("2. Produto e condicao registrada");
-  text(
-    `${sale.quantity} unidade(s) - ${sale.product}\nCor: ${sale.color} | Armazenamento: ${sale.storage}\nCondicao: ${sale.condition}`
+  section("2. Produtos e condicoes registradas");
+  sale.items.forEach((item, index) =>
+    text(
+      `Item ${index + 1}: ${item.quantity} unidade(s) - ${item.product}\nCor: ${item.color} | Armazenamento: ${item.storage}\nCondicao: ${item.condition}${item.variantId ? " | Origem: catalogo" : " | Informado manualmente"}`
+    )
   );
   section("3. Condicao financeira combinada");
   text(

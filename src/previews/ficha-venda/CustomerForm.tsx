@@ -146,9 +146,9 @@ export default function CustomerForm({
           <div className="cf-client-intro">
             <span className="cf-eyebrow">O COMBINADO JÁ ESTÁ AQUI</span>
             <h1>
-              Seu novo iPhone
+              Sua compra
               <br />
-              <span>está quase aí.</span>
+              <span>está quase pronta.</span>
             </h1>
             <p>
               Confira a negociação e complete seu cadastro.
