@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "build:ficha-preview": "tsc -b && vite build --config vite.ficha-preview.config.ts",
     "start": "node server.mjs",
     "lint": "eslint .",
     "preview": "vite preview"
@@ -46,6 +47,7 @@
     "date-fns": "^2.29.3",
     "embla-carousel-react": "^8.5.2",
     "input-otp": "^1.4.2",
+    "jspdf": "^4.2.1",
     "lucide-react": "^0.364.0",
     "next-themes": "^0.4.4",
     "node": "^22.17.0",
