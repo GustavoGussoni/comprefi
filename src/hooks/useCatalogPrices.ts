@@ -35,7 +35,10 @@ interface CatalogPricesResult {
   error: boolean;
 }
 
-export function useCatalogPrices(category: string): CatalogPricesResult {
+export function useCatalogPrices(
+  category: string,
+  { enabled = true }: { enabled?: boolean } = {},
+): CatalogPricesResult {
   const [pricingBySlug, setPricingBySlug] = useState<
     Record<string, PricingMap>
   >({});
@@ -48,6 +51,14 @@ export function useCatalogPrices(category: string): CatalogPricesResult {
 
   useEffect(() => {
     let cancelled = false;
+
+    if (!enabled) {
+      setLoading(false);
+      setError(false);
+      return () => {
+        cancelled = true;
+      };
+    }
 
     async function fetchPrices() {
       try {
@@ -103,7 +114,7 @@ export function useCatalogPrices(category: string): CatalogPricesResult {
     return () => {
       cancelled = true;
     };
-  }, [category]);
+  }, [category, enabled]);
 
   return { pricingBySlug, activeProductsBySlug, inactiveSlugs, loading, error };
 }

@@ -40,6 +40,71 @@ export interface Product extends Omit<ApiProduct, "image"> {
   image: string;
 }
 
+export type UsedStockStatus = "draft" | "available" | "sold";
+
+/** Campos expostos pela vitrine. Não contém dados operacionais da unidade. */
+export interface UsedStockPublicUnit {
+  id: string;
+  model: string;
+  storage: string;
+  color: string;
+  battery: number | null;
+  details: string;
+  image: string;
+  imageIsIllustrative: boolean;
+  realImages: string[];
+  pixPrice: number;
+  installments: number;
+  installmentPrice: number;
+}
+
+export interface UsedStockHistoryEntry {
+  id: string;
+  action: string;
+  at: string;
+  actorId: string;
+  actorName: string;
+}
+
+/** Retorno administrativo; não deve ser usado em páginas públicas. */
+export interface UsedStockAdminUnit extends UsedStockPublicUnit {
+  revision: number;
+  status: UsedStockStatus;
+  imei: string | null;
+  internalNotes: string;
+  createdAt: string;
+  updatedAt: string;
+  receivedAt: string | null;
+  checkedAt: string | null;
+  activatedAt: string | null;
+  soldAt: string | null;
+  createdById: string;
+  history: UsedStockHistoryEntry[];
+}
+
+export interface UsedStockEditableInput {
+  model?: string;
+  storage?: string;
+  color?: string;
+  battery?: number | null;
+  details?: string;
+  image?: string;
+  imageIsIllustrative?: boolean;
+  realImages?: string[];
+  pixPrice?: number;
+  installments?: number;
+  installmentPrice?: number;
+  imei?: string | null;
+  internalNotes?: string;
+}
+
+export interface CreateUsedStockInput extends UsedStockEditableInput {
+  creationKey: string;
+  model: string;
+  storage: string;
+  color: string;
+}
+
 export interface ApiFilters {
   category?: string;
   isNew?: boolean;
@@ -475,6 +540,67 @@ class ApiService {
 
   getCategories(): Promise<string[]> {
     return this.request<string[]>("/products/categories");
+  }
+
+  getPublicUsedStock(): Promise<UsedStockPublicUnit[]> {
+    return this.request<UsedStockPublicUnit[]>("/used-stock/public");
+  }
+
+  getPublicUsedStockById(id: string): Promise<UsedStockPublicUnit> {
+    return this.request<UsedStockPublicUnit>(
+      `/used-stock/public/${encodeURIComponent(id)}`,
+    );
+  }
+
+  getAdminUsedStock(): Promise<UsedStockAdminUnit[]> {
+    return this.request<UsedStockAdminUnit[]>("/used-stock/admin");
+  }
+
+  createUsedStock(input: CreateUsedStockInput): Promise<UsedStockAdminUnit> {
+    return this.request<UsedStockAdminUnit>("/used-stock/admin", {
+      method: "POST",
+      body: input,
+    });
+  }
+
+  updateUsedStock(
+    id: string,
+    input: UsedStockEditableInput & { expectedRevision: number },
+  ): Promise<UsedStockAdminUnit> {
+    return this.request<UsedStockAdminUnit>(
+      `/used-stock/admin/${encodeURIComponent(id)}`,
+      { method: "PATCH", body: input },
+    );
+  }
+
+  activateUsedStock(
+    id: string,
+    expectedRevision: number,
+  ): Promise<UsedStockAdminUnit> {
+    return this.request<UsedStockAdminUnit>(
+      `/used-stock/admin/${encodeURIComponent(id)}/activate`,
+      { method: "POST", body: { expectedRevision, received: true, checked: true } },
+    );
+  }
+
+  deactivateUsedStock(
+    id: string,
+    expectedRevision: number,
+  ): Promise<UsedStockAdminUnit> {
+    return this.request<UsedStockAdminUnit>(
+      `/used-stock/admin/${encodeURIComponent(id)}/deactivate`,
+      { method: "POST", body: { expectedRevision } },
+    );
+  }
+
+  sellUsedStock(
+    id: string,
+    expectedRevision: number,
+  ): Promise<UsedStockAdminUnit> {
+    return this.request<UsedStockAdminUnit>(
+      `/used-stock/admin/${encodeURIComponent(id)}/sold`,
+      { method: "POST", body: { expectedRevision } },
+    );
   }
 
   calculatePrices(

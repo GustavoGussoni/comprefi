@@ -1,4 +1,4 @@
-import { useParams, useNavigate } from "react-router-dom";
+import { Navigate, useParams, useNavigate } from "react-router-dom";
 import ProductDetail from "../components/ProductDetail";
 import {
   findFlatProductById,
@@ -11,7 +11,13 @@ const ProductPage: React.FC = () => {
   const { category, id } = useParams<{ category: string; id: string }>();
   const navigate = useNavigate();
   const { pricingBySlug, activeProductsBySlug, loading, error } =
-    useCatalogPrices(category || "");
+    useCatalogPrices(category || "", {
+      enabled: category !== "iphones-seminovos",
+    });
+
+  if (category === "iphones-seminovos") {
+    return <Navigate to="/iphones-seminovos" replace />;
+  }
 
   if (category === "macbooks" && (loading || error)) {
     return (

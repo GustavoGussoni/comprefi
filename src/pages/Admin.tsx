@@ -18,6 +18,7 @@ import CatalogTable from "@/components/admin/CatalogTable";
 import PriceCalculator from "@/components/admin/PriceCalculator";
 import SimulationsCrm from "@/components/admin/SimulationsCrm";
 import SimuladorTaxas from "@/components/admin/SimuladorTaxas";
+import UsedStockAdmin from "@/components/admin/UsedStockAdmin";
 import ValorTrocaTable from "@/components/admin/ValorTrocaTable";
 import { useAdminAuth } from "@/contexts/AdminAuthContext";
 import { canManageTradeValues } from "@/lib/tradeValueAccess";
@@ -35,6 +36,7 @@ const navigation: NavigationItem[] = [
   { path: "/admin", label: "Visão geral", icon: LayoutDashboard, roles: ["ADMIN", "SALES"] },
   { path: "/admin/simulacoes", label: "Simulações e CRM", icon: UserRoundSearch, roles: ["ADMIN", "SALES"] },
   { path: "/admin/catalogo", label: "Catálogo", icon: Package, roles: ["ADMIN", "SALES"] },
+  { path: "/admin/seminovos", label: "Seminovos", icon: Package, roles: ["ADMIN", "SALES"] },
   { path: "/admin/valores-troca", label: "Valores de troca", icon: ArrowLeftRight, roles: ["ADMIN", "SALES"] },
   { path: "/admin/calculadora", label: "Calculadora de preços", icon: Calculator, roles: ["ADMIN", "SALES"], section: "Ferramentas" },
   { path: "/admin/simulador-taxas", label: "Simulador de taxas", icon: CreditCard, roles: ["ADMIN", "SALES"] },
@@ -77,6 +79,8 @@ const Admin: React.FC = () => {
         return <SimulationsCrm />;
       case "/admin/catalogo":
         return <CatalogTable readOnly={user.role === "SALES"} />;
+      case "/admin/seminovos":
+        return <UsedStockAdmin />;
       case "/admin/valores-troca":
         return <ValorTrocaTable />;
       case "/admin/calculadora":
