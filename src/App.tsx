@@ -11,6 +11,7 @@ import Footer from "./components/Footer";
 import Home from "./pages/Home";
 import CategoryPage from "./pages/CategoryPage";
 import ProductPage from "./pages/ProductPage";
+import UsedStockDetailPage from "./pages/UsedStockDetailPage";
 import Captura from "./pages/Captura";
 import Economia from "./pages/Economia";
 import DicasMac from "./pages/DicasMac";
@@ -131,6 +132,14 @@ function App() {
             element={
               <PageTransition>
                 <ProductPage />
+              </PageTransition>
+            }
+          />
+          <Route
+            path="/seminovos/:id"
+            element={
+              <PageTransition>
+                <UsedStockDetailPage />
               </PageTransition>
             }
           />

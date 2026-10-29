@@ -12,6 +12,7 @@ import FAQ from "../components/FAQ";
 import ImageLoader from "../components/ImageLoader";
 import ZoomableLightbox from "../components/ZoomableLightbox";
 import CompreFiClubBanner from "../components/CompreFiClubBanner";
+import UsedStockCatalog from "../components/used-stock/UsedStockCatalog";
 import { useCatalogPrices, mergePricing } from "../hooks/useCatalogPrices";
 import { sellableMacbook } from "../lib/sellableMacbook";
 
@@ -106,6 +107,17 @@ const ProductPhotoCarousel: React.FC<{
 const CategoryPage: React.FC = () => {
   const location = useLocation();
   const categorySlug = location.pathname.replace(/^\//, "");
+
+  if (categorySlug === "iphones-seminovos") {
+    return <UsedStockCatalog />;
+  }
+
+  return <CatalogCategoryPage categorySlug={categorySlug} />;
+};
+
+const CatalogCategoryPage: React.FC<{ categorySlug: string }> = ({
+  categorySlug,
+}) => {
   const config = categorySlug ? getCategoryBySlug(categorySlug) : undefined;
   const { pricingBySlug, activeProductsBySlug, inactiveSlugs, loading, error } =
     useCatalogPrices(categorySlug);
