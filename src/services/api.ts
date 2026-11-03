@@ -5,6 +5,14 @@ const API_BASE_URL = (
 export type UserRole = "ADMIN" | "SALES";
 export type CrmDeliveryStatus = "NOT_SENT" | "PENDING" | "SENT" | "FAILED";
 
+/** Referência cadastrada no catálogo; não representa verificação online no CRM. */
+export interface CatalogVariantCrmSku {
+  id: string;
+  crmSku: string | null;
+  crmSkuRevision: number;
+  crmMappingStatus: "configured" | "pending";
+}
+
 export interface AuthUser {
   id: string;
   name: string;
@@ -42,6 +50,22 @@ export interface Product extends Omit<ApiProduct, "image"> {
 
 export type UsedStockStatus = "draft" | "available" | "sold";
 
+/** Variante de identificação do catálogo disponível para vincular uma unidade. */
+export interface UsedStockCatalogVariant {
+  id: string;
+  productGroupId: string;
+  slug: string;
+  model: string;
+  storage: string;
+  color: string;
+  isActive: boolean;
+  groupIsActive: boolean;
+  unitCount: number;
+  crmSku?: string | null;
+  crmSkuRevision?: number;
+  crmMappingStatus?: "configured" | "pending";
+}
+
 /** Campos expostos pela vitrine. Não contém dados operacionais da unidade. */
 export interface UsedStockPublicUnit {
   id: string;
@@ -68,6 +92,9 @@ export interface UsedStockHistoryEntry {
 
 /** Retorno administrativo; não deve ser usado em páginas públicas. */
 export interface UsedStockAdminUnit extends UsedStockPublicUnit {
+  catalogVariantId: string | null;
+  catalogLinked: boolean;
+  catalogActive: boolean;
   revision: number;
   status: UsedStockStatus;
   imei: string | null;
@@ -83,9 +110,7 @@ export interface UsedStockAdminUnit extends UsedStockPublicUnit {
 }
 
 export interface UsedStockEditableInput {
-  model?: string;
-  storage?: string;
-  color?: string;
+  catalogVariantId?: string | null;
   battery?: number | null;
   details?: string;
   image?: string;
@@ -100,9 +125,7 @@ export interface UsedStockEditableInput {
 
 export interface CreateUsedStockInput extends UsedStockEditableInput {
   creationKey: string;
-  model: string;
-  storage: string;
-  color: string;
+  catalogVariantId: string;
 }
 
 export interface ApiFilters {
@@ -554,6 +577,22 @@ class ApiService {
 
   getAdminUsedStock(): Promise<UsedStockAdminUnit[]> {
     return this.request<UsedStockAdminUnit[]>("/used-stock/admin");
+  }
+
+  updateCatalogVariantCrmSku(
+    id: string,
+    input: { crmSku: string | null; expectedRevision: number },
+  ): Promise<CatalogVariantCrmSku> {
+    return this.request<CatalogVariantCrmSku>(
+      `/catalog/admin/variants/${encodeURIComponent(id)}/crm-sku`,
+      { method: "PUT", body: input },
+    );
+  }
+
+  getAdminUsedStockCatalogVariants(): Promise<UsedStockCatalogVariant[]> {
+    return this.request<UsedStockCatalogVariant[]>(
+      "/used-stock/admin/catalog-variants",
+    );
   }
 
   createUsedStock(input: CreateUsedStockInput): Promise<UsedStockAdminUnit> {

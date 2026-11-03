@@ -3,6 +3,7 @@ import {
   ClipboardCheck,
   Edit3,
   Eye,
+  Link2Off,
   PackagePlus,
   Power,
   RefreshCw,
@@ -14,24 +15,25 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import UsedStockEditor, {
   type UsedStockEditorValues,
 } from "@/components/admin/UsedStockEditor";
-import { formatUsedStockInstallment, formatUsedStockMoney, isAllowedUsedStockImage } from "@/lib/usedStock";
+import {
+  formatUsedStockInstallment,
+  formatUsedStockMoney,
+  isAllowedUsedStockImage,
+} from "@/lib/usedStock";
 import {
   ApiError,
   apiService,
   type CreateUsedStockInput,
   type UsedStockAdminUnit,
+  type UsedStockCatalogVariant,
   type UsedStockEditableInput,
   type UsedStockStatus,
 } from "@/services/api";
 
 const EMPTY_VALUES: UsedStockEditorValues = {
-  model: "",
-  storage: "",
-  color: "",
+  catalogVariantId: "",
   battery: "",
   details: "",
-  image: "",
-  imageIsIllustrative: true,
   realImages: "",
   pixPrice: "",
   installments: "12",
@@ -54,17 +56,14 @@ const statusClasses: Record<UsedStockStatus, string> = {
 
 function unitToValues(unit: UsedStockAdminUnit): UsedStockEditorValues {
   return {
-    model: unit.model,
-    storage: unit.storage,
-    color: unit.color,
+    catalogVariantId: unit.catalogVariantId || "",
     battery: unit.battery === null ? "" : String(unit.battery),
     details: unit.details,
-    image: unit.image,
-    imageIsIllustrative: unit.imageIsIllustrative,
     realImages: unit.realImages.join("\n"),
     pixPrice: unit.pixPrice === 0 ? "" : String(unit.pixPrice),
     installments: String(unit.installments || 12),
-    installmentPrice: unit.installmentPrice === 0 ? "" : String(unit.installmentPrice),
+    installmentPrice:
+      unit.installmentPrice === 0 ? "" : String(unit.installmentPrice),
     imei: unit.imei || "",
     internalNotes: unit.internalNotes,
   };
@@ -83,21 +82,24 @@ function imageList(value: string): string[] {
     .filter(Boolean);
 }
 
-function valuesToEditableInput(values: UsedStockEditorValues): UsedStockEditableInput {
+function valuesToEditableInput(
+  values: UsedStockEditorValues,
+): UsedStockEditableInput {
   const battery = toOptionalNumber(values.battery);
   const pixPrice = toOptionalNumber(values.pixPrice);
   const installments = toOptionalNumber(values.installments);
   const installmentPrice = toOptionalNumber(values.installmentPrice);
+  const realImages = imageList(values.realImages);
 
   return {
-    model: values.model.trim(),
-    storage: values.storage.trim(),
-    color: values.color.trim(),
+    ...(values.catalogVariantId
+      ? { catalogVariantId: values.catalogVariantId }
+      : {}),
     battery: battery === undefined ? null : battery,
     details: values.details.trim(),
-    image: values.image.trim(),
-    imageIsIllustrative: values.imageIsIllustrative,
-    realImages: imageList(values.realImages),
+    image: realImages[0] || "",
+    imageIsIllustrative: false,
+    realImages,
     pixPrice: pixPrice ?? 0,
     installments: installments ?? 12,
     installmentPrice: installmentPrice ?? 0,
@@ -106,44 +108,79 @@ function valuesToEditableInput(values: UsedStockEditorValues): UsedStockEditable
   };
 }
 
-function validateDraft(values: UsedStockEditorValues): string | null {
-  if (!values.model.trim() || !values.storage.trim() || !values.color.trim()) {
-    return "Preencha modelo, capacidade e cor para salvar o rascunho.";
+function validateDraft(
+  values: UsedStockEditorValues,
+  requiresCatalogVariant: boolean,
+): string | null {
+  if (requiresCatalogVariant && !values.catalogVariantId) {
+    return "Selecione uma variante existente do Catálogo para cadastrar a nova unidade.";
   }
-  if (values.battery && (!Number.isInteger(Number(values.battery)) || Number(values.battery) < 1 || Number(values.battery) > 100)) {
+  if (
+    values.battery &&
+    (!Number.isInteger(Number(values.battery)) ||
+      Number(values.battery) < 1 ||
+      Number(values.battery) > 100)
+  ) {
     return "A bateria deve ser um número inteiro entre 1 e 100.";
   }
   if (values.imei && !/^\d{15}$/.test(values.imei)) {
     return "O IMEI deve conter exatamente 15 dígitos quando informado.";
   }
-  if (values.image && !isAllowedUsedStockImage(values.image)) {
-    return "A imagem deve usar /assets/... ou https://www.comprefi.com/assets/...";
-  }
-  if (imageList(values.realImages).some((image) => !isAllowedUsedStockImage(image))) {
-    return "Cada imagem adicional deve usar um caminho permitido.";
+  if (
+    imageList(values.realImages).some(
+      (image) => !isAllowedUsedStockImage(image),
+    )
+  ) {
+    return "Cada foto real deve usar um caminho permitido e não pode ser um render antigo.";
   }
   return null;
 }
 
-function validateActivation(values: UsedStockEditorValues): string | null {
-  const draftError = validateDraft(values);
+function validateActivation(
+  values: UsedStockEditorValues,
+  catalogVariants: UsedStockCatalogVariant[],
+): string | null {
+  const draftError = validateDraft(values, true);
   if (draftError) return draftError;
   const editable = valuesToEditableInput(values);
+  const selectedVariant = catalogVariants.find(
+    (variant) => variant.id === values.catalogVariantId,
+  );
 
-  if (editable.battery === null || !editable.details || !editable.image) {
-    return "Complete bateria, detalhes do estado e imagem antes de disponibilizar.";
+  if (!selectedVariant || !selectedVariant.isActive || !selectedVariant.groupIsActive) {
+    return "A variante selecionada está inativa ou não está disponível no Catálogo.";
   }
-  if (!editable.pixPrice || editable.pixPrice <= 0 || !editable.installmentPrice || editable.installmentPrice <= 0) {
+  if (!editable.battery || !editable.details) {
+    return "Complete bateria e detalhes do estado antes de disponibilizar.";
+  }
+  if (!editable.realImages?.length) {
+    return "Inclua ao menos uma foto real da unidade antes de disponibilizar.";
+  }
+  if (
+    !editable.pixPrice ||
+    editable.pixPrice <= 0 ||
+    !editable.installmentPrice ||
+    editable.installmentPrice <= 0
+  ) {
     return "Informe preços positivos de PIX e de cada parcela antes de disponibilizar.";
   }
-  if (!editable.installments || editable.installments < 1 || editable.installments > 24 || !Number.isInteger(editable.installments)) {
+  if (
+    !editable.installments ||
+    editable.installments < 1 ||
+    editable.installments > 24 ||
+    !Number.isInteger(editable.installments)
+  ) {
     return "Informe uma quantidade de parcelas inteira entre 1 e 24.";
   }
   return null;
 }
 
-function isActivationReady(unit: UsedStockAdminUnit): boolean {
-  return validateActivation(unitToValues(unit)) === null;
+function isActivationReady(
+  unit: UsedStockAdminUnit,
+  catalogVariants: UsedStockCatalogVariant[],
+): boolean {
+  if (!unit.catalogLinked || !unit.catalogActive) return false;
+  return validateActivation(unitToValues(unit), catalogVariants) === null;
 }
 
 interface ConfirmAction {
@@ -151,18 +188,21 @@ interface ConfirmAction {
   unit: UsedStockAdminUnit;
 }
 
-interface UsedStockAdminProps {
-  readOnly?: boolean;
-}
-
-const UsedStockAdmin: React.FC<UsedStockAdminProps> = ({ readOnly = false }) => {
+const UsedStockAdmin: React.FC = () => {
   const [units, setUnits] = useState<UsedStockAdminUnit[]>([]);
+  const [catalogVariants, setCatalogVariants] = useState<
+    UsedStockCatalogVariant[]
+  >([]);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [operationError, setOperationError] = useState<string | null>(null);
   const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState<"all" | UsedStockStatus>("all");
-  const [editingUnit, setEditingUnit] = useState<UsedStockAdminUnit | null>(null);
+  const [statusFilter, setStatusFilter] = useState<"all" | UsedStockStatus>(
+    "all",
+  );
+  const [editingUnit, setEditingUnit] = useState<UsedStockAdminUnit | null>(
+    null,
+  );
   const [editorOpen, setEditorOpen] = useState(false);
   const [values, setValues] = useState<UsedStockEditorValues>(EMPTY_VALUES);
   const [editorError, setEditorError] = useState<string | null>(null);
@@ -178,15 +218,25 @@ const UsedStockAdmin: React.FC<UsedStockAdminProps> = ({ readOnly = false }) => 
   const saveInFlightRef = useRef(false);
   const transitionInFlightRef = useRef(false);
 
-  const loadUnits = useCallback(async (cancelled: { current: boolean }) => {
+  const loadData = useCallback(async (cancelled: { current: boolean }) => {
     try {
       setLoading(true);
       setLoadError(null);
-      const result = await apiService.getAdminUsedStock();
-      if (!cancelled.current) setUnits(result);
+      const [stockResult, variantsResult] = await Promise.all([
+        apiService.getAdminUsedStock(),
+        apiService.getAdminUsedStockCatalogVariants(),
+      ]);
+      if (!cancelled.current) {
+        setUnits(stockResult);
+        setCatalogVariants(variantsResult);
+      }
     } catch (error) {
       if (!cancelled.current) {
-        setLoadError(error instanceof ApiError ? error.message : "Não foi possível carregar o estoque de seminovos.");
+        setLoadError(
+          error instanceof ApiError
+            ? error.message
+            : "Não foi possível carregar o estoque de seminovos.",
+        );
       }
     } finally {
       if (!cancelled.current) setLoading(false);
@@ -195,11 +245,11 @@ const UsedStockAdmin: React.FC<UsedStockAdminProps> = ({ readOnly = false }) => 
 
   useEffect(() => {
     const cancelled = { current: false };
-    void loadUnits(cancelled);
+    void loadData(cancelled);
     return () => {
       cancelled.current = true;
     };
-  }, [loadUnits, reloadKey]);
+  }, [loadData, reloadKey]);
 
   useEffect(() => {
     const dialog = dialogRef.current;
@@ -212,14 +262,19 @@ const UsedStockAdmin: React.FC<UsedStockAdminProps> = ({ readOnly = false }) => 
     const needle = search.trim().toLowerCase();
     return units.filter((unit) => {
       const matchesStatus = statusFilter === "all" || unit.status === statusFilter;
-      const matchesSearch = !needle || [unit.model, unit.storage, unit.color, unit.id]
-        .some((value) => value.toLowerCase().includes(needle));
+      const matchesSearch =
+        !needle ||
+        [unit.model, unit.storage, unit.color, unit.id].some((value) =>
+          value.toLowerCase().includes(needle),
+        );
       return matchesStatus && matchesSearch;
     });
   }, [search, statusFilter, units]);
 
   const replaceUnit = (updated: UsedStockAdminUnit) => {
-    setUnits((current) => current.map((unit) => (unit.id === updated.id ? updated : unit)));
+    setUnits((current) =>
+      current.map((unit) => (unit.id === updated.id ? updated : unit)),
+    );
   };
 
   const startCreate = () => {
@@ -253,14 +308,16 @@ const UsedStockAdmin: React.FC<UsedStockAdminProps> = ({ readOnly = false }) => 
     if (error instanceof ApiError && error.status === 409) {
       return "Esta unidade foi alterada por outra pessoa ou mudou de status. Atualize a lista e revise antes de tentar novamente.";
     }
-    return error instanceof Error ? error.message : "Não foi possível concluir a operação.";
+    return error instanceof Error
+      ? error.message
+      : "Não foi possível concluir a operação.";
   };
 
   const saveDraft = async (): Promise<UsedStockAdminUnit | null> => {
     if (saveInFlightRef.current) return null;
     saveInFlightRef.current = true;
 
-    const validationError = validateDraft(values);
+    const validationError = validateDraft(values, !editingUnit);
     if (validationError) {
       setEditorError(validationError);
       saveInFlightRef.current = false;
@@ -284,9 +341,7 @@ const UsedStockAdmin: React.FC<UsedStockAdminProps> = ({ readOnly = false }) => 
         const createInput: CreateUsedStockInput = {
           ...input,
           creationKey,
-          model: input.model || "",
-          storage: input.storage || "",
-          color: input.color || "",
+          catalogVariantId: values.catalogVariantId,
         };
         saved = await apiService.createUsedStock(createInput);
         setUnits((current) => [saved, ...current]);
@@ -309,7 +364,7 @@ const UsedStockAdmin: React.FC<UsedStockAdminProps> = ({ readOnly = false }) => 
   };
 
   const requestActivationFromEditor = async () => {
-    const validationError = validateActivation(values);
+    const validationError = validateActivation(values, catalogVariants);
     if (validationError) {
       setEditorError(validationError);
       return;
@@ -326,9 +381,12 @@ const UsedStockAdmin: React.FC<UsedStockAdminProps> = ({ readOnly = false }) => 
   const openActivation = (unit: UsedStockAdminUnit, trigger: HTMLButtonElement) => {
     confirmationTriggerRef.current = trigger;
     setOperationError(null);
-    const validationError = validateActivation(unitToValues(unit));
-    if (validationError) {
-      setOperationError("Complete os campos da unidade no editor antes de disponibilizá-la.");
+    const validationError = validateActivation(unitToValues(unit), catalogVariants);
+    if (validationError || !unit.catalogLinked || !unit.catalogActive) {
+      setOperationError(
+        validationError ||
+          "Vincule esta unidade a uma variante ativa do Catálogo antes de disponibilizá-la.",
+      );
       startEdit(unit);
       return;
     }
@@ -399,35 +457,43 @@ const UsedStockAdmin: React.FC<UsedStockAdminProps> = ({ readOnly = false }) => 
           }
     : null;
 
-  if (readOnly) {
-    return (
-      <div className="rounded-xl border border-orange-500/20 bg-orange-500/5 p-8">
-        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#ff7a1a]">Acesso restrito</p>
-        <h1 className="mt-2 text-2xl font-semibold text-white">Sua conta não tem acesso ao estoque de seminovos.</h1>
-      </div>
-    );
-  }
-
   return (
     <div className="space-y-6">
       <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#ff7a1a]">Estoque por unidade</p>
-          <h1 className="mt-1 text-2xl font-semibold text-white">Seminovos</h1>
-          <p className="mt-2 text-sm text-zinc-400">Cadastre, revise e acompanhe cada aparelho individualmente.</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#ff7a1a]">
+            Estoque por unidade
+          </p>
+          <h1 className="mt-1 text-2xl font-semibold text-white">
+            iPhones Seminovos
+          </h1>
+          <p className="mt-2 max-w-2xl text-sm text-zinc-400">
+            Selecione uma variante já cadastrada no Catálogo e administre cada aparelho separadamente. Preço, bateria, IMEI e histórico permanecem por unidade.
+          </p>
         </div>
-        <button type="button" onClick={startCreate} disabled={saving || pendingId !== null} className="inline-flex items-center justify-center rounded-lg bg-[#ff6700] px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#e85f00] disabled:cursor-not-allowed disabled:opacity-60">
+        <button type="button" onClick={startCreate} disabled={saving || pendingId !== null || loading} className="inline-flex items-center justify-center rounded-lg bg-[#ff6700] px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#e85f00] disabled:cursor-not-allowed disabled:opacity-60">
           <PackagePlus size={18} className="mr-2" />
-          Novo seminovo
+          Nova unidade
         </button>
       </div>
 
       {editorOpen && (
         <UsedStockEditor
-          title={editingUnit ? `Editar rascunho · ${editingUnit.model}` : "Novo seminovo"}
+          title={editingUnit ? `Editar rascunho · ${editingUnit.model}` : "Nova unidade de seminovo"}
           values={values}
           saving={saving}
           error={editorError}
+          catalogVariants={catalogVariants}
+          legacyIdentity={
+            editingUnit && !editingUnit.catalogLinked
+              ? {
+                  model: editingUnit.model,
+                  storage: editingUnit.storage,
+                  color: editingUnit.color,
+                }
+              : undefined
+          }
+          isNew={!editingUnit}
           onChange={setValues}
           onSave={() => void saveOnly()}
           onCancel={closeEditor}
@@ -466,7 +532,7 @@ const UsedStockAdmin: React.FC<UsedStockAdminProps> = ({ readOnly = false }) => 
         {loading ? (
           <div className="py-12 text-center" role="status">
             <RefreshCw className="mx-auto mb-3 h-7 w-7 animate-spin text-[#ff6700]" />
-            <p className="text-sm text-zinc-400">Carregando unidades...</p>
+            <p className="text-sm text-zinc-400">Carregando unidades e variantes...</p>
           </div>
         ) : loadError ? (
           <div className="p-6 text-center">
@@ -476,12 +542,13 @@ const UsedStockAdmin: React.FC<UsedStockAdminProps> = ({ readOnly = false }) => 
         ) : filteredUnits.length === 0 ? (
           <div className="p-10 text-center">
             <p className="text-white">Nenhuma unidade encontrada.</p>
-            <p className="mt-1 text-sm text-zinc-500">Cadastre um seminovo manualmente para começar.</p>
+            <p className="mt-1 text-sm text-zinc-500">Cadastre uma unidade por uma variante existente do Catálogo.</p>
           </div>
         ) : (
           <ul className="divide-y divide-white/10">
             {filteredUnits.map((unit) => {
-              const canActivate = unit.status === "draft" && isActivationReady(unit);
+              const canActivate = unit.status === "draft" && isActivationReady(unit, catalogVariants);
+              const isPendingLink = !unit.catalogLinked;
               return (
                 <li key={unit.id} className="p-4 sm:p-5">
                   <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
@@ -489,9 +556,15 @@ const UsedStockAdmin: React.FC<UsedStockAdminProps> = ({ readOnly = false }) => 
                       <div className="flex flex-wrap items-center gap-2">
                         <h3 className="font-medium text-white">{unit.model}</h3>
                         <span className={`rounded-full border px-2 py-0.5 text-xs ${statusClasses[unit.status]}`}>{statusLabels[unit.status]}</span>
+                        {isPendingLink ? (
+                          <span className="inline-flex items-center gap-1 rounded-full border border-amber-400/30 bg-amber-500/10 px-2 py-0.5 text-xs text-amber-200"><Link2Off size={12} />Vínculo pendente</span>
+                        ) : !unit.catalogActive ? (
+                          <span className="rounded-full border border-red-400/30 bg-red-500/10 px-2 py-0.5 text-xs text-red-200">Variante inativa</span>
+                        ) : null}
                         <span className="text-xs text-zinc-600">Rev. {unit.revision}</span>
                       </div>
                       <p className="mt-1 text-sm text-zinc-400">{unit.storage} · {unit.color} · Bateria {unit.battery === null ? "não informada" : `${unit.battery}%`}</p>
+                      {isPendingLink && <p className="mt-2 text-xs text-amber-200">Cadastro histórico: vincule à variante já existente para preservar esta unidade, seu código e seu histórico.</p>}
                       <p className="mt-2 text-xs text-zinc-500">Código público: {unit.id}</p>
                       <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-sm">
                         <span className="text-[#ff8a42]">PIX {formatUsedStockMoney(unit.pixPrice)}</span>
@@ -503,19 +576,14 @@ const UsedStockAdmin: React.FC<UsedStockAdminProps> = ({ readOnly = false }) => 
                     <div className="flex flex-wrap gap-2 xl:justify-end">
                       {unit.status === "draft" && (
                         <>
-                          <button type="button" onClick={() => startEdit(unit)} disabled={pendingId !== null || saving} className="inline-flex items-center rounded-md border border-zinc-700 px-3 py-2 text-sm text-zinc-200 transition-colors hover:bg-white/5 disabled:opacity-50"><Edit3 size={16} className="mr-1.5" />Editar</button>
-                          <button
-                            type="button"
-                            onClick={(event) => openActivation(unit, event.currentTarget)}
-                            disabled={pendingId !== null || saving}
-                            className={`inline-flex items-center rounded-md px-3 py-2 text-sm font-medium transition-colors disabled:opacity-50 ${canActivate ? "bg-[#ff6700] text-white hover:bg-[#e85f00]" : "border border-amber-500/40 text-amber-200 hover:bg-amber-500/10"}`}
-                          >
+                          <button type="button" onClick={() => startEdit(unit)} disabled={pendingId !== null || saving} className="inline-flex items-center rounded-md border border-zinc-700 px-3 py-2 text-sm text-zinc-200 transition-colors hover:bg-white/5 disabled:opacity-50"><Edit3 size={16} className="mr-1.5" />{isPendingLink ? "Vincular variante" : "Editar"}</button>
+                          <button type="button" onClick={(event) => openActivation(unit, event.currentTarget)} disabled={pendingId !== null || saving} className={`inline-flex items-center rounded-md px-3 py-2 text-sm font-medium transition-colors disabled:opacity-50 ${canActivate ? "bg-[#ff6700] text-white hover:bg-[#e85f00]" : "border border-amber-500/40 text-amber-200 hover:bg-amber-500/10"}`}>
                             {canActivate ? <CheckCircle2 size={16} className="mr-1.5" /> : <Edit3 size={16} className="mr-1.5" />}
-                            {canActivate ? "Ativar seminovo" : "Completar editor"}
+                            {canActivate ? "Ativar unidade" : "Completar editor"}
                           </button>
                         </>
                       )}
-                      {unit.status === "available" && (
+                      {unit.status === "available" && unit.catalogLinked && unit.catalogActive && (
                         <>
                           <a href={`/seminovos/${encodeURIComponent(unit.id)}`} target="_blank" rel="noreferrer" className="inline-flex items-center rounded-md border border-zinc-700 px-3 py-2 text-sm text-zinc-200 transition-colors hover:bg-white/5"><Eye size={16} className="mr-1.5" />Ver vitrine</a>
                           <button type="button" onClick={(event) => { confirmationTriggerRef.current = event.currentTarget; setConfirmAction({ kind: "deactivate", unit }); }} disabled={pendingId !== null || saving} className="inline-flex items-center rounded-md border border-amber-500/40 px-3 py-2 text-sm text-amber-200 transition-colors hover:bg-amber-500/10 disabled:opacity-50"><Power size={16} className="mr-1.5" />Desativar</button>
@@ -532,19 +600,7 @@ const UsedStockAdmin: React.FC<UsedStockAdminProps> = ({ readOnly = false }) => 
         )}
       </section>
 
-      <dialog
-        ref={dialogRef}
-        aria-labelledby="used-stock-confirm-title"
-        onCancel={(event) => {
-          event.preventDefault();
-          if (pendingId !== null || transitionInFlightRef.current) return;
-          closeDialog();
-        }}
-        onClose={() => {
-          if (pendingId === null && !transitionInFlightRef.current) setConfirmAction(null);
-        }}
-        className="m-auto w-[calc(100%-2rem)] max-w-lg rounded-xl border border-white/10 bg-[#151515] p-0 text-white shadow-2xl backdrop:bg-black/75"
-      >
+      <dialog ref={dialogRef} aria-labelledby="used-stock-confirm-title" onCancel={(event) => { event.preventDefault(); if (pendingId !== null || transitionInFlightRef.current) return; closeDialog(); }} onClose={() => { if (pendingId === null && !transitionInFlightRef.current) setConfirmAction(null); }} className="m-auto w-[calc(100%-2rem)] max-w-lg rounded-xl border border-white/10 bg-[#151515] p-0 text-white shadow-2xl backdrop:bg-black/75">
         {confirmAction && actionCopy && (
           <div className="p-5 sm:p-6">
             <div className="flex items-start gap-3">
@@ -566,16 +622,10 @@ const UsedStockAdmin: React.FC<UsedStockAdminProps> = ({ readOnly = false }) => 
               <div className="mt-4 rounded-lg border border-[#ff6700]/30 bg-[#ff6700]/5 p-3 text-sm text-zinc-200">
                 <p className="font-medium text-white">Confirme o recebimento e a conferência</p>
                 <div className="mt-3 space-y-2">
-                  <label className="flex cursor-pointer items-center gap-2 text-sm text-zinc-200">
-                    <input type="checkbox" checked={receivedConfirmed} onChange={(event) => setReceivedConfirmed(event.target.checked)} disabled={pendingId !== null} className="h-4 w-4 rounded border-zinc-600 bg-zinc-900 accent-[#ff6700]" />
-                    Confirmo que esta unidade foi recebida.
-                  </label>
-                  <label className="flex cursor-pointer items-center gap-2 text-sm text-zinc-200">
-                    <input type="checkbox" checked={checkedConfirmed} onChange={(event) => setCheckedConfirmed(event.target.checked)} disabled={pendingId !== null} className="h-4 w-4 rounded border-zinc-600 bg-zinc-900 accent-[#ff6700]" />
-                    Confirmo que esta unidade foi conferida.
-                  </label>
+                  <label className="flex cursor-pointer items-center gap-2 text-sm text-zinc-200"><input type="checkbox" checked={receivedConfirmed} onChange={(event) => setReceivedConfirmed(event.target.checked)} disabled={pendingId !== null} className="h-4 w-4 rounded border-zinc-600 bg-zinc-900 accent-[#ff6700]" />Confirmo que esta unidade foi recebida.</label>
+                  <label className="flex cursor-pointer items-center gap-2 text-sm text-zinc-200"><input type="checkbox" checked={checkedConfirmed} onChange={(event) => setCheckedConfirmed(event.target.checked)} disabled={pendingId !== null} className="h-4 w-4 rounded border-zinc-600 bg-zinc-900 accent-[#ff6700]" />Confirmo que esta unidade foi conferida.</label>
                 </div>
-                <p className="mt-3 text-xs text-zinc-400">Revise os dados da unidade antes de confirmar a disponibilização.</p>
+                <p className="mt-3 text-xs text-zinc-400">Revise os dados da unidade e as fotos reais antes de confirmar a disponibilização.</p>
               </div>
             )}
 

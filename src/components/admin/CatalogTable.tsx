@@ -18,14 +18,16 @@ import {
   Percent,
   Calculator,
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import CrmSkuEditor from "@/components/admin/CrmSkuEditor";
+import { apiService, type CatalogVariantCrmSku } from "@/services/api";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
 // ============================================
 // Types
 // ============================================
-interface Variant {
-  id: string;
+interface Variant extends CatalogVariantCrmSku {
   storage: string;
   color: string;
   originalPrice: string;
@@ -133,7 +135,9 @@ const loadMargins = (): MarginConfig => {
   try {
     const saved = localStorage.getItem("comprefi_margins");
     if (saved) return JSON.parse(saved);
-  } catch {}
+  } catch {
+    return DEFAULT_MARGINS;
+  }
   return DEFAULT_MARGINS;
 };
 
@@ -141,9 +145,14 @@ const loadFreight = (): FreightConfig => {
   try {
     const saved = localStorage.getItem("comprefi_freight");
     if (saved) return { ...DEFAULT_FREIGHT, ...JSON.parse(saved) };
-  } catch {}
+  } catch {
+    return DEFAULT_FREIGHT;
+  }
   return DEFAULT_FREIGHT;
 };
+
+const errorMessage = (error: unknown, fallback: string): string =>
+  error instanceof Error ? error.message : fallback;
 
 // ============================================
 // Sub-components
@@ -313,8 +322,8 @@ const NewProductForm: React.FC<{
         throw new Error(err.message || "Erro ao criar produto");
       }
       onSave(formData.slug);
-    } catch (err: any) {
-      alert(err.message);
+    } catch (err: unknown) {
+      alert(errorMessage(err, "Erro ao criar produto"));
     } finally {
       setSaving(false);
     }
@@ -505,6 +514,7 @@ interface CatalogTableProps {
 }
 
 const CatalogTable: React.FC<CatalogTableProps> = ({ readOnly = false }) => {
+  const navigate = useNavigate();
   const [products, setProducts] = useState<ProductGroup[]>([]);
   const [stats, setStats] = useState<CatalogStats | null>(null);
   const [loading, setLoading] = useState(true);
@@ -514,6 +524,18 @@ const CatalogTable: React.FC<CatalogTableProps> = ({ readOnly = false }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [showInactive, setShowInactive] = useState(true);
+  const [onlyWithoutSku, setOnlyWithoutSku] = useState(false);
+  const [editingSkuIds, setEditingSkuIds] = useState<Set<string>>(() => new Set());
+
+  const onSkuEditingChange = useCallback((id: string, editing: boolean) => {
+    setEditingSkuIds((current) => {
+      if (current.has(id) === editing) return current;
+      const next = new Set(current);
+      if (editing) next.add(id);
+      else next.delete(id);
+      return next;
+    });
+  }, []);
 
   // Config
   const [showConfig, setShowConfig] = useState(false);
@@ -624,8 +646,8 @@ const CatalogTable: React.FC<CatalogTableProps> = ({ readOnly = false }) => {
 
       setProducts(productsData);
       setStats(statsData);
-    } catch (err: any) {
-      setError(err.message || "Erro ao carregar catalogo");
+    } catch (err: unknown) {
+      setError(errorMessage(err, "Erro ao carregar catalogo"));
     } finally {
       setLoading(false);
     }
@@ -654,10 +676,24 @@ const CatalogTable: React.FC<CatalogTableProps> = ({ readOnly = false }) => {
   // ============================================
   const categories = [...new Set(products.map((p) => p.category))];
 
-  const filteredProducts = products.filter((p) => {
+  const matchesVariantFilter = (product: ProductGroup, variant: Variant) => {
+    // Um conflito pode mudar o SKU que originou a busca; não desmontar o rascunho.
+    if (editingSkuIds.has(variant.id)) return true;
+    const search = searchTerm.trim().toLowerCase();
     const matchesSearch =
-      p.model.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      p.slug.toLowerCase().includes(searchTerm.toLowerCase());
+      product.model.toLowerCase().includes(search) ||
+      product.slug.toLowerCase().includes(search) ||
+      (variant.crmSku ?? "").toLowerCase().includes(search);
+    return matchesSearch && (!onlyWithoutSku || variant.crmSku === null);
+  };
+
+  const filteredProducts = products.filter((p) => {
+    const matchesSearch = p.variants.length > 0
+      ? p.variants.some((variant) => matchesVariantFilter(p, variant))
+      : !onlyWithoutSku && (
+        p.model.toLowerCase().includes(searchTerm.trim().toLowerCase()) ||
+        p.slug.toLowerCase().includes(searchTerm.trim().toLowerCase())
+      );
     const matchesCategory =
       categoryFilter === "all" || p.category === categoryFilter;
     const matchesActive = showInactive || p.isActive;
@@ -676,6 +712,35 @@ const CatalogTable: React.FC<CatalogTableProps> = ({ readOnly = false }) => {
   // ============================================
   // Actions
   // ============================================
+  // Mesclar somente os campos de SKU, sem recarregar preços ou limpar edições abertas.
+  const updateVariantSku = (updated: CatalogVariantCrmSku) => {
+    setProducts((current) => current.map((product) => ({
+      ...product,
+      variants: product.variants.map((variant) => variant.id === updated.id ? {
+        ...variant,
+        crmSku: updated.crmSku,
+        crmSkuRevision: updated.crmSkuRevision,
+        crmMappingStatus: updated.crmMappingStatus,
+      } : variant),
+    })));
+  };
+
+  const reloadVariantSku = async (id: string): Promise<CatalogVariantCrmSku> => {
+    const current = await apiService.request<ProductGroup[]>(
+      "/catalog/admin/products?includeInactive=true",
+    );
+    const variant = current.flatMap((product) => product.variants).find((item) => item.id === id);
+    if (!variant) throw new Error("Variante não encontrada. Recarregue o catálogo.");
+    const updated: CatalogVariantCrmSku = {
+      id: variant.id,
+      crmSku: variant.crmSku,
+      crmSkuRevision: variant.crmSkuRevision,
+      crmMappingStatus: variant.crmMappingStatus,
+    };
+    updateVariantSku(updated);
+    return updated;
+  };
+
   const toggleProductActive = async (slug: string, currentActive: boolean) => {
     try {
       const res = await fetch(`${API_URL}/catalog/admin/products/${slug}`, {
@@ -685,8 +750,8 @@ const CatalogTable: React.FC<CatalogTableProps> = ({ readOnly = false }) => {
       });
       if (!res.ok) throw new Error("Erro ao atualizar");
       await loadData();
-    } catch (err: any) {
-      alert(err.message);
+    } catch (err: unknown) {
+      alert(errorMessage(err, "Erro ao atualizar"));
     }
   };
 
@@ -710,8 +775,8 @@ const CatalogTable: React.FC<CatalogTableProps> = ({ readOnly = false }) => {
       );
       if (!res.ok) throw new Error("Erro ao atualizar variante");
       await loadData();
-    } catch (err: any) {
-      alert(err.message);
+    } catch (err: unknown) {
+      alert(errorMessage(err, "Erro ao atualizar variante"));
     }
   };
 
@@ -788,8 +853,8 @@ const CatalogTable: React.FC<CatalogTableProps> = ({ readOnly = false }) => {
       if (!res.ok) throw new Error("Erro ao salvar precos");
       setEditingVariant(null);
       await loadData(); // Não reseta expandedSlug, mantém posição
-    } catch (err: any) {
-      alert(err.message);
+    } catch (err: unknown) {
+      alert(errorMessage(err, "Erro ao salvar preços"));
     }
   };
 
@@ -813,8 +878,8 @@ const CatalogTable: React.FC<CatalogTableProps> = ({ readOnly = false }) => {
       if (!res.ok) throw new Error("Erro ao salvar produto");
       setEditingProduct(null);
       await loadData();
-    } catch (err: any) {
-      alert(err.message);
+    } catch (err: unknown) {
+      alert(errorMessage(err, "Erro ao salvar produto"));
     }
   };
 
@@ -834,6 +899,18 @@ const CatalogTable: React.FC<CatalogTableProps> = ({ readOnly = false }) => {
       prices = calculatePrices(costNum, category);
     }
 
+    const variantData =
+      category === "iphones-seminovos"
+        ? {
+            storage: newVariant.storage,
+            color: newVariant.color,
+          }
+        : {
+            storage: newVariant.storage,
+            color: newVariant.color,
+            ...prices,
+          };
+
     try {
       const res = await fetch(
         `${API_URL}/catalog/admin/products/${slug}/variants`,
@@ -841,13 +918,7 @@ const CatalogTable: React.FC<CatalogTableProps> = ({ readOnly = false }) => {
           method: "PUT",
           headers: getAuthHeaders(),
           body: JSON.stringify({
-            variants: [
-              {
-                storage: newVariant.storage,
-                color: newVariant.color,
-                ...prices,
-              },
-            ],
+            variants: [variantData],
           }),
         },
       );
@@ -855,8 +926,8 @@ const CatalogTable: React.FC<CatalogTableProps> = ({ readOnly = false }) => {
       setAddingVariantSlug(null);
       setNewVariant({ storage: "", color: "", cost: "" });
       await loadData();
-    } catch (err: any) {
-      alert(err.message);
+    } catch (err: unknown) {
+      alert(errorMessage(err, "Erro ao adicionar variante"));
     }
   };
 
@@ -880,7 +951,7 @@ const CatalogTable: React.FC<CatalogTableProps> = ({ readOnly = false }) => {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-6">
       {/* Stats Cards */}
       {stats && (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -941,7 +1012,8 @@ const CatalogTable: React.FC<CatalogTableProps> = ({ readOnly = false }) => {
                 type="text"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="Buscar por nome ou slug..."
+                aria-label="Buscar por nome, slug ou SKU do CRM"
+                placeholder="Buscar por nome, slug ou SKU..."
                 className="w-full pl-10 pr-3 py-2 bg-gray-800 border border-gray-700 rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
@@ -950,6 +1022,7 @@ const CatalogTable: React.FC<CatalogTableProps> = ({ readOnly = false }) => {
             <select
               value={categoryFilter}
               onChange={(e) => setCategoryFilter(e.target.value)}
+              aria-label="Categoria do catálogo"
               className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="all">Todas as categorias</option>
@@ -999,6 +1072,16 @@ const CatalogTable: React.FC<CatalogTableProps> = ({ readOnly = false }) => {
             </button>
           </div>}
         </div>
+        <label className="mt-3 inline-flex cursor-pointer items-center gap-2 text-sm text-gray-300">
+          <input
+            type="checkbox"
+            checked={onlyWithoutSku}
+            onChange={(event) => setOnlyWithoutSku(event.target.checked)}
+            className="rounded border-gray-600 bg-gray-800 text-blue-500 focus:ring-blue-500"
+          />
+          Só sem SKU
+        </label>
+        <p className="mt-2 text-xs text-gray-400">SKU cadastrado é uma referência do catálogo, não uma verificação online no DataCrazy.</p>
       </div>
 
       {/* Config Panel */}
@@ -1039,13 +1122,44 @@ const CatalogTable: React.FC<CatalogTableProps> = ({ readOnly = false }) => {
       {/* Produtos por Categoria */}
       {Object.entries(groupedByCategory).map(([category, categoryProducts]) => (
         <div key={category} className="space-y-2">
-          <h3 className="text-lg font-semibold text-white flex items-center space-x-2">
-            <Package className="w-5 h-5 text-blue-400" />
-            <span>{categoryLabels[category] || category}</span>
-            <span className="text-sm font-normal text-gray-400">
-              ({categoryProducts.length} produtos)
-            </span>
-          </h3>
+          {category === "iphones-seminovos" ? (
+            <div className="rounded-lg border border-[#ff6700]/30 bg-[#ff6700]/5 p-4">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                <div>
+                  <h3 className="flex items-center space-x-2 text-lg font-semibold text-white">
+                    <Package className="h-5 w-5 text-[#ff8a42]" />
+                    <span>iPhones Seminovos — identidade e histórico</span>
+                    <span className="text-sm font-normal text-gray-400">
+                      ({categoryProducts.length} produtos)
+                    </span>
+                  </h3>
+                  <p className="mt-2 max-w-3xl text-sm text-zinc-400">
+                    Modelos e variantes identificam a unidade. Bateria, preço, fotos, IMEI, disponibilidade e histórico são cadastrados por aparelho na gestão de unidades.
+                  </p>
+                  <p className="mt-1 text-xs text-zinc-500">
+                    Para uma identificação ausente, Gustavo cadastra o modelo e a variante uma única vez neste Catálogo.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() =>
+                    navigate("/admin/catalogo?categoria=iphones-seminovos")
+                  }
+                  className="inline-flex shrink-0 items-center justify-center rounded-md border border-[#ff6700]/50 px-3 py-2 text-sm font-medium text-[#ff8a42] transition-colors hover:bg-[#ff6700]/10"
+                >
+                  Gerenciar unidades
+                </button>
+              </div>
+            </div>
+          ) : (
+            <h3 className="flex items-center space-x-2 text-lg font-semibold text-white">
+              <Package className="w-5 h-5 text-blue-400" />
+              <span>{categoryLabels[category] || category}</span>
+              <span className="text-sm font-normal text-gray-400">
+                ({categoryProducts.length} produtos)
+              </span>
+            </h3>
+          )}
 
           <div className="space-y-1">
             {categoryProducts.map((product) => (
@@ -1054,7 +1168,7 @@ const CatalogTable: React.FC<CatalogTableProps> = ({ readOnly = false }) => {
                 ref={(el) => {
                   productRefs.current[product.slug] = el;
                 }}
-                className={`bg-gray-900 rounded-lg border ${
+                className={`min-w-0 overflow-hidden bg-gray-900 rounded-lg border ${
                   product.isActive
                     ? "border-gray-800"
                     : "border-red-900/50 opacity-60"
@@ -1062,20 +1176,26 @@ const CatalogTable: React.FC<CatalogTableProps> = ({ readOnly = false }) => {
               >
                 {/* Product Header */}
                 <div
-                  className="flex items-center justify-between p-4 cursor-pointer hover:bg-gray-800/50 transition-colors"
-                  onClick={() =>
+                  className="flex flex-wrap items-center justify-between gap-3 p-4 hover:bg-gray-800/50 transition-colors"
+                >
+                  <button
+                    type="button"
+                    aria-expanded={expandedSlug === product.slug}
+                    aria-controls={`catalog-variants-${product.id}`}
+                    aria-label={`Variantes de ${product.model}`}
+                    className="flex min-w-0 flex-1 items-center gap-3 text-left focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    onClick={() =>
                     setExpandedSlug(
                       expandedSlug === product.slug ? null : product.slug,
                     )
                   }
-                >
-                  <div className="flex items-center space-x-3 flex-1">
+                  >
                     {expandedSlug === product.slug ? (
                       <ChevronDown className="w-4 h-4 text-gray-400" />
                     ) : (
                       <ChevronRight className="w-4 h-4 text-gray-400" />
                     )}
-                    <div>
+                    <span className="min-w-0 break-words">
                       <span className="font-medium text-white">
                         {product.model}
                       </span>
@@ -1084,8 +1204,8 @@ const CatalogTable: React.FC<CatalogTableProps> = ({ readOnly = false }) => {
                           {product.section}
                         </span>
                       )}
-                    </div>
-                  </div>
+                    </span>
+                  </button>
 
                   <div className="flex items-center space-x-4">
                     <span className="text-xs text-gray-500">
@@ -1209,28 +1329,34 @@ const CatalogTable: React.FC<CatalogTableProps> = ({ readOnly = false }) => {
 
                 {/* Expanded Variants */}
                 {expandedSlug === product.slug && (
-                  <div className="border-t border-gray-800">
+                  <div id={`catalog-variants-${product.id}`} className="min-w-0 border-t border-gray-800">
                     <div className="overflow-x-auto">
                       <table className="w-full text-sm">
                         <thead>
                           <tr className="text-gray-400 text-xs border-b border-gray-800">
                             <th className="text-left px-4 py-2">Storage</th>
                             <th className="text-left px-4 py-2">Cor</th>
-                            <th className="text-left px-4 py-2">
-                              <span className="flex items-center space-x-1">
-                                <DollarSign className="w-3 h-3" />
-                                <span>Custo</span>
-                              </span>
-                            </th>
-                            <th className="text-left px-4 py-2">Original</th>
-                            <th className="text-left px-4 py-2">PIX</th>
-                            <th className="text-left px-4 py-2">12x</th>
+                            {category !== "iphones-seminovos" && (
+                              <>
+                                <th className="text-left px-4 py-2">
+                                  <span className="flex items-center space-x-1">
+                                    <DollarSign className="w-3 h-3" />
+                                    <span>Custo</span>
+                                  </span>
+                                </th>
+                                <th className="text-left px-4 py-2">Original</th>
+                                <th className="text-left px-4 py-2">PIX</th>
+                                <th className="text-left px-4 py-2">12x</th>
+                              </>
+                            )}
                             <th className="text-center px-4 py-2">Status</th>
-                            <th className="text-center px-4 py-2">Acoes</th>
+                            {category !== "iphones-seminovos" && (
+                              <th className="text-center px-4 py-2">Ações</th>
+                            )}
                           </tr>
                         </thead>
                         <tbody>
-                          {[...product.variants].sort((a, b) => {
+                          {product.variants.filter((variant) => matchesVariantFilter(product, variant)).sort((a, b) => {
                             const parseSize = (s: string): number => {
                               const num = parseFloat(s);
                               if (s.includes('TB')) return num * 1024;
@@ -1241,11 +1367,13 @@ const CatalogTable: React.FC<CatalogTableProps> = ({ readOnly = false }) => {
                             return parseSize(b.storage) - parseSize(a.storage);
                           }).map((variant) => {
                             const isEditing =
-                              !readOnly && editingVariant?.variantId === variant.id;
+                              category !== "iphones-seminovos" &&
+                              !readOnly &&
+                              editingVariant?.variantId === variant.id;
 
                             return (
+                              <React.Fragment key={variant.id}>
                               <tr
-                                key={variant.id}
                                 className={`border-b border-gray-800/50 hover:bg-gray-800/30 ${
                                   !variant.isActive ? "opacity-50" : ""
                                 }`}
@@ -1257,7 +1385,7 @@ const CatalogTable: React.FC<CatalogTableProps> = ({ readOnly = false }) => {
                                   {variant.color}
                                 </td>
 
-                                {isEditing ? (
+                                {category !== "iphones-seminovos" && (isEditing ? (
                                   <>
                                     {/* Custo */}
                                     <td className="px-4 py-1">
@@ -1331,7 +1459,7 @@ const CatalogTable: React.FC<CatalogTableProps> = ({ readOnly = false }) => {
                                       {variant.installmentPrice}
                                     </td>
                                   </>
-                                )}
+                                ))}
 
                                 <td className="px-4 py-2 text-center">
                                   {readOnly ? (
@@ -1347,7 +1475,8 @@ const CatalogTable: React.FC<CatalogTableProps> = ({ readOnly = false }) => {
                                     </button>
                                   )}
                                 </td>
-                                <td className="px-4 py-2 text-center">
+                                {category !== "iphones-seminovos" && (
+                                  <td className="px-4 py-2 text-center">
                                   {isEditing ? (
                                     <div className="flex items-center justify-center space-x-1">
                                       <button
@@ -1376,8 +1505,25 @@ const CatalogTable: React.FC<CatalogTableProps> = ({ readOnly = false }) => {
                                       <DollarSign className="w-3.5 h-3.5 text-yellow-400" />
                                     </button>
                                   )}
+                                  </td>
+                                )}
+                              </tr>
+                              <tr className="border-b border-gray-700">
+                                <td colSpan={category === "iphones-seminovos" ? 3 : 8} className="px-4 py-3 align-top">
+                                  <div className="w-64 max-w-[calc(100vw-6rem)] sm:w-96">
+                                    <p className="mb-2 text-xs font-semibold text-gray-400">SKU do CRM · {variant.storage} · {variant.color}</p>
+                                    <CrmSkuEditor
+                                      variant={variant}
+                                      identity={`${product.model} · ${variant.storage} · ${variant.color}`}
+                                      readOnly={readOnly}
+                                      onUpdated={updateVariantSku}
+                                      onReload={reloadVariantSku}
+                                      onEditingChange={onSkuEditingChange}
+                                    />
+                                  </div>
                                 </td>
                               </tr>
+                              </React.Fragment>
                             );
                           })}
                         </tbody>
@@ -1412,22 +1558,24 @@ const CatalogTable: React.FC<CatalogTableProps> = ({ readOnly = false }) => {
                             placeholder="Titanio Natural"
                             className="w-36 px-2 py-1 bg-gray-800 border border-gray-700 rounded text-white text-xs focus:ring-2 focus:ring-blue-500 focus:outline-none"
                           />
-                          <div className="relative">
-                            <DollarSign className="absolute left-1.5 top-1/2 -translate-y-1/2 w-3 h-3 text-yellow-500" />
-                            <input
-                              type="number"
-                              step="0.01"
-                              value={newVariant.cost}
-                              onChange={(e) =>
-                                setNewVariant({
-                                  ...newVariant,
-                                  cost: e.target.value,
-                                })
-                              }
-                              placeholder="Custo"
-                              className="w-24 pl-6 pr-2 py-1 bg-gray-800 border border-yellow-700 rounded text-white text-xs focus:ring-2 focus:ring-yellow-500 focus:outline-none"
-                            />
-                          </div>
+                          {category !== "iphones-seminovos" && (
+                            <div className="relative">
+                              <DollarSign className="absolute left-1.5 top-1/2 -translate-y-1/2 w-3 h-3 text-yellow-500" />
+                              <input
+                                type="number"
+                                step="0.01"
+                                value={newVariant.cost}
+                                onChange={(e) =>
+                                  setNewVariant({
+                                    ...newVariant,
+                                    cost: e.target.value,
+                                  })
+                                }
+                                placeholder="Custo"
+                                className="w-24 pl-6 pr-2 py-1 bg-gray-800 border border-yellow-700 rounded text-white text-xs focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+                              />
+                            </div>
+                          )}
                           <button
                             onClick={() =>
                               handleAddVariant(product.slug, product.category)
@@ -1452,13 +1600,13 @@ const CatalogTable: React.FC<CatalogTableProps> = ({ readOnly = false }) => {
                           </button>
                         </div>
                       ) : (
-                        <button
-                          onClick={() => setAddingVariantSlug(product.slug)}
-                          className="flex items-center space-x-1 text-xs text-gray-400 hover:text-blue-400 transition-colors"
-                        >
-                          <Plus className="w-3.5 h-3.5" />
-                          <span>Adicionar variante</span>
-                        </button>
+                          <button
+                            onClick={() => setAddingVariantSlug(product.slug)}
+                            className="flex items-center space-x-1 text-xs text-gray-400 hover:text-blue-400 transition-colors"
+                          >
+                            <Plus className="w-3.5 h-3.5" />
+                            <span>{category === "iphones-seminovos" ? "Adicionar identificação" : "Adicionar variante"}</span>
+                          </button>
                       )}
                     </div>}
 
