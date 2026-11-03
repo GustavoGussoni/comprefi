@@ -1,5 +1,11 @@
 import type { UsedStockPublicUnit } from "@/services/api";
 
+const BLOCKED_USED_STOCK_IMAGE_PATHS = new Set([
+  "/assets/used-stock/iphone16-pro-max-natural.jpg",
+  "/assets/used-stock/iphone16-pro-max-preto.jpg",
+  "/assets/used-stock/iphone12-pro-max-azul.jpg",
+]);
+
 export function formatUsedStockMoney(value: number): string {
   return value.toLocaleString("pt-BR", {
     style: "currency",
@@ -23,6 +29,7 @@ export function isAllowedUsedStockImage(value: string): boolean {
   if (!value || hasControlCharacter || /[?#\\]/.test(value)) return false;
 
   if (value.startsWith("/assets/")) {
+    if (BLOCKED_USED_STOCK_IMAGE_PATHS.has(value)) return false;
     const segments = value.slice("/assets/".length).split("/");
     return (
       /^\/assets\/[A-Za-z0-9][A-Za-z0-9._/-]*$/.test(value) &&

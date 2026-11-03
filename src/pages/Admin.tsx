@@ -12,13 +12,12 @@ import {
   X,
 } from "lucide-react";
 import { useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import AdminDashboard from "@/components/admin/AdminDashboard";
-import CatalogTable from "@/components/admin/CatalogTable";
+import CatalogAdmin from "@/components/admin/CatalogAdmin";
 import PriceCalculator from "@/components/admin/PriceCalculator";
 import SimulationsCrm from "@/components/admin/SimulationsCrm";
 import SimuladorTaxas from "@/components/admin/SimuladorTaxas";
-import UsedStockAdmin from "@/components/admin/UsedStockAdmin";
 import ValorTrocaTable from "@/components/admin/ValorTrocaTable";
 import { useAdminAuth } from "@/contexts/AdminAuthContext";
 import { canManageTradeValues } from "@/lib/tradeValueAccess";
@@ -36,7 +35,6 @@ const navigation: NavigationItem[] = [
   { path: "/admin", label: "Visão geral", icon: LayoutDashboard, roles: ["ADMIN", "SALES"] },
   { path: "/admin/simulacoes", label: "Simulações e CRM", icon: UserRoundSearch, roles: ["ADMIN", "SALES"] },
   { path: "/admin/catalogo", label: "Catálogo", icon: Package, roles: ["ADMIN", "SALES"] },
-  { path: "/admin/seminovos", label: "Seminovos", icon: Package, roles: ["ADMIN", "SALES"] },
   { path: "/admin/valores-troca", label: "Valores de troca", icon: ArrowLeftRight, roles: ["ADMIN", "SALES"] },
   { path: "/admin/calculadora", label: "Calculadora de preços", icon: Calculator, roles: ["ADMIN", "SALES"], section: "Ferramentas" },
   { path: "/admin/simulador-taxas", label: "Simulador de taxas", icon: CreditCard, roles: ["ADMIN", "SALES"] },
@@ -65,6 +63,7 @@ const Admin: React.FC = () => {
     (item.path !== "/admin/valores-troca" || canManageTradeValues(user));
   const canAccess = isAllowed(activeItem);
   const visibleNavigation = navigation.filter(isAllowed);
+  const canManageCatalogIdentity = user.role === "ADMIN";
 
   const navigateTo = (path: string) => {
     navigate(path);
@@ -78,9 +77,9 @@ const Admin: React.FC = () => {
       case "/admin/simulacoes":
         return <SimulationsCrm />;
       case "/admin/catalogo":
-        return <CatalogTable readOnly={user.role === "SALES"} />;
+        return <CatalogAdmin readOnly={!canManageCatalogIdentity} />;
       case "/admin/seminovos":
-        return <UsedStockAdmin />;
+        return <Navigate to="/admin/catalogo?categoria=iphones-seminovos" replace />;
       case "/admin/valores-troca":
         return <ValorTrocaTable />;
       case "/admin/calculadora":
@@ -91,6 +90,10 @@ const Admin: React.FC = () => {
         return <AdminDashboard />;
     }
   };
+
+  const isUsedStockCatalog =
+    activePath === "/admin/catalogo" &&
+    new URLSearchParams(location.search).get("categoria") === "iphones-seminovos";
 
   return (
     <div className="min-h-screen bg-[#090909] text-white">
@@ -157,7 +160,15 @@ const Admin: React.FC = () => {
             <div className="hidden items-center gap-2 text-sm sm:flex">
               <span className="text-zinc-600">Admin</span>
               <span className="text-zinc-700">/</span>
-              <span className="text-zinc-300">{activeItem.label}</span>
+              {isUsedStockCatalog ? (
+                <>
+                  <span className="text-zinc-300">Catálogo</span>
+                  <span className="text-zinc-700">/</span>
+                  <span className="text-zinc-300">iPhones Seminovos</span>
+                </>
+              ) : (
+                <span className="text-zinc-300">{activeItem.label}</span>
+              )}
             </div>
           </div>
           <div className="flex items-center gap-3">

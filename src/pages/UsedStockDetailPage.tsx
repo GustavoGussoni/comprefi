@@ -9,6 +9,7 @@ import {
   buildUsedStockWhatsAppMessage,
   formatUsedStockInstallment,
   formatUsedStockMoney,
+  isAllowedUsedStockImage,
   usedStockUnitName,
 } from "@/lib/usedStock";
 import { ApiError, apiService, type UsedStockPublicUnit } from "@/services/api";
@@ -32,6 +33,11 @@ const UsedStockDetailPage: React.FC = () => {
   const [isContacting, setIsContacting] = useState(false);
   const [contactError, setContactError] = useState<string | null>(null);
   const contactInFlightRef = useRef(false);
+  const hasDisplayablePhoto =
+    unit !== null &&
+    Boolean(unit.image) &&
+    !unit.imageIsIllustrative &&
+    isAllowedUsedStockImage(unit.image);
 
   useEffect(() => {
     let cancelled = false;
@@ -162,7 +168,7 @@ const UsedStockDetailPage: React.FC = () => {
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
           <section className="overflow-hidden rounded-lg border border-gray-800 bg-gray-900 p-4 md:p-6">
             <div className="relative flex min-h-[300px] items-center justify-center overflow-hidden rounded-lg bg-black/20">
-              {unit.image ? (
+              {hasDisplayablePhoto ? (
                 <ImageLoader
                   src={unit.image}
                   alt={usedStockUnitName(unit)}
@@ -171,9 +177,11 @@ const UsedStockDetailPage: React.FC = () => {
               ) : (
                 <span className="text-sm text-gray-500">Imagem indisponível</span>
               )}
-              <span className="absolute bottom-3 left-3 rounded bg-black/70 px-2.5 py-1.5 text-xs text-gray-200">
-                {unit.imageIsIllustrative ? "Imagem ilustrativa" : "Foto da unidade"}
-              </span>
+              {hasDisplayablePhoto && (
+                <span className="absolute bottom-3 left-3 rounded bg-black/70 px-2.5 py-1.5 text-xs text-gray-200">
+                  Foto da unidade
+                </span>
+              )}
             </div>
           </section>
 

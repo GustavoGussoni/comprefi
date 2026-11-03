@@ -7,6 +7,7 @@ import {
   buildUsedStockWhatsAppMessage,
   formatUsedStockInstallment,
   formatUsedStockMoney,
+  isAllowedUsedStockImage,
   usedStockUnitName,
 } from "@/lib/usedStock";
 import { ApiError, apiService, type UsedStockPublicUnit } from "@/services/api";
@@ -23,6 +24,10 @@ const UsedStockCard: React.FC<UsedStockCardProps> = ({ unit }) => {
   const [isUnavailable, setIsUnavailable] = useState(false);
   const contactInFlightRef = useRef(false);
   const detailPath = `/seminovos/${encodeURIComponent(currentUnit.id)}`;
+  const hasDisplayablePhoto =
+    !currentUnit.imageIsIllustrative &&
+    Boolean(currentUnit.image) &&
+    isAllowedUsedStockImage(currentUnit.image);
 
   useEffect(() => {
     setCurrentUnit(unit);
@@ -78,7 +83,7 @@ const UsedStockCard: React.FC<UsedStockCardProps> = ({ unit }) => {
       <div className="p-4">
         <Link to={detailPath} className="mb-3 block">
           <div className="relative flex min-h-[190px] items-center justify-center overflow-hidden rounded-lg bg-black/20">
-            {currentUnit.image ? (
+            {hasDisplayablePhoto ? (
               <ImageLoader
                 src={currentUnit.image}
                 alt={usedStockUnitName(currentUnit)}
@@ -87,9 +92,11 @@ const UsedStockCard: React.FC<UsedStockCardProps> = ({ unit }) => {
             ) : (
               <span className="text-sm text-gray-500">Imagem indisponível</span>
             )}
-            <span className="absolute bottom-2 left-2 rounded bg-black/70 px-2 py-1 text-[11px] text-gray-200">
-              {currentUnit.imageIsIllustrative ? "Imagem ilustrativa" : "Foto da unidade"}
-            </span>
+            {hasDisplayablePhoto && (
+              <span className="absolute bottom-2 left-2 rounded bg-black/70 px-2 py-1 text-[11px] text-gray-200">
+                Foto da unidade
+              </span>
+            )}
           </div>
         </Link>
 
