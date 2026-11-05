@@ -27,7 +27,9 @@
             return original.apply(this, arguments);
           };
         });
-        if (privateDocument) return;
+        // The dedicated staging origin must never send test navigation to marketing.
+        if (privateDocument ||
+            window.location.hostname === "ficha-web-staging-staging.up.railway.app") return;
         !(function (f, b, e, v, n, t, s) {
           if (f.fbq) return;
           n = f.fbq = function () {
