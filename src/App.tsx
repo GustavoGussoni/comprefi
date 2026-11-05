@@ -21,6 +21,7 @@ import CalculationPage from "./pages/CalculationPage";
 import ResultPage from "./pages/ResultPage";
 import Admin from "./pages/Admin";
 import ProtectedRoute from "./components/ProtectedRoute";
+import PublicSaleSheet from "./features/sale-sheet/PublicSaleSheet";
 
 // Componente para detectar mudanças de rota e rolar para o topo
 const ScrollToTop = () => {
@@ -35,6 +36,8 @@ const ScrollToTop = () => {
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
   const location = useLocation();
+  // Private link: no commerce Header/Footer or external widgets on this route.
+  if (location.pathname.startsWith("/ficha-venda/")) return <>{children}</>;
   const hideHeaderRoutes = [
     "/economia",
     "/dicas-mac",
@@ -67,6 +70,7 @@ function App() {
       <ScrollToTop />
       <Layout>
         <Routes>
+          <Route path="/ficha-venda/:token" element={<PublicSaleSheet />} />
           <Route
             path="/"
             element={

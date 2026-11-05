@@ -1,0 +1,1638 @@
+/* Reused form styles, strictly scoped: no body/root/global reset. */
+.sale-sheet {
+  --cf-bg: #090909;
+  --cf-panel: #111112;
+  --cf-border: #ffffff12;
+  --cf-muted: #9c9ca3;
+  --cf-accent: #ff721d;
+  background: var(--cf-bg);
+  color: #f4f4f5;
+  min-height: 100vh;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+.sale-sheet * {
+  box-sizing: border-box;
+}
+.sale-sheet button,
+.sale-sheet input,
+.sale-sheet select {
+  font: inherit;
+}
+.sale-sheet button {
+  cursor: pointer;
+}
+.sale-sheet button:disabled {
+  cursor: not-allowed;
+  opacity: 0.35;
+}
+.sale-sheet button,
+.sale-sheet a,
+.sale-sheet input,
+.sale-sheet select {
+  outline-offset: 4px;
+}
+.sale-sheet :focus-visible {
+  outline: 2px solid #ff8b43;
+}
+.sale-sheet h1,
+.sale-sheet h2,
+.sale-sheet h3,
+.sale-sheet p {
+  margin: 0;
+}
+.sale-sheet button {
+  transition:
+    background 0.16s,
+    color 0.16s,
+    transform 0.16s;
+}
+.sale-sheet button:active {
+  transform: translateY(1px);
+}
+.sale-sheet button:disabled:active {
+  transform: none;
+}
+.sale-sheet svg {
+  flex-shrink: 0;
+}
+.sale-sheet button:not(.cf-button) {
+  background: none;
+  border: 0;
+  color: inherit;
+}
+.sale-sheet .cf-muted {
+  color: #85858e;
+}
+.sale-sheet .cf-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+.sale-sheet .cf-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 21px;
+  font-weight: 700;
+  letter-spacing: -0.7px;
+  white-space: nowrap;
+}
+.sale-sheet .cf-mark {
+  display: block;
+  width: 24px;
+  height: 24px;
+  border: 4px solid #ff721d;
+}
+.sale-sheet .cf-brand-divider {
+  height: 22px;
+  width: 1px;
+  background: #ffffff24;
+  margin: 0 9px;
+}
+.sale-sheet .cf-brand-caption {
+  color: #8c8c94;
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+.sale-sheet .cf-icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  border-radius: 7px;
+  color: #9b9ba4;
+}
+.sale-sheet .cf-icon-button:hover {
+  color: white;
+  background: #ffffff09;
+}
+.sale-sheet .cf-page-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 30px;
+}
+.sale-sheet .cf-eyebrow {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: #ff873b;
+  display: block;
+  margin-bottom: 10px;
+}
+.sale-sheet .cf-page-heading h1 {
+  font-size: 32px;
+  font-weight: 600;
+  letter-spacing: -1.3px;
+  line-height: 1.15;
+  margin-bottom: 12px;
+}
+.sale-sheet .cf-page-heading p {
+  font-size: 12px;
+  color: #898992;
+}
+.sale-sheet .cf-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  min-height: 42px;
+  border-radius: 7px;
+  background: #ff721d;
+  color: #140a04;
+  font-size: 12px !important;
+  padding: 11px 17px;
+  font-weight: 600 !important;
+  border: 1px solid #ff842f;
+  white-space: nowrap;
+  box-shadow: 0 3px 16px #ff721d0a;
+}
+.sale-sheet .cf-button:hover {
+  background: #ff8a40;
+}
+.sale-sheet .cf-button-secondary {
+  background: #ffffff03;
+  color: #d4d4da;
+  border-color: #ffffff18;
+  box-shadow: none;
+}
+.sale-sheet .cf-button-secondary:hover {
+  background: #ffffff09;
+}
+.sale-sheet .cf-list-panel {
+  border: 1px solid var(--cf-border);
+  border-radius: 10px;
+  overflow: hidden;
+  background: #101011;
+}
+.sale-sheet .cf-list-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 17px 22px;
+  border-bottom: 1px solid var(--cf-border);
+}
+.sale-sheet .cf-search {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: #62626d;
+  min-width: 180px;
+  max-width: 245px;
+  border: 1px solid #ffffff10;
+  border-radius: 6px;
+  padding: 8px 10px;
+}
+.sale-sheet .cf-search input {
+  background: none;
+  border: 0;
+  color: #eee;
+  min-width: 0;
+  width: 100%;
+  font-size: 10px;
+}
+.sale-sheet .cf-search input::placeholder {
+  color: #74747d;
+}
+.sale-sheet .cf-table-wrap {
+  overflow-x: auto;
+}
+.sale-sheet .cf-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  white-space: nowrap;
+}
+.sale-sheet .cf-table th {
+  font-size: 8px;
+  font-weight: 500;
+  letter-spacing: 1.1px;
+  color: #73737e;
+  padding: 17px 22px;
+  border-bottom: 1px solid #ffffff08;
+}
+.sale-sheet .cf-table td {
+  padding: 23px 22px;
+  border-bottom: 1px solid #ffffff08;
+  font-size: 11px;
+}
+.sale-sheet .cf-table td > strong {
+  font-weight: 500;
+  display: block;
+  color: #e2e2e6;
+}
+.sale-sheet .cf-table td > small {
+  display: block;
+  color: #747480;
+  font-size: 9px;
+  margin-top: 5px;
+}
+.sale-sheet .cf-row-title {
+  font-size: 12px !important;
+  text-align: left;
+  font-weight: 500;
+}
+.sale-sheet .cf-row-title:hover {
+  color: #ff873b !important;
+}
+.sale-sheet .cf-badge {
+  font-size: 9px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 8px;
+  border-radius: 5px;
+  border: 1px solid #ffffff12;
+  background: #ffffff04;
+  color: #9999a4;
+  white-space: nowrap;
+}
+.sale-sheet .cf-badge i {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: currentColor;
+}
+.sale-sheet .cf-badge-green {
+  color: #83c5a0;
+  border-color: #76c69b22;
+  background: #76c69b09;
+}
+.sale-sheet .cf-badge-orange {
+  color: #e7b07f;
+  border-color: #ff873b24;
+  background: #ff873b09;
+}
+.sale-sheet .cf-badge-red {
+  color: #eca5a5;
+  border-color: #ff888833;
+  background: #ff888809;
+}
+.sale-sheet .cf-empty {
+  padding: 45px;
+  text-align: center;
+  color: #72727d;
+}
+.sale-sheet .cf-empty svg {
+  margin: 0 auto 12px;
+}
+.sale-sheet .cf-empty h3 {
+  color: #aaaab2;
+  font-size: 14px;
+}
+.sale-sheet .cf-empty p {
+  font-size: 12px;
+  margin-top: 8px;
+}
+.sale-sheet .cf-back {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #8b8b95 !important;
+  font-size: 11px !important;
+  margin-bottom: 22px;
+}
+.sale-sheet .cf-editor-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 26px;
+  align-items: start;
+}
+.sale-sheet .cf-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.sale-sheet .cf-panel {
+  background: #111112;
+  border: 1px solid #ffffff13;
+  border-radius: 10px;
+  padding: 25px;
+}
+.sale-sheet .cf-panel-heading {
+  display: flex;
+  align-items: flex-start;
+  gap: 13px;
+  margin-bottom: 23px;
+}
+.sale-sheet .cf-number {
+  font-size: 10px;
+  letter-spacing: 1px;
+  line-height: 28px;
+  width: 29px;
+  height: 29px;
+  flex-shrink: 0;
+  text-align: center;
+  border-radius: 7px;
+  color: #ff873b;
+  background: #ff721d0c;
+  border: 1px solid #ff721d25;
+}
+.sale-sheet .cf-panel h2 {
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: -0.2px;
+}
+.sale-sheet .cf-panel-heading p {
+  font-size: 11px;
+  color: #85858f;
+  margin-top: 5px;
+  line-height: 1.65;
+}
+.sale-sheet .cf-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px 17px;
+}
+.sale-sheet .cf-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+  font-size: 11px;
+}
+.sale-sheet .cf-field > span {
+  color: #b8b8c0;
+}
+.sale-sheet .cf-field b {
+  color: #ff873b;
+  font-weight: 400;
+}
+.sale-sheet .cf-field input,
+.sale-sheet .cf-field select {
+  width: 100%;
+  min-width: 0;
+  background: #0b0b0c;
+  border: 1px solid #ffffff18;
+  border-radius: 6px;
+  padding: 11px 12px;
+  color: #f0f0f4;
+  font-size: 12px;
+  color-scheme: dark;
+  min-height: 42px;
+}
+.sale-sheet .cf-field input::placeholder {
+  color: #50505d;
+}
+.sale-sheet .cf-field input:read-only {
+  color: #7e7e89;
+  background: #ffffff03;
+}
+.sale-sheet .cf-field small {
+  color: #74747f;
+  font-size: 9px;
+  line-height: 1.65;
+}
+.sale-sheet .cf-field small:empty {
+  display: none;
+}
+.sale-sheet .cf-field input[aria-invalid="true"],
+.sale-sheet .cf-field select[aria-invalid="true"] {
+  border-color: #ff888899;
+}
+.sale-sheet .cf-field .cf-field-error {
+  color: #ffb5b7;
+  margin-top: -3px;
+}
+.sale-sheet .cf-wide {
+  grid-column: 1/-1;
+}
+.sale-sheet .cf-note {
+  display: flex;
+  gap: 11px;
+  align-items: flex-start;
+  border: 1px solid #ff721d20;
+  background: #ff721d07;
+  border-radius: 7px;
+  padding: 13px;
+  margin-bottom: 20px;
+  color: #b8a18f;
+}
+.sale-sheet .cf-note svg {
+  color: #dd995e;
+  margin-top: 1px;
+}
+.sale-sheet .cf-note p {
+  font-size: 10px;
+  line-height: 1.8;
+}
+.sale-sheet .cf-financial-total {
+  margin-top: 20px;
+  background: #0b0b0c;
+  border-radius: 6px;
+  padding: 14px 15px;
+  display: grid;
+  gap: 8px;
+}
+.sale-sheet .cf-financial-total > span {
+  font-size: 10px;
+  color: #93939e;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+.sale-sheet .cf-financial-total b {
+  font-weight: 400;
+  color: #bdbdc5;
+}
+.sale-sheet .cf-financial-total strong {
+  color: #f7f7fa;
+  font-size: 13px;
+}
+.sale-sheet .cf-check {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  color: #afafb9;
+  font-size: 11px;
+  line-height: 1.8;
+  cursor: pointer;
+}
+.sale-sheet .cf-check input {
+  margin-top: 4px;
+  accent-color: #ff721d;
+  flex-shrink: 0;
+  width: 15px;
+  height: 15px;
+}
+.sale-sheet .cf-space-top {
+  margin-top: 20px;
+}
+.sale-sheet .cf-help {
+  font-size: 10px !important;
+  line-height: 1.8 !important;
+  color: #7d7d89 !important;
+  margin-top: 16px !important;
+}
+.sale-sheet .cf-sticky {
+  position: sticky;
+  top: 25px;
+}
+.sale-sheet .cf-side-label {
+  font-size: 8px;
+  letter-spacing: 2px;
+  color: #72727d;
+  margin-bottom: 12px;
+  display: block;
+}
+.sale-sheet .cf-form-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+.sale-sheet .cf-error {
+  background: #33191c;
+  color: #ffb5b7;
+  border: 1px solid #ff88882a;
+  font-size: 12px;
+  border-radius: 7px;
+  padding: 13px 16px;
+  margin: 16px 0 !important;
+}
+.sale-sheet .cf-summary {
+  background: linear-gradient(140deg, #1b1a19, #121213 60%);
+  border: 1px solid #ffffff15;
+  border-radius: 12px;
+  padding: 27px;
+}
+.sale-sheet .cf-summary-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #ffffff0d;
+  padding-bottom: 18px;
+}
+.sale-sheet .cf-summary-top .cf-eyebrow {
+  color: #adadae;
+  margin: 0;
+  font-size: 8px;
+}
+.sale-sheet .cf-summary-top > svg {
+  color: #8a817b;
+}
+.sale-sheet .cf-product {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 23px 0;
+}
+.sale-sheet .cf-product h3 {
+  font-size: 19px;
+  font-weight: 500;
+  letter-spacing: -0.7px;
+}
+.sale-sheet .cf-product p {
+  font-size: 11px;
+  color: #b6b2b0;
+  margin-top: 4px;
+}
+.sale-sheet .cf-product p span {
+  padding: 0 4px;
+  color: #6f6965;
+}
+.sale-sheet .cf-product small {
+  font-size: 9px;
+  color: #77777f;
+}
+.sale-sheet .cf-trade-summary {
+  display: flex;
+  gap: 10px;
+  padding: 14px;
+  border-radius: 7px;
+  background: #ffffff03;
+  border: 1px solid #ffffff08;
+  margin-bottom: 23px;
+}
+.sale-sheet .cf-trade-summary > svg {
+  color: #87817a;
+  margin-top: 2px;
+}
+.sale-sheet .cf-trade-summary strong {
+  font-size: 10px;
+  color: #b8b8be;
+  font-weight: 500;
+}
+.sale-sheet .cf-trade-summary p {
+  font-size: 10px;
+  color: #898991;
+  margin-top: 4px;
+}
+.sale-sheet .cf-trade-summary small {
+  font-size: 8px;
+  color: #7c7c87;
+  display: block;
+  margin-top: 4px;
+}
+.sale-sheet .cf-price > span {
+  font-size: 11px;
+  color: #a1a1ab;
+  display: block;
+}
+.sale-sheet .cf-price > strong {
+  font-size: 34px;
+  line-height: 1.2;
+  letter-spacing: -1.5px;
+  display: block;
+  margin: 7px 0;
+  color: #f5f1ed;
+  font-weight: 500;
+  overflow-wrap: anywhere;
+}
+.sale-sheet .cf-price > small {
+  font-size: 9px;
+  color: #a69d93;
+}
+.sale-sheet .cf-money-lines {
+  margin: 24px 0 0;
+  display: grid;
+  gap: 10px;
+}
+.sale-sheet .cf-money-lines > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 10px;
+}
+.sale-sheet .cf-money-lines dt {
+  color: #8c8c97;
+}
+.sale-sheet .cf-money-lines dd {
+  margin: 0;
+  color: #cbcbcf;
+  text-align: right;
+}
+.sale-sheet .cf-delivery {
+  display: flex;
+  gap: 11px;
+  margin-top: 24px;
+  padding-top: 22px;
+  border-top: 1px solid #ffffff0d;
+}
+.sale-sheet .cf-delivery > svg {
+  color: #9b9188;
+  margin-top: 1px;
+}
+.sale-sheet .cf-delivery strong {
+  display: block;
+  font-size: 10px;
+  font-weight: 500;
+  color: #bdbdc4;
+}
+.sale-sheet .cf-delivery p {
+  font-size: 10px;
+  color: #93939f;
+  line-height: 1.9;
+  margin-top: 5px;
+}
+.sale-sheet .cf-delivery small {
+  display: block;
+  font-size: 9px;
+  line-height: 1.8;
+  color: #777782;
+  margin-top: 6px;
+}
+.sale-sheet .cf-summary-note {
+  font-size: 9px;
+  line-height: 1.9;
+  color: #82828e;
+  border-top: 1px solid #ffffff0d;
+  padding-top: 20px;
+  margin-top: 20px !important;
+}
+.sale-sheet .cf-summary-note svg {
+  display: inline;
+  vertical-align: middle;
+}
+.sale-sheet .cf-summary-compact {
+  padding: 23px;
+}
+.sale-sheet .cf-summary-compact .cf-price > strong {
+  font-size: 28px;
+}
+.sale-sheet .cf-summary-compact .cf-product h3 {
+  font-size: 17px;
+}
+.sale-sheet .cf-drawer-layer {
+  position: fixed;
+  z-index: 80;
+  inset: 0;
+  display: flex;
+  justify-content: flex-end;
+}
+.sale-sheet .cf-drawer-overlay {
+  position: absolute;
+  inset: 0;
+  background: #0009 !important;
+  backdrop-filter: blur(3px);
+}
+.sale-sheet .cf-drawer {
+  position: relative;
+  width: 560px;
+  max-width: 100%;
+  height: 100dvh;
+  background: #0d0d0e;
+  border-left: 1px solid #ffffff16;
+  display: flex;
+  flex-direction: column;
+  box-shadow: -10px 0 50px #0006;
+}
+.sale-sheet .cf-drawer > header {
+  padding: 24px 28px;
+  border-bottom: 1px solid #ffffff12;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.sale-sheet .cf-drawer > header .cf-eyebrow {
+  font-size: 8px;
+  margin-bottom: 6px;
+}
+.sale-sheet .cf-drawer h2 {
+  font-size: 19px;
+  letter-spacing: -0.4px;
+  font-weight: 500;
+}
+.sale-sheet .cf-drawer-body {
+  padding: 25px 28px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 19px;
+}
+.sale-sheet .cf-drawer-card {
+  border: 1px solid #ffffff12;
+  border-radius: 9px;
+  padding: 20px;
+  background: #111112;
+}
+.sale-sheet .cf-drawer-card p {
+  font-size: 11px;
+  color: #8e8e9a;
+  line-height: 1.8;
+  margin: 12px 0 14px;
+}
+.sale-sheet .cf-link-preview {
+  background: #080809;
+  border: 1px dashed #ffffff14;
+  padding: 12px;
+  font-family: monospace;
+  font-size: 10px;
+  color: #8c8c97;
+  border-radius: 5px;
+  margin-bottom: 13px;
+  overflow-wrap: anywhere;
+}
+.sale-sheet .cf-button-row {
+  display: flex;
+  gap: 9px;
+  flex-wrap: wrap;
+}
+.sale-sheet .cf-button-row .cf-button {
+  font-size: 10px !important;
+  min-height: 36px;
+  padding: 8px 11px;
+}
+.sale-sheet .cf-client-shell {
+  min-height: calc(100vh - 38px);
+  background:
+    radial-gradient(ellipse at 10% 8%, #ff721d06, transparent 35%), #090909;
+}
+.sale-sheet .cf-client-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1170px;
+  padding: 30px 30px;
+  margin: 0 auto;
+  border-bottom: 1px solid #ffffff0e;
+}
+.sale-sheet .cf-secure {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 10px;
+  color: #8c8c96;
+}
+.sale-sheet .cf-client-main {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 45px 30px 65px;
+}
+.sale-sheet .cf-client-intro {
+  margin-bottom: 34px;
+}
+.sale-sheet .cf-client-intro h1 {
+  font-size: 42px;
+  font-weight: 500;
+  letter-spacing: -1.7px;
+  line-height: 1.13;
+  margin: 15px 0 17px;
+}
+.sale-sheet .cf-client-intro h1 > span {
+  color: #ababaf;
+}
+.sale-sheet .cf-client-intro p {
+  font-size: 12px;
+  line-height: 1.9;
+  color: #8a8a96;
+}
+.sale-sheet .cf-client-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 350px;
+  gap: 44px;
+  align-items: start;
+}
+.sale-sheet .cf-client-grid > .cf-sticky {
+  margin-top: -170px;
+}
+.sale-sheet .cf-stepper {
+  display: flex;
+  align-items: center;
+  margin: 0 0 25px;
+  gap: 0;
+}
+.sale-sheet .cf-stepper > div {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #666670;
+  font-size: 9px;
+  flex: 1;
+  position: relative;
+}
+.sale-sheet .cf-stepper > div:not(:last-child):after {
+  content: "";
+  height: 1px;
+  background: #ffffff10;
+  flex: 1;
+  margin: 0 14px;
+}
+.sale-sheet .cf-stepper > div > span {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #ffffff14;
+  flex-shrink: 0;
+}
+.sale-sheet .cf-stepper b {
+  font-weight: 400;
+  white-space: nowrap;
+}
+.sale-sheet .cf-stepper .is-active {
+  color: #dedee3;
+}
+.sale-sheet .cf-stepper .is-active > span {
+  background: #ff721d12;
+  border-color: #ff721d66;
+  color: #ff873b;
+}
+.sale-sheet .cf-client-form .cf-panel {
+  padding: 25px;
+}
+.sale-sheet .cf-client-form .cf-panel h2 {
+  font-size: 17px;
+  letter-spacing: -0.5px;
+}
+.sale-sheet .cf-client-form .cf-panel-heading {
+  margin-bottom: 24px;
+}
+.sale-sheet .cf-client-form .cf-fields {
+  gap: 20px 18px;
+}
+.sale-sheet .cf-client-form .cf-field {
+  font-size: 11px;
+}
+.sale-sheet .cf-client-form .cf-field input,
+.sale-sheet .cf-client-form .cf-field select {
+  background: #0c0c0d;
+  font-size: 12px;
+  min-height: 45px;
+}
+.sale-sheet .cf-client-form .cf-field input:focus,
+.sale-sheet .cf-client-form .cf-field select:focus {
+  border-color: #ff721d88;
+}
+.sale-sheet .cf-client-form .cf-field input[aria-invalid="true"]:focus,
+.sale-sheet .cf-client-form .cf-field select[aria-invalid="true"]:focus {
+  border-color: #ff8888;
+}
+.sale-sheet .cf-cep-status {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin-top: 18px;
+  padding: 11px 12px;
+  border: 1px solid #ffffff12;
+  border-radius: 7px;
+  background: #ffffff04;
+  color: #aaaab4;
+  font-size: 10px;
+  line-height: 1.6;
+}
+.sale-sheet .cf-cep-status.is-found {
+  border-color: #76c69b25;
+  background: #76c69b08;
+  color: #a4c9b0;
+}
+.sale-sheet .cf-cep-status.is-not-found,
+.sale-sheet .cf-cep-status.is-error {
+  border-color: #ff873b29;
+  background: #ff721d08;
+  color: #ddb18f;
+}
+.sale-sheet .cf-cep-status button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  color: #f0b489 !important;
+  font-size: 10px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.sale-sheet .cf-client-form .cf-form-actions {
+  margin-top: 24px;
+}
+.sale-sheet .cf-private {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 9px;
+  color: #73737d;
+}
+.sale-sheet .cf-after {
+  padding: 27px 11px;
+}
+.sale-sheet .cf-after > span {
+  display: block;
+  letter-spacing: 1.6px;
+  font-size: 8px;
+  color: #777781;
+  margin-bottom: 17px;
+}
+.sale-sheet .cf-after p {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  color: #85858f;
+  font-size: 10px;
+  margin-bottom: 11px;
+}
+.sale-sheet .cf-after b {
+  font-weight: 400;
+  font-size: 8px;
+  color: #a28d7a;
+  letter-spacing: 1px;
+}
+.sale-sheet .cf-client-footer {
+  max-width: 1110px;
+  margin: 0 auto;
+  padding: 25px 30px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  border-top: 1px solid #ffffff0c;
+  color: #5f5f6b;
+  font-size: 9px;
+}
+.sale-sheet .cf-review {
+  margin: 0 0 24px;
+  display: grid;
+  gap: 18px;
+}
+.sale-sheet .cf-review > div {
+  display: grid;
+  grid-template-columns: 90px minmax(0, 1fr);
+  gap: 15px;
+  font-size: 12px;
+  line-height: 1.8;
+}
+.sale-sheet .cf-review dt {
+  color: #777784;
+}
+.sale-sheet .cf-review dd {
+  color: #d3d3db;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.sale-sheet .cf-review + .cf-note {
+  margin-bottom: 0;
+}
+.sale-sheet .cf-customer-success {
+  max-width: 520px;
+  padding: 60px 25px 80px;
+  text-align: center;
+  margin: 0 auto;
+}
+.sale-sheet .cf-success-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #24392d44;
+  border: 1px solid #6fba8f44;
+  color: #8abf9f;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  margin: 0 auto 24px;
+}
+.sale-sheet .cf-customer-success h1 {
+  font-size: 37px;
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: -1.5px;
+  margin: 22px 0 18px;
+}
+.sale-sheet .cf-customer-success > p {
+  font-size: 12px;
+  color: #9595a1;
+  line-height: 1.9;
+}
+.sale-sheet .cf-success-steps {
+  display: grid;
+  gap: 17px;
+  border: 1px solid #ffffff14;
+  border-radius: 10px;
+  background: #111112;
+  margin: 30px 0 20px;
+  padding: 23px;
+  text-align: left;
+}
+.sale-sheet .cf-success-steps > div {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  font-size: 11px;
+  color: #adadb7;
+}
+.sale-sheet .cf-success-steps svg {
+  color: #89ad96;
+}
+.sale-sheet .cf-customer-success .cf-note {
+  text-align: left;
+  margin-bottom: 24px;
+}
+.sale-sheet .cf-customer-success > small {
+  display: block;
+  margin-top: 22px;
+  font-size: 9px;
+  color: #6f6f7b;
+}
+.sale-sheet .cf-expired {
+  max-width: 620px;
+  padding: 70px 25px;
+  text-align: center;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+.sale-sheet .cf-expired h1 {
+  font-size: 28px;
+}
+.sale-sheet .cf-expired p {
+  font-size: 13px;
+  color: #94949f;
+  line-height: 1.9;
+}
+@media (min-width: 1600px) {
+  .sale-sheet .cf-page-heading {
+    margin-bottom: 38px;
+  }
+}
+@media (max-width: 1200px) {
+  .sale-sheet .cf-editor-grid {
+    grid-template-columns: minmax(0, 1fr) 280px;
+    gap: 20px;
+  }
+  .sale-sheet .cf-list-toolbar {
+    flex-wrap: wrap;
+  }
+  .sale-sheet .cf-table td,
+  .sale-sheet .cf-table th {
+    padding-left: 17px;
+    padding-right: 17px;
+  }
+  .sale-sheet .cf-client-grid {
+    gap: 28px;
+    grid-template-columns: minmax(0, 1fr) 320px;
+  }
+}
+@media (max-width: 740px) {
+  .sale-sheet .cf-page-heading {
+    align-items: flex-start;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+  .sale-sheet .cf-page-heading h1 {
+    font-size: 29px;
+  }
+  .sale-sheet .cf-page-heading p {
+    font-size: 11px;
+    line-height: 1.8;
+  }
+  .sale-sheet .cf-eyebrow {
+    font-size: 8px;
+    letter-spacing: 1.4px;
+  }
+  .sale-sheet .cf-page-heading > .cf-button {
+    min-height: 38px;
+    font-size: 11px !important;
+  }
+  .sale-sheet .cf-list-toolbar {
+    padding: 13px 12px;
+    gap: 14px;
+  }
+  .sale-sheet .cf-search {
+    max-width: 100%;
+    width: 100%;
+  }
+  .sale-sheet .cf-table th {
+    font-size: 7px;
+    padding: 13px 15px;
+  }
+  .sale-sheet .cf-table td {
+    padding: 19px 15px;
+    font-size: 10px;
+  }
+  .sale-sheet .cf-table td > small {
+    font-size: 8px;
+  }
+  .sale-sheet .cf-table td:nth-child(4),
+  .sale-sheet .cf-table th:nth-child(4) {
+    display: none;
+  }
+  .sale-sheet .cf-table {
+    white-space: normal;
+    min-width: 445px;
+  }
+  .sale-sheet .cf-table .cf-row-title {
+    font-size: 11px !important;
+  }
+  .sale-sheet .cf-editor-grid {
+    display: flex;
+    flex-direction: column;
+  }
+  .sale-sheet .cf-editor-grid > .cf-sticky {
+    position: static;
+    order: -1;
+    width: 100%;
+  }
+  .sale-sheet .cf-editor-grid .cf-stack {
+    width: 100%;
+  }
+  .sale-sheet .cf-editor-grid .cf-summary {
+    display: none;
+  }
+  .sale-sheet .cf-editor-grid .cf-side-label,
+  .sale-sheet .cf-editor-grid > .cf-sticky > .cf-help {
+    display: none;
+  }
+  .sale-sheet .cf-panel {
+    padding: 20px;
+  }
+  .sale-sheet .cf-fields {
+    gap: 16px 12px;
+  }
+  .sale-sheet .cf-field {
+    font-size: 11px;
+  }
+  .sale-sheet .cf-field input,
+  .sale-sheet .cf-field select {
+    font-size: 16px;
+    padding: 10px;
+    min-height: 44px;
+  }
+  .sale-sheet .cf-form-actions .cf-button {
+    font-size: 10px !important;
+    gap: 6px;
+    padding: 11px 12px;
+  }
+  .sale-sheet .cf-form-actions {
+    gap: 8px;
+  }
+  .sale-sheet .cf-check {
+    font-size: 11px;
+  }
+  .sale-sheet .cf-drawer > header {
+    padding: 22px;
+  }
+  .sale-sheet .cf-drawer-body {
+    padding: 22px;
+    gap: 18px;
+  }
+  .sale-sheet .cf-drawer {
+    width: 100%;
+  }
+  .sale-sheet .cf-drawer-card {
+    padding: 18px;
+  }
+  .sale-sheet .cf-client-header {
+    padding: 23px 20px;
+  }
+  .sale-sheet .cf-client-header .cf-brand {
+    font-size: 20px;
+  }
+  .sale-sheet .cf-client-header .cf-brand-caption,
+  .sale-sheet .cf-client-header .cf-brand-divider {
+    display: none;
+  }
+  .sale-sheet .cf-secure {
+    font-size: 9px;
+  }
+  .sale-sheet .cf-client-main {
+    padding: 33px 20px 45px;
+  }
+  .sale-sheet .cf-client-intro {
+    margin-bottom: 25px;
+  }
+  .sale-sheet .cf-client-intro h1 {
+    font-size: 36px;
+    letter-spacing: -1.5px;
+    margin-top: 12px;
+  }
+  .sale-sheet .cf-client-intro p {
+    font-size: 12px;
+  }
+  .sale-sheet .cf-client-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+  }
+  .sale-sheet .cf-client-grid > div {
+    width: 100%;
+  }
+  .sale-sheet .cf-client-grid > .cf-sticky {
+    margin-top: 0;
+    position: static;
+    width: 100%;
+    order: -1;
+  }
+  .sale-sheet .cf-client-grid > .cf-sticky .cf-after {
+    display: none;
+  }
+  .sale-sheet .cf-summary {
+    padding: 23px;
+  }
+  .sale-sheet .cf-client-grid .cf-summary-top {
+    padding-bottom: 14px;
+  }
+  .sale-sheet .cf-client-grid .cf-product {
+    padding: 20px 0;
+  }
+  .sale-sheet .cf-client-grid .cf-product h3 {
+    font-size: 20px;
+  }
+  .sale-sheet .cf-client-grid .cf-trade-summary {
+    margin-bottom: 20px;
+  }
+  .sale-sheet .cf-client-grid .cf-price > strong {
+    font-size: 32px;
+  }
+  .sale-sheet .cf-client-grid .cf-money-lines {
+    margin-top: 18px;
+  }
+  .sale-sheet .cf-client-grid .cf-delivery {
+    margin-top: 19px;
+    padding-top: 17px;
+  }
+  .sale-sheet .cf-summary-note {
+    font-size: 10px;
+  }
+  .sale-sheet .cf-stepper {
+    margin-bottom: 22px;
+  }
+  .sale-sheet .cf-stepper > div {
+    font-size: 10px;
+    gap: 7px;
+  }
+  .sale-sheet .cf-stepper > div:not(:last-child):after {
+    margin: 0 8px;
+  }
+  .sale-sheet .cf-stepper > div > span {
+    width: 27px;
+    height: 27px;
+  }
+  .sale-sheet .cf-client-form .cf-panel {
+    padding: 22px 18px;
+  }
+  .sale-sheet .cf-client-form .cf-fields {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 19px;
+  }
+  .sale-sheet .cf-client-form .cf-field {
+    font-size: 12px;
+  }
+  .sale-sheet .cf-client-form .cf-field input,
+  .sale-sheet .cf-client-form .cf-field select {
+    font-size: 16px;
+    min-height: 46px;
+  }
+  .sale-sheet .cf-client-form .cf-field small {
+    font-size: 10px;
+  }
+  .sale-sheet .cf-client-form .cf-panel-heading p {
+    font-size: 11px;
+  }
+  .sale-sheet .cf-client-form .cf-button {
+    font-size: 12px !important;
+  }
+  .sale-sheet .cf-client-form .cf-form-actions {
+    margin-top: 22px;
+  }
+  .sale-sheet .cf-private {
+    font-size: 8px;
+    max-width: 115px;
+  }
+  .sale-sheet .cf-client-footer {
+    padding: 23px 20px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    font-size: 9px;
+  }
+  .sale-sheet .cf-client-intro .cf-desktop {
+    display: none;
+  }
+  .sale-sheet .cf-review > div {
+    grid-template-columns: 68px minmax(0, 1fr);
+    font-size: 11px;
+  }
+  .sale-sheet .cf-customer-success {
+    padding: 45px 25px;
+  }
+  .sale-sheet .cf-customer-success h1 {
+    font-size: 33px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sale-sheet * {
+    scroll-behavior: auto !important;
+    transition: none !important;
+    animation: none !important;
+  }
+}
+.sale-sheet .cf-table-wrap {
+  position: relative;
+}
+.sale-sheet .cf-items-editor {
+  display: grid;
+  gap: 16px;
+  margin-top: 20px;
+  min-width: 0;
+}
+.sale-sheet .cf-catalog-info {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 9px;
+  color: #c5c0bb;
+  font-size: 12px;
+}
+.sale-sheet .cf-catalog-info svg {
+  color: #ff781e;
+  flex-shrink: 0;
+}
+.sale-sheet .cf-catalog-info small {
+  color: #8c8279;
+  border: 1px solid #32261e;
+  border-radius: 5px;
+  padding: 4px 7px;
+  font-size: 10px;
+}
+.sale-sheet .cf-catalog-search {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 14px;
+  border: 1px solid #2d2926;
+  background: #0c0b0a;
+  border-radius: 8px;
+  color: #90857c;
+}
+.sale-sheet .cf-catalog-search:focus-within {
+  border-color: #ff781e;
+}
+.sale-sheet .cf-catalog-search input {
+  width: 100%;
+  min-width: 0;
+  background: none;
+  border: 0;
+  padding: 13px 0;
+  color: #f1ede9;
+  outline: none;
+  font: inherit;
+  font-size: 13px;
+}
+.sale-sheet .cf-item-editor {
+  border: 1px solid #2b2825;
+  border-radius: 10px;
+  background: #100e0d;
+  padding: 16px;
+  min-width: 0;
+}
+.sale-sheet .cf-item-editor-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 15px;
+  gap: 12px;
+}
+.sale-sheet .cf-item-editor-top > span {
+  font-size: 10px;
+  letter-spacing: 1.4px;
+  font-weight: 600;
+  color: #e9a06c;
+}
+.sale-sheet .cf-item-remove {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px;
+  color: #b99c8c;
+  font-size: 11px;
+}
+.sale-sheet .cf-item-remove:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+.sale-sheet .cf-item-remove:hover:not(:disabled) {
+  color: #ff9b70;
+}
+.sale-sheet .cf-item-editor-content {
+  display: grid;
+  grid-template-columns: 86px minmax(0, 1fr);
+  gap: 18px;
+  align-items: start;
+}
+.sale-sheet .cf-product-photo {
+  display: inline-flex;
+  width: 72px;
+  height: 72px;
+  flex: 0 0 72px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9px;
+  background: #f5f5f7;
+  overflow: hidden;
+}
+.sale-sheet .cf-product-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.sale-sheet .cf-photo-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  color: #7d7267;
+}
+.sale-sheet .cf-photo-empty small {
+  font-size: 9px;
+}
+.sale-sheet .cf-item-editor-content > .cf-product-photo {
+  width: 86px;
+  height: 86px;
+}
+.sale-sheet .cf-item-editor-content .cf-field:first-child {
+  grid-column: 1 / -1;
+}
+.sale-sheet .cf-item-editor .cf-field select {
+  width: 100%;
+  min-width: 0;
+}
+.sale-sheet .cf-item-footnote {
+  margin: 12px 0 0;
+  color: #91847b;
+  font-size: 10px;
+  line-height: 1.6;
+}
+.sale-sheet .cf-items-summary-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #bdb5ae;
+  font-size: 11px;
+  padding-top: 14px;
+  gap: 12px;
+}
+.sale-sheet .cf-items-summary-heading small {
+  color: #91847b;
+}
+.sale-sheet .cf-product-line {
+  gap: 13px;
+  padding: 17px 0 !important;
+  margin: 0 !important;
+  border-bottom: 1px solid #2a2622;
+}
+.sale-sheet .cf-product-line > div {
+  min-width: 0;
+}
+.sale-sheet .cf-product-line h3 {
+  font-size: 15px !important;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+.sale-sheet .cf-product-line p {
+  font-size: 11px !important;
+}
+.sale-sheet .cf-product-line small {
+  font-size: 10px;
+}
+@media (max-width: 600px) {
+  .sale-sheet .cf-item-editor-content {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 13px;
+  }
+  .sale-sheet .cf-item-editor-content > .cf-product-photo {
+    width: 72px;
+    height: 72px;
+  }
+  .sale-sheet .cf-item-editor {
+    padding: 14px;
+  }
+  .sale-sheet .cf-product-photo {
+    width: 60px;
+    height: 60px;
+    flex-basis: 60px;
+  }
+}
+.sale-sheet .cf-health-blocker {
+  max-width: 570px;
+  margin: 72px auto;
+  padding: 38px 30px;
+  border: 1px solid #ff721d2e;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #ff721d0d, #111112);
+  text-align: center;
+}
+.sale-sheet .cf-health-blocker > svg {
+  color: #ef9a59;
+  margin-bottom: 18px;
+}
+.sale-sheet .cf-health-blocker .cf-eyebrow {
+  margin-bottom: 9px;
+}
+.sale-sheet .cf-health-blocker h1 {
+  margin-bottom: 12px;
+  font-size: 26px;
+  font-weight: 500;
+  letter-spacing: -0.8px;
+}
+.sale-sheet .cf-health-blocker p {
+  max-width: 435px;
+  margin: 0 auto 22px;
+  color: #a5a0a0;
+  font-size: 12px;
+  line-height: 1.8;
+}
+.sale-sheet .cf-client-mode-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+  max-width: 720px;
+  margin: -13px 0 30px;
+  padding: 14px 16px;
+  border: 1px solid #f0aa5a80;
+  border-radius: 8px;
+  background: #f3c38e;
+  color: #45260f;
+}
+.sale-sheet .cf-client-mode-notice > svg {
+  color: #a85111;
+  margin-top: 2px;
+}
+.sale-sheet .cf-client-mode-notice strong {
+  display: block;
+  margin-bottom: 3px;
+  font-size: 11px;
+}
+.sale-sheet .cf-client-mode-notice p {
+  color: #643d1d;
+  font-size: 11px;
+  line-height: 1.7;
+}
+.sale-sheet .cf-uncertain-note {
+  display: block;
+  margin: 0 0 13px;
+  padding: 10px 11px;
+  border-radius: 6px;
+  border: 1px solid #f0aa5a3b;
+  background: #ff721d0b;
+  color: #d5ab89;
+  font-size: 10px;
+  line-height: 1.65;
+}
+.sale-sheet .cf-drawer-card .cf-uncertain-note {
+  margin-top: 11px;
+  color: #ebb2b2;
+  border-color: #ff888833;
+  background: #ff888809;
+}
+@media (max-width: 740px) {
+  .sale-sheet .cf-health-blocker {
+    margin: 48px 20px;
+    padding: 30px 20px;
+  }
+  .sale-sheet .cf-health-blocker h1 {
+    font-size: 23px;
+  }
+  .sale-sheet .cf-client-mode-notice {
+    margin: -5px 0 25px;
+  }
+}
+
+.sale-sheet-admin {
+  min-height: 0;
+}
+.sale-sheet .cf-form-fieldset {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  min-width: 0;
+}
+.sale-sheet .cf-form-fieldset:disabled {
+  opacity: 0.75;
+}
+.sale-sheet .cf-drawer-overlay {
+  position: fixed;
+}
+.sale-sheet .cf-client-shell {
+  min-height: 100vh;
+}
+.sale-sheet .cf-field input:read-only {
+  color: #bbb;
+}
+
+/* Portal root has both classes on the same element (not a descendant). */
+.sale-sheet.cf-drawer-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: flex;
+  justify-content: flex-end;
+  min-height: 0;
+}
+.sale-sheet .cf-product-line small {
+  display: block;
+}
