@@ -1,5 +1,5 @@
 {
   "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }],
   "installCommand": "npm install",
-  "buildCommand": "npm run build"
+  "buildCommand": "VITE_FICHA_VENDA_ENABLED=false npm run build"
 }
