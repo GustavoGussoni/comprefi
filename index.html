@@ -1,64 +1,68 @@
 <!doctype html>
 <html style="background-color: #000" lang="pt-BR">
   <head>
-    <!-- Meta Pixel Code -->
-    <script>
-      !(function (f, b, e, v, n, t, s) {
-        if (f.fbq) return;
-        n = f.fbq = function () {
-          n.callMethod
-            ? n.callMethod.apply(n, arguments)
-            : n.queue.push(arguments);
-        };
-        if (!f._fbq) f._fbq = n;
-        n.push = n;
-        n.loaded = !0;
-        n.version = "2.0";
-        n.queue = [];
-        t = b.createElement(e);
-        t.async = !0;
-        t.src = v;
-        s = b.getElementsByTagName(e)[0];
-        s.parentNode.insertBefore(t, s);
-      })(
-        window,
-        document,
-        "script",
-        "https://connect.facebook.net/en_US/fbevents.js",
-      );
-      fbq("init", "1132548938964717");
-      fbq("track", "PageView");
-    </script>
-
-    <!-- End Meta Pixel Code -->
     <meta charset="UTF-8" />
-
+    <meta name="referrer" content="no-referrer" />
+    <!-- Private sale links must not initialize Pixel, including before React. -->
+    <script>
+      (function () {
+        function privatePath(path) {
+          return /^\/ficha-venda(?:\/|$)/i.test(path);
+        }
+        var privateDocument = privatePath(window.location.pathname);
+        // Cross-boundary SPA navigation becomes a fresh document. A previously
+        // loaded marketing SDK must never observe the private link location.
+        ["pushState", "replaceState"].forEach(function (method) {
+          var original = window.history[method];
+          window.history[method] = function (state, title, url) {
+            if (url != null) {
+              var target = new URL(url, window.location.href);
+              if (target.origin === window.location.origin &&
+                  privatePath(target.pathname) !== privateDocument) {
+                if (method === "replaceState") window.location.replace(target.href);
+                else window.location.assign(target.href);
+                return;
+              }
+            }
+            return original.apply(this, arguments);
+          };
+        });
+        // The dedicated staging origin must never send test navigation to marketing.
+        if (privateDocument ||
+            window.location.hostname === "ficha-web-staging-staging.up.railway.app") return;
+        !(function (f, b, e, v, n, t, s) {
+          if (f.fbq) return;
+          n = f.fbq = function () {
+            n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments);
+          };
+          if (!f._fbq) f._fbq = n;
+          n.push = n;
+          n.loaded = !0;
+          n.version = "2.0";
+          n.queue = [];
+          t = b.createElement(e);
+          t.async = !0;
+          t.src = v;
+          s = b.getElementsByTagName(e)[0];
+          s.parentNode.insertBefore(t, s);
+        })(window, document, "script", "https://connect.facebook.net/en_US/fbevents.js");
+        fbq("init", "1132548938964717");
+        fbq("track", "PageView");
+      })();
+    </script>
+    <!-- No noscript tracking: the React form requires JS and private URLs
+         must remain untracked even when browser scripting is disabled. -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#000" />
     <meta name="msapplication-navbutton-color" content="#000" />
-
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black" />
     <title>CompreFi - seu setup Apple com tranquilidade.</title>
     <link rel="icon" type="image/png" href="/comprefi-favicon.webp" />
-
-    <link
-      rel="apple-touch-icon"
-      sizes="180x180"
-      href="/comprefi-favicon.webp"
-    />
-
+    <link rel="apple-touch-icon" sizes="180x180" href="/comprefi-favicon.webp" />
     <link rel="manifest" href="/comprefi-favicon.webp" />
   </head>
   <body>
-    <!-- Meta Pixel (noscript fallback) -->
-    <noscript
-      ><img
-        height="1"
-        width="1"
-        style="display: none"
-        src="https://www.facebook.com/tr?id=1132548938964717&ev=PageView&noscript=1"
-    /></noscript>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

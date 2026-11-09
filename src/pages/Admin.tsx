@@ -4,6 +4,7 @@ import {
   ChevronDown,
   CreditCard,
   ExternalLink,
+  FileText,
   LayoutDashboard,
   LogOut,
   Menu,
@@ -22,6 +23,8 @@ import ValorTrocaTable from "@/components/admin/ValorTrocaTable";
 import { useAdminAuth } from "@/contexts/AdminAuthContext";
 import { canManageTradeValues } from "@/lib/tradeValueAccess";
 import type { UserRole } from "@/services/api";
+import SaleSheetsAdmin from "@/features/sale-sheet/SaleSheetsAdmin";
+import { SALE_SHEET_ENABLED } from "@/features/sale-sheet/config";
 
 interface NavigationItem {
   path: string;
@@ -34,6 +37,7 @@ interface NavigationItem {
 const navigation: NavigationItem[] = [
   { path: "/admin", label: "Visão geral", icon: LayoutDashboard, roles: ["ADMIN", "SALES"] },
   { path: "/admin/simulacoes", label: "Simulações e CRM", icon: UserRoundSearch, roles: ["ADMIN", "SALES"] },
+  { path: "/admin/fichas", label: "Fichas de venda", icon: FileText, roles: ["ADMIN", "SALES"] },
   { path: "/admin/catalogo", label: "Catálogo", icon: Package, roles: ["ADMIN", "SALES"] },
   { path: "/admin/valores-troca", label: "Valores de troca", icon: ArrowLeftRight, roles: ["ADMIN", "SALES"] },
   { path: "/admin/calculadora", label: "Calculadora de preços", icon: Calculator, roles: ["ADMIN", "SALES"], section: "Ferramentas" },
@@ -60,6 +64,7 @@ const Admin: React.FC = () => {
   const activeItem = navigation.find((item) => item.path === activePath) || navigation[0];
   const isAllowed = (item: NavigationItem) =>
     item.roles.includes(user.role) &&
+    (item.path !== "/admin/fichas" || SALE_SHEET_ENABLED) &&
     (item.path !== "/admin/valores-troca" || canManageTradeValues(user));
   const canAccess = isAllowed(activeItem);
   const visibleNavigation = navigation.filter(isAllowed);
@@ -74,6 +79,8 @@ const Admin: React.FC = () => {
     if (!canAccess) return <AccessDenied />;
 
     switch (activePath) {
+      case "/admin/fichas":
+        return <SaleSheetsAdmin />;
       case "/admin/simulacoes":
         return <SimulationsCrm />;
       case "/admin/catalogo":
