@@ -37,7 +37,7 @@ interface NavigationItem {
 const navigation: NavigationItem[] = [
   { path: "/admin", label: "Visão geral", icon: LayoutDashboard, roles: ["ADMIN", "SALES"] },
   { path: "/admin/simulacoes", label: "Simulações e CRM", icon: UserRoundSearch, roles: ["ADMIN", "SALES"] },
-  { path: "/admin/fichas", label: "Fichas de venda", icon: FileText, roles: ["ADMIN", "SALES"] },
+  { path: "/admin/fichas", label: "Pedidos", icon: FileText, roles: ["ADMIN", "SALES"] },
   { path: "/admin/catalogo", label: "Catálogo", icon: Package, roles: ["ADMIN", "SALES"] },
   { path: "/admin/valores-troca", label: "Valores de troca", icon: ArrowLeftRight, roles: ["ADMIN", "SALES"] },
   { path: "/admin/calculadora", label: "Calculadora de preços", icon: Calculator, roles: ["ADMIN", "SALES"], section: "Ferramentas" },

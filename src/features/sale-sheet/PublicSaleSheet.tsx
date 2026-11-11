@@ -24,7 +24,7 @@ export default function PublicSaleSheet() {
         setHealth(state);
         if (state.state !== "ready") {
           setError(
-            "A ficha de venda ainda não está disponível. Solicite orientação ao vendedor.",
+            "Não foi possível abrir seu cadastro. Tente novamente ou fale com seu vendedor.",
           );
           return;
         }
@@ -41,20 +41,20 @@ export default function PublicSaleSheet() {
   return (
     <div className="sale-sheet sale-sheet-public">
       <Helmet>
-        <title>Ficha de venda · CompreFi</title>
+        <title>Seu cadastro · CompreFi</title>
         <meta name="robots" content="noindex, nofollow, noarchive" />
         <meta name="referrer" content="no-referrer" />
       </Helmet>
       {loading ? (
         <main className="cf-health-blocker" role="status">
-          <h1>Carregando ficha…</h1>
+          <h1>Carregando seu cadastro…</h1>
           <p>Conferindo disponibilidade do link.</p>
         </main>
       ) : error || !sheet || health.state !== "ready" ? (
         <main className="cf-health-blocker">
-          <span className="cf-eyebrow">FICHA DE VENDA</span>
-          <h1>Ficha indisponível</h1>
-          <p role="alert">{error || "Solicite um novo link ao vendedor."}</p>
+          <span className="cf-eyebrow">SEU CADASTRO COMPREFI</span>
+          <h1>Não foi possível abrir o cadastro</h1>
+          <p role="alert">{error || "Peça um novo link ao seu vendedor."}</p>
         </main>
       ) : (
         <CustomerForm

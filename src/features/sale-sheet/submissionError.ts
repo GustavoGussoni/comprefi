@@ -1,5 +1,5 @@
 export const DELIVERY_DEADLINE_EXPIRED_MESSAGE =
-  "O prazo máximo de entrega desta ficha venceu. Entre em contato com a CompreFi para revisar a negociação e receber uma nova ficha.";
+  "O prazo de entrega combinado para esta compra venceu. Fale com a CompreFi para revisar o pedido e receber um novo link.";
 
 /** Only known error codes produce customer-facing copy; raw server messages are never shown. */
 export function publicSubmissionValidationMessage(

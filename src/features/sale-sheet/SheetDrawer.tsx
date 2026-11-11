@@ -1,10 +1,34 @@
 import * as Dialog from "@radix-ui/react-dialog";
 import { useRef, useState } from "react";
-import { Download, X } from "lucide-react";
-import { saleSheetApi, safeError } from "./api";
+import { Archive, ArchiveRestore, Download, Pencil, X } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { errorStatus, saleSheetApi, safeError } from "./api";
 import type { CrmDeliveryMode, SheetSnapshot } from "./model";
+import {
+  canArchiveSheet,
+  canEditSheet,
+  canUnarchiveSheet,
+  sheetStateLabel,
+} from "./lifecycle";
 import { taskLabel } from "./taskLabel";
 import { Badge, Button, Summary } from "./ui";
+
+type Confirmation = {
+  title: string;
+  description: string;
+  label: string;
+  dangerous?: boolean;
+  run: () => Promise<void>;
+};
 
 export default function SheetDrawer({
   sheet,
@@ -12,6 +36,7 @@ export default function SheetDrawer({
   isAdmin,
   crmMode,
   onUpdate,
+  onEdit,
   onClose,
 }: {
   sheet: SheetSnapshot;
@@ -19,16 +44,27 @@ export default function SheetDrawer({
   isAdmin: boolean;
   crmMode: CrmDeliveryMode;
   onUpdate: (sheet: SheetSnapshot, token?: string) => void;
+  onEdit: () => void;
   onClose: () => void;
 }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
+  const [confirmation, setConfirmation] = useState<Confirmation | null>(null);
+  const [confirmationError, setConfirmationError] = useState("");
+  const confirmationTrigger = useRef<HTMLButtonElement | null>(null);
+  const confirmationBack = useRef<HTMLButtonElement | null>(null);
+  const confirmationContent = useRef<HTMLDivElement | null>(null);
+  const drawerClose = useRef<HTMLButtonElement | null>(null);
   const actionLock = useRef(false);
+  const editable = canEditSheet(sheet);
   const link = rawToken
     ? `${window.location.origin}/ficha-venda/${encodeURIComponent(rawToken)}`
     : "";
-  const perform = async (action: () => Promise<void>) => {
+  const perform = async (
+    action: () => Promise<void>,
+    onFailure?: (caught: unknown) => void,
+  ) => {
     if (actionLock.current) return;
     actionLock.current = true;
     setBusy(true);
@@ -37,29 +73,58 @@ export default function SheetDrawer({
     try {
       await action();
     } catch (caught) {
-      setError(safeError(caught));
+      if (onFailure) onFailure(caught);
+      else setError(safeError(caught));
     } finally {
       actionLock.current = false;
       setBusy(false);
     }
+  };
+  const requestConfirmation = (
+    trigger: HTMLButtonElement,
+    details: Confirmation,
+  ) => {
+    if (actionLock.current || confirmation) return;
+    confirmationTrigger.current = trigger;
+    setConfirmationError("");
+    setConfirmation(details);
+  };
+  const confirmAction = () => {
+    if (!confirmation || confirmationError || actionLock.current) return;
+    confirmationContent.current?.focus();
+    void perform(
+      async () => {
+        await confirmation.run();
+        setConfirmation(null);
+      },
+      (caught) => {
+        const status = errorStatus(caught);
+        const message =
+          status && status >= 400 && status < 500
+            ? safeError(caught)
+            : "Não foi possível confirmar o resultado desta ação. Volte e atualize o pedido antes de tentar novamente.";
+        setConfirmationError(message);
+        setError(message);
+      },
+    );
   };
   const download = async () => {
     const blob = await saleSheetApi.download(sheet.id);
     const url = URL.createObjectURL(blob);
     const anchor = document.createElement("a");
     anchor.href = url;
-    anchor.download = `ficha-${sheet.id}.pdf`;
+    anchor.download = `contrato-${sheet.reference}.pdf`;
     document.body.appendChild(anchor);
     anchor.click();
     anchor.remove();
     window.setTimeout(() => URL.revokeObjectURL(url), 1000);
-    setNotice("Download do PDF completo iniciado.");
+    setNotice("Download do contrato iniciado. O PDF está sem assinatura.");
   };
   return (
     <Dialog.Root
       open
       onOpenChange={(open) => {
-        if (!open && !actionLock.current) onClose();
+        if (!open && !actionLock.current && !confirmation) onClose();
       }}
     >
       <Dialog.Portal>
@@ -69,24 +134,25 @@ export default function SheetDrawer({
             className="cf-drawer"
             aria-busy={busy}
             onEscapeKeyDown={(event) => {
-              if (actionLock.current) event.preventDefault();
+              if (actionLock.current || confirmation) event.preventDefault();
             }}
             onPointerDownOutside={(event) => {
-              if (actionLock.current) event.preventDefault();
+              if (actionLock.current || confirmation) event.preventDefault();
             }}
           >
             <header>
               <div>
                 <span className="cf-eyebrow">
-                  FICHA DE VENDA · VERSÃO {sheet.revision}
+                  PEDIDO · VERSÃO {sheet.revision}
                 </span>
                 <Dialog.Title>{sheet.reference}</Dialog.Title>
                 <Dialog.Description className="cf-muted">
-                  Detalhes privados da negociação e do cadastro.
+                  Negociação, cadastro e próximos passos.
                 </Dialog.Description>
               </div>
               <Dialog.Close
                 className="cf-icon-button"
+                ref={drawerClose}
                 disabled={busy}
                 aria-label="Fechar detalhes"
               >
@@ -104,101 +170,204 @@ export default function SheetDrawer({
                   {notice}
                 </p>
               )}
-              <Badge tone={sheet.submittedAt ? "green" : "orange"}>
-                {sheet.submittedAt
-                  ? "Cadastro recebido"
-                  : "Aguardando cadastro"}
+              <Badge
+                tone={
+                  sheet.archivedAt
+                    ? "neutral"
+                    : sheet.revoked
+                      ? "red"
+                      : sheet.submittedAt
+                        ? "green"
+                        : "orange"
+                }
+              >
+                {sheetStateLabel(sheet)}
               </Badge>
-              <Summary sale={sheet} showSku />
               <section className="cf-drawer-card">
-                <h3>Link do cliente</h3>
-                <p>
-                  Válido até{" "}
-                  {new Date(sheet.linkExpiresAt).toLocaleString("pt-BR")}. O
-                  link bruto aparece somente ao gerar ou renovar, nunca na
-                  lista.
-                </p>
-                {link && !sheet.revoked && !sheet.submittedAt && (
+                <h3>Gerenciar pedido</h3>
+                {editable ? (
                   <>
-                    <div className="cf-link-preview">{link}</div>
+                    <p>
+                      Errou algum detalhe? Corrija antes do cliente enviar o
+                      cadastro. Ao salvar, você recebe um novo link.
+                    </p>
                     <div className="cf-button-row">
+                      <Button disabled={busy} onClick={onEdit}>
+                        <Pencil size={15} /> Editar pedido
+                      </Button>
                       <Button
                         secondary
+                        className="cf-button-danger"
                         disabled={busy}
-                        onClick={() =>
-                          void perform(async () => {
-                            await navigator.clipboard.writeText(link);
-                            setNotice(
-                              "Link copiado. Compartilhe apenas com o cliente.",
-                            );
+                        onClick={(event) =>
+                          requestConfirmation(event.currentTarget, {
+                            title: "Cancelar pedido?",
+                            description:
+                              "O link do cliente deixará de funcionar. O histórico será mantido; nenhum negócio será cancelado no CRM.",
+                            label: "Cancelar pedido",
+                            dangerous: true,
+                            run: async () => {
+                              onUpdate(
+                                await saleSheetApi.cancel(
+                                  sheet.id,
+                                  sheet.revision,
+                                ),
+                                "",
+                              );
+                              setNotice(
+                                "Pedido cancelado. Ele está na área Cancelados.",
+                              );
+                            },
                           })
                         }
                       >
-                        Copiar link
+                        Cancelar pedido
                       </Button>
-                      <a
-                        className="cf-button cf-button-secondary"
-                        href={link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        referrerPolicy="no-referrer"
-                        aria-disabled={busy}
-                        onClick={(event) => {
-                          if (actionLock.current) event.preventDefault();
-                        }}
-                      >
-                        Abrir ficha
-                      </a>
                     </div>
                   </>
-                )}
-                {sheet.revoked ? (
-                  <p>Link encerrado.</p>
                 ) : (
-                  !sheet.submittedAt && (
-                    <div className="cf-button-row">
-                      <Button
-                        secondary
-                        disabled={busy}
-                        onClick={() => {
-                          if (
-                            window.confirm(
-                              "Renovar invalida o link anterior. Continuar?",
-                            )
-                          )
-                            void perform(async () => {
-                              const result = await saleSheetApi.rotate(
-                                sheet.id,
-                              );
-                              onUpdate(result.sheet, result.token);
-                            });
-                        }}
-                      >
-                        Renovar link
-                      </Button>
-                      <Button
-                        secondary
-                        disabled={busy}
-                        onClick={() => {
-                          if (
-                            window.confirm(
-                              "Encerrar este link? O cliente não poderá enviar o cadastro.",
-                            )
-                          )
-                            void perform(async () =>
-                              onUpdate(await saleSheetApi.revoke(sheet.id), ""),
-                            );
-                        }}
-                      >
-                        Encerrar link
-                      </Button>
-                    </div>
-                  )
+                  <p>
+                    {sheet.archivedAt
+                      ? "O cadastro e o contrato foram preservados. Arquivar não cancela o negócio no CRM."
+                      : sheet.revoked
+                        ? "Este pedido foi cancelado. O link não recebe cadastros e o histórico fica preservado."
+                        : "O cadastro já foi recebido. Não é possível alterar esta negociação ou substituir o contrato por aqui."}
+                  </p>
+                )}
+                {canArchiveSheet(sheet) && (
+                  <Button
+                    secondary
+                    disabled={busy}
+                    onClick={(event) =>
+                      requestConfirmation(event.currentTarget, {
+                        title: "Arquivar pedido?",
+                        description:
+                          "O pedido vai para Arquivados. Cadastro, contrato e negócio no CRM ficam preservados. Você pode desarquivar depois.",
+                        label: "Arquivar",
+                        run: async () => {
+                          onUpdate(
+                            await saleSheetApi.archive(
+                              sheet.id,
+                              sheet.revision,
+                            ),
+                            "",
+                          );
+                          setNotice(
+                            "Pedido movido para Arquivados. Cadastro e contrato preservados.",
+                          );
+                        },
+                      })
+                    }
+                  >
+                    <Archive size={15} /> Arquivar
+                  </Button>
+                )}
+                {canUnarchiveSheet(sheet) && (
+                  <>
+                    <p>
+                      Desarquivar só devolve o pedido à lista. Não altera o
+                      contrato, não reativa links cancelados e não reenvia dados
+                      ao CRM.
+                    </p>
+                    <Button
+                      secondary
+                      disabled={busy}
+                      onClick={() =>
+                        void perform(async () => {
+                          const restored = await saleSheetApi.unarchive(
+                            sheet.id,
+                            sheet.revision,
+                            sheet.archivedAt || "",
+                          );
+                          onUpdate(restored, "");
+                          setNotice(
+                            restored.revoked
+                              ? "Pedido desarquivado. Ele voltou para Cancelados; o link continua bloqueado."
+                              : "Pedido desarquivado. Ele voltou para Em andamento; cadastro e contrato foram preservados.",
+                          );
+                        })
+                      }
+                    >
+                      <ArchiveRestore size={15} /> Desarquivar
+                    </Button>
+                  </>
                 )}
               </section>
+              <Summary sale={sheet} showSku />
+              {editable && (
+                <section className="cf-drawer-card">
+                  <h3>Link do cliente</h3>
+                  <p>
+                    Válido até{" "}
+                    {new Date(sheet.linkExpiresAt).toLocaleString("pt-BR")}.
+                    Compartilhe somente com o cliente.
+                  </p>
+                  {link && (
+                    <>
+                      <div className="cf-link-preview">{link}</div>
+                      <div className="cf-button-row">
+                        <Button
+                          secondary
+                          disabled={busy}
+                          onClick={() =>
+                            void perform(async () => {
+                              await navigator.clipboard.writeText(link);
+                              setNotice("Link copiado. Envie ao cliente.");
+                            })
+                          }
+                        >
+                          Copiar link
+                        </Button>
+                        <a
+                          className="cf-button cf-button-secondary"
+                          href={link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          referrerPolicy="no-referrer"
+                          aria-disabled={busy}
+                          onClick={(event) => {
+                            if (actionLock.current) event.preventDefault();
+                          }}
+                        >
+                          Abrir cadastro
+                        </a>
+                      </div>
+                    </>
+                  )}
+                  {!link && (
+                    <p>
+                      O link só aparece quando é gerado. Use o botão abaixo para
+                      obter um novo.
+                    </p>
+                  )}
+                  <div className="cf-button-row">
+                    <Button
+                      secondary
+                      disabled={busy}
+                      onClick={(event) =>
+                        requestConfirmation(event.currentTarget, {
+                          title: "Gerar novo link?",
+                          description:
+                            "O link anterior deixará de funcionar. Copie o novo link e envie na conversa com o cliente.",
+                          label: "Gerar novo link",
+                          run: async () => {
+                            const result = await saleSheetApi.rotate(sheet.id);
+                            onUpdate(result.sheet, result.token || "");
+                            setNotice(
+                              "Novo link gerado. Copie e envie ao cliente; o anterior não funciona mais.",
+                            );
+                          },
+                        })
+                      }
+                    >
+                      Gerar novo link
+                    </Button>
+                  </div>
+                </section>
+              )}
               {sheet.customer && (
                 <section className="cf-drawer-card">
-                  <h3>Cadastro recebido</h3>
+                  <h3>Cadastro do cliente</h3>
                   <dl className="cf-review">
                     <div>
                       <dt>Nome</dt>
@@ -225,28 +394,30 @@ export default function SheetDrawer({
                         {sheet.customer.district} · {sheet.customer.city}/
                         {sheet.customer.state}
                         <br />
-                        {sheet.customer.cep}
+                        CEP {sheet.customer.cep}
                       </dd>
                     </div>
                   </dl>
                   <p>
-                    CPF conferido matematicamente e e-mail por formato. Não
-                    representa verificação de identidade ou titularidade.
+                    CPF e e-mail têm validação de formato/dígitos. Isso não
+                    verifica a identidade do titular.
                   </p>
                 </section>
               )}
               <section className="cf-drawer-card">
-                <h3>Contrato privado</h3>
+                <h3>Contrato</h3>
                 <p>
-                  {taskLabel(sheet.pdf)} · {sheet.pdf.attempts} tentativa(s).
-                  Assinaturas e pagamento não são realizados nesta tela.
+                  {sheet.submittedAt
+                    ? taskLabel(sheet.pdf)
+                    : "Disponível depois do cadastro do cliente."}{" "}
+                  {sheet.submittedAt && "· Sem assinatura"}
                 </p>
                 <div className="cf-button-row">
                   <Button
                     disabled={busy || sheet.pdf.status !== "ready"}
                     onClick={() => void perform(download)}
                   >
-                    <Download size={16} /> Baixar PDF completo
+                    <Download size={16} /> Baixar contrato em PDF
                   </Button>
                   {sheet.submittedAt &&
                     (sheet.pdf.status === "failed" ||
@@ -262,31 +433,34 @@ export default function SheetDrawer({
                           )
                         }
                       >
-                        Retomar contrato pendente
+                        Tentar gerar contrato
                       </Button>
                     )}
                 </div>
                 <p>
-                  Um PDF pronto não é regenerado nem substituído. Preparação
-                  comercial e revisão jurídica continuam sendo pré-requisitos
-                  para uso real.
+                  Gustavo assina pelo gov.br. Assinatura e pagamento são
+                  acompanhados pela equipe.
                 </p>
               </section>
               <section className="cf-drawer-card">
-                <h3>CRM</h3>
+                <h3>Envio ao CRM</h3>
                 <p>
-                  {taskLabel(sheet.crm)} · {sheet.crm.attempts} tentativa(s).
+                  {sheet.submittedAt
+                    ? taskLabel(sheet.crm)
+                    : "O cadastro é enviado depois que o cliente concluir o formulário."}
                 </p>
                 {crmMode === "disabled" && (
+                  <p>Envio ao CRM desligado. Isso não bloqueia o contrato.</p>
+                )}
+                {sheet.crm.status === "sent" && (
                   <p>
-                    Integração CRM desativada nesta preparação. Cadastro e PDF
-                    são independentes.
+                    Envio confirmado. Confira o lead e o negócio no DataCrazy.
                   </p>
                 )}
                 {sheet.crm.status === "uncertain" && (
                   <p className="cf-uncertain-note">
-                    Confirme o recebimento no destino antes de qualquer ação.
-                    Não há reenvio automático nem garantia de negócio criado.
+                    O resultado não foi confirmado. Confira no DataCrazy antes
+                    de tentar novamente, para evitar duplicação.
                   </p>
                 )}
                 {isAdmin && (
@@ -301,40 +475,107 @@ export default function SheetDrawer({
                             JSON.stringify(payload, null, 2),
                           );
                           setNotice(
-                            "Payload privado copiado. Não compartilhe fora da equipe autorizada.",
+                            "Dados de integração copiados. Use somente com a equipe autorizada.",
                           );
                         })
                       }
                     >
-                      Copiar payload CRM
+                      Copiar dados da integração
                     </Button>
                     {crmMode === "datacrazy" &&
                       sheet.crm.status === "failed" && (
                         <Button
                           secondary
                           disabled={busy}
-                          onClick={() => {
-                            if (
-                              window.confirm(
-                                "Confira o destino: ele já recebeu este cadastro? Só prossiga se a equipe confirmou que não houve recebimento.",
-                              )
-                            )
-                              void perform(async () =>
-                                onUpdate(await saleSheetApi.retryCrm(sheet.id)),
-                              );
-                          }}
+                          onClick={(event) =>
+                            requestConfirmation(event.currentTarget, {
+                              title: "Tentar envio ao CRM?",
+                              description:
+                                "Confirme no DataCrazy que este cadastro ainda não foi recebido. Tentar sem conferir pode duplicar o negócio. Continue somente após essa verificação.",
+                              label: "Tentar envio ao CRM",
+                              run: async () => {
+                                onUpdate(await saleSheetApi.retryCrm(sheet.id));
+                              },
+                            })
+                          }
                         >
-                          Solicitar nova tentativa CRM
+                          Tentar envio ao CRM
                         </Button>
                       )}
                   </div>
                 )}
                 <p>
-                  Anexo do contrato ao CRM desativado. Não existe URL pública do
-                  PDF.
+                  O PDF não é anexado ao CRM. Baixe o contrato neste pedido.
                 </p>
               </section>
             </div>
+            <AlertDialog
+              open={Boolean(confirmation)}
+              onOpenChange={(open) => {
+                if (!open && !actionLock.current) setConfirmation(null);
+              }}
+            >
+              <AlertDialogContent
+                ref={confirmationContent}
+                className="sale-sheet cf-confirmation"
+                overlayClassName="cf-confirmation-overlay"
+                aria-busy={busy}
+                onOpenAutoFocus={(event) => {
+                  event.preventDefault();
+                  confirmationBack.current?.focus();
+                }}
+                onCloseAutoFocus={(event) => {
+                  event.preventDefault();
+                  const trigger = confirmationTrigger.current;
+                  if (trigger?.isConnected && !trigger.disabled)
+                    trigger.focus();
+                  else drawerClose.current?.focus();
+                }}
+                onEscapeKeyDown={(event) => {
+                  if (actionLock.current) event.preventDefault();
+                }}
+              >
+                <AlertDialogHeader>
+                  <span className="cf-eyebrow">CONFIRMAR AÇÃO</span>
+                  <AlertDialogTitle>
+                    {confirmation?.title || "Confirmar ação"}
+                  </AlertDialogTitle>
+                  <AlertDialogDescription className="cf-confirmation-description">
+                    {confirmation?.description}
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                {confirmationError && (
+                  <p className="cf-error" role="alert">
+                    {confirmationError}
+                  </p>
+                )}
+                <AlertDialogFooter className="cf-confirmation-footer">
+                  <AlertDialogCancel
+                    ref={confirmationBack}
+                    className="cf-button cf-button-secondary"
+                    type="button"
+                    disabled={busy}
+                  >
+                    Voltar
+                  </AlertDialogCancel>
+                  <AlertDialogAction
+                    className={
+                      confirmation?.dangerous
+                        ? "cf-button cf-confirmation-danger"
+                        : "cf-button"
+                    }
+                    type="button"
+                    disabled={busy || Boolean(confirmationError)}
+                    onClick={(event) => {
+                      event.preventDefault();
+                      confirmAction();
+                    }}
+                  >
+                    {busy ? "Processando…" : confirmation?.label || "Confirmar"}
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </Dialog.Content>
         </div>
       </Dialog.Portal>

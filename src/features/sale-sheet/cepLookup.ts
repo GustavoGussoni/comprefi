@@ -104,7 +104,7 @@ export async function lookupCep(
     const street = asText(record.logradouro);
     const district = asText(record.bairro);
     const hasControlCharacter = (value: string) =>
-      [...value].some(
+      Array.from(value).some(
         (character) =>
           character.charCodeAt(0) < 32 || character.charCodeAt(0) === 127,
       );

@@ -2,12 +2,12 @@ import type { SheetTask } from "./model";
 
 export function taskLabel(task: SheetTask): string {
   return {
-    waiting: "Pendente",
-    ready: "Pronto",
+    waiting: "Aguardando",
+    ready: "Disponível",
     disabled: "Desativado",
-    failed: "Falhou",
-    sent: "Recebido pelo destino · conferir negócio",
-    sending: "Em andamento",
-    uncertain: "Resultado incerto · conferir recebimento",
+    failed: "Não concluído",
+    sent: "Enviado",
+    sending: "Processando",
+    uncertain: "Resultado não confirmado",
   }[task.status];
 }

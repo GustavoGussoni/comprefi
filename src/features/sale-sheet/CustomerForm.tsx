@@ -303,9 +303,7 @@ export default function CustomerForm({
     if (moveToInvalidStep(validationErrors)) return;
     if (!accepted) {
       setError(
-        usesRealDataCrazy
-          ? "Confirme a conferência dos dados e o envio ao CRM antes de continuar."
-          : "Confirme a conferência dos dados e condições antes de enviar.",
+        "Marque a confirmação dos dados e do combinado antes de enviar.",
       );
       return;
     }
@@ -359,11 +357,7 @@ export default function CustomerForm({
   const modeNotice = (
     <div className="cf-note" role="note">
       <ShieldCheck size={18} />
-      <p>
-        {usesRealDataCrazy
-          ? "Os dados serão encaminhados ao CRM da equipe. O recebimento não garante a criação de um negócio nem confirma pagamento ou assinatura."
-          : "Ficha em preparação: integração CRM desativada. O envio registra apenas o cadastro; não é assinatura nem confirmação de pagamento."}
-      </p>
+      <p>Este cadastro não é uma assinatura nem um pagamento.</p>
     </div>
   );
   const normalizedReview = normalizeClient(client);
@@ -373,7 +367,7 @@ export default function CustomerForm({
       <header className="cf-client-header">
         <Brand />
         <span className="cf-secure">
-          <LockKeyhole size={14} /> Ficha de cadastro
+          <LockKeyhole size={14} /> Cadastro da sua compra
         </span>
       </header>
       {sale.revoked ? (
@@ -388,44 +382,23 @@ export default function CustomerForm({
             <CheckCircle2 size={40} />
           </span>
           <Badge tone="green">Cadastro enviado</Badge>
-          <h1>
-            {usesRealDataCrazy ? (
-              <>
-                Cadastro
-                <br />
-                recebido.
-              </>
-            ) : (
-              <>
-                Tudo certo com
-                <br />o seu cadastro.
-              </>
-            )}
-          </h1>
+          <h1>Recebemos seu cadastro.</h1>
           <p>
-            {usesRealDataCrazy
-              ? "Seu cadastro foi recebido. A equipe confere os próximos passos; o recebimento não confirma resultado no CRM."
-              : "Seu cadastro foi recebido. Assinatura e pagamento não acontecem nesta tela."}
+            Nossa equipe vai conferir os dados e orientar você sobre o contrato
+            e os próximos passos.
           </p>
           <div className="cf-success-steps">
             <div>
               <Check size={18} />
               <span>Cadastro recebido</span>
             </div>
-            {usesRealDataCrazy ? (
-              <div>
-                <Check size={18} />
-                <span>A equipe confere o resultado no CRM</span>
-              </div>
-            ) : (
-              <div>
-                <Check size={18} />
-                <span>A equipe acompanhará a preparação do contrato</span>
-              </div>
-            )}
+            <div>
+              <ClipboardCheck size={18} />
+              <span>A equipe confere os dados e prepara o contrato</span>
+            </div>
             <div>
               <LockKeyhole size={18} />
-              <span>Assinaturas e pagamento continuam com a equipe</span>
+              <span>Assinatura e pagamento são orientados pela equipe</span>
             </div>
           </div>
           <div className="cf-note">
@@ -441,16 +414,11 @@ export default function CustomerForm({
       ) : (
         <main className="cf-client-main">
           <div className="cf-client-intro">
-            <span className="cf-eyebrow">O COMBINADO JÁ ESTÁ AQUI</span>
-            <h1>
-              Sua compra
-              <br />
-              <span>está quase pronta.</span>
-            </h1>
+            <span className="cf-eyebrow">SEU CADASTRO COM A COMPREFI</span>
+            <h1>Complete seu cadastro.</h1>
             <p>
-              Confira a negociação e complete seu cadastro.
-              <br className="cf-desktop" /> A gente cuida dos próximos passos
-              com você.
+              Confira sua compra e preencha os dados do titular. É rápido e sem
+              cobrança nesta etapa.
             </p>
           </div>
           {modeNotice}
@@ -459,8 +427,8 @@ export default function CustomerForm({
               <div className="cf-stepper">
                 {[
                   { label: "Seus dados", icon: UserRound },
-                  { label: "Endereço", icon: MapPin },
-                  { label: "Conferência", icon: ClipboardCheck },
+                  { label: "Seu endereço", icon: MapPin },
+                  { label: "Confira e envie", icon: ClipboardCheck },
                 ].map((current, index) => (
                   <div
                     key={current.label}
@@ -490,8 +458,8 @@ export default function CustomerForm({
                 >
                   {step === 0 && (
                     <Panel
-                      title="Vamos começar por você."
-                      subtitle="Use os dados da pessoa que será titular da compra."
+                      title="Seus dados"
+                      subtitle="Preencha como aparece no documento do titular da compra."
                     >
                       <div className="cf-fields">
                         <Field
@@ -510,7 +478,7 @@ export default function CustomerForm({
                         />
                         <Field
                           label="CPF"
-                          hint="Conferimos somente os dígitos, sem verificar identidade ou titularidade."
+                          hint="Conferimos os dígitos do CPF. Isso não verifica a identidade do titular."
                           inputMode="numeric"
                           required
                           maxLength={14}
@@ -583,8 +551,8 @@ export default function CustomerForm({
                   )}
                   {step === 1 && (
                     <Panel
-                      title="Onde você está?"
-                      subtitle="Endereço cadastral do titular. Confira com seu vendedor se a entrega será em outro local."
+                      title="Seu endereço"
+                      subtitle="Informe o endereço do titular. Se a entrega for em outro local, avise seu vendedor."
                     >
                       <div className="cf-fields">
                         <Field
@@ -694,12 +662,8 @@ export default function CustomerForm({
                   )}
                   {step === 2 && (
                     <Panel
-                      title="Só mais uma conferência."
-                      subtitle={
-                        usesRealDataCrazy
-                          ? "Você está enviando um cadastro para a equipe; não é uma assinatura nem pagamento."
-                          : "Você está enviando um cadastro, não realizando uma assinatura ou pagamento."
-                      }
+                      title="Confira e envie"
+                      subtitle="Confira seus dados e o combinado antes de enviar."
                     >
                       <dl className="cf-review">
                         <div>
@@ -735,9 +699,9 @@ export default function CustomerForm({
                       <div className="cf-note">
                         <ShieldCheck size={19} />
                         <p>
-                          {usesRealDataCrazy
-                            ? "O cadastro pode ser encaminhado ao CRM. A confirmação abaixo não é assinatura ou pagamento."
-                            : "O cadastro será recebido para preparar o contrato. CRM desativado. Os dígitos do CPF e o formato do e-mail são conferidos, sem validar identidade ou titularidade."}
+                          A equipe usará estes dados para seu cadastro e
+                          contrato. Assinatura e pagamento acontecem depois, com
+                          nossa orientação.
                         </p>
                       </div>
                       <label className="cf-check cf-space-top">
@@ -750,11 +714,10 @@ export default function CustomerForm({
                           required
                         />
                         <span>
-                          Conferi meus dados e a condição negociada exibida
-                          nesta ficha. Entendo que a assinatura do contrato e o
-                          pagamento acontecerão depois, com a equipe.
+                          Conferi meus dados e o combinado da minha compra. Sei que
+                          este envio não é assinatura nem pagamento.
                           {usesRealDataCrazy &&
-                            " Estou ciente do encaminhamento cadastral ao CRM da equipe."}
+                            " Autorizo o envio dos dados à equipe para cadastro e atendimento."}
                         </span>
                       </label>
                     </Panel>
@@ -792,12 +755,8 @@ export default function CustomerForm({
                   <Button type="submit" disabled={submitting}>
                     {step === 2
                       ? submitting
-                        ? usesRealDataCrazy
-                          ? "Enviando ao DataCrazy…"
-                          : "Enviando cadastro…"
-                        : usesRealDataCrazy
-                          ? "Enviar cadastro ao DataCrazy"
-                          : "Enviar cadastro"
+                        ? "Enviando cadastro…"
+                        : "Enviar cadastro"
                       : "Continuar"}
                     <ArrowRight size={17} />
                   </Button>

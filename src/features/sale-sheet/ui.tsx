@@ -2,6 +2,7 @@ import type {
   ReactNode,
   InputHTMLAttributes,
   SelectHTMLAttributes,
+  MouseEventHandler,
 } from "react";
 import { useId, useState } from "react";
 import {
@@ -41,7 +42,7 @@ export function Button({
   className = "",
 }: {
   children: ReactNode;
-  onClick?: () => void;
+  onClick?: MouseEventHandler<HTMLButtonElement>;
   secondary?: boolean;
   disabled?: boolean;
   type?: "button" | "submit";
@@ -210,11 +211,11 @@ export function Summary({
   return (
     <div className={`cf-summary ${compact ? "cf-summary-compact" : ""}`}>
       <div className="cf-summary-top">
-        <span className="cf-eyebrow">SUA NEGOCIAÇÃO</span>
+        <span className="cf-eyebrow">SUA COMPRA</span>
         <ShieldCheck size={17} />
       </div>
       <div className="cf-items-summary-heading">
-        <span>Produtos da ficha</span>
+        <span>Produtos</span>
         <small>{unitCount(sale)} unidade(s)</small>
       </div>
       {sale.items.map((item) => (
@@ -282,7 +283,7 @@ export function Summary({
             </div>
             {cardFee(sale) > 0 && (
               <div>
-                <dt>Acréscimo já incluído</dt>
+                <dt>Taxa do cartão já incluída</dt>
                 <dd>{money(cardFee(sale))}</dd>
               </div>
             )}
