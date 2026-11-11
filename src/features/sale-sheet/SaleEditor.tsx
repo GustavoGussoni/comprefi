@@ -5,6 +5,7 @@ import { errorStatus, safeError } from "./api";
 import { createPayload } from "./payload";
 import ProductItemsEditor from "./ProductItemsEditor";
 import { Button, Field, Panel, Select, Summary } from "./ui";
+import { editableTerms } from "./lifecycle";
 import {
   cardBase,
   cardFee,
@@ -23,6 +24,8 @@ export default function SaleEditor({
   catalog,
   catalogLoading,
   catalogError,
+  initialSale,
+  mode = "create",
   onCancel,
   onSave,
 }: {
@@ -30,17 +33,26 @@ export default function SaleEditor({
   catalog: CatalogItem[];
   catalogLoading: boolean;
   catalogError: string;
+  initialSale?: Sale;
+  mode?: "create" | "edit";
   onCancel: () => void;
   onSave: (sale: Sale, idempotencyKey: string) => Promise<void>;
 }) {
-  const [sale, setSale] = useState<Sale>(newSale);
+  const [sale, setSale] = useState<Sale>(() =>
+    initialSale ? editableTerms(initialSale) : newSale(),
+  );
+  const [reviewing, setReviewing] = useState(false);
+  const isEditing = mode === "edit";
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
   const [locked, setLocked] = useState(false);
   const attempt = useRef(new SubmissionAttempt());
-  const update = <K extends keyof Sale>(key: K, value: Sale[K]) =>
+  const update = <K extends keyof Sale>(key: K, value: Sale[K]) => {
+    setReviewing(false);
     setSale((current) => ({ ...current, [key]: value }));
+  };
   const amount = (key: "base" | "pix" | "card" | "credit", value: string) => {
+    setReviewing(false);
     const amountValue = value === "" ? 0 : Number(value);
     setSale((current) => ({
       ...current,
@@ -50,19 +62,27 @@ export default function SaleEditor({
         : {}),
     }));
   };
-  const changePayment = (payment: Payment) =>
+  const changePayment = (payment: Payment) => {
+    setReviewing(false);
     setSale((current) => ({
       ...current,
       payment,
       pix: payment === "pix" ? current.base : 0,
       card: payment === "pix" ? 0 : current.base,
     }));
+  };
   const submit = async (event: FormEvent) => {
     event.preventDefault();
     if (saving) return;
     const message = validateSale(sale, catalog);
     if (message) {
       setError(message);
+      return;
+    }
+    if (!reviewing) {
+      setError("");
+      setReviewing(true);
+      window.scrollTo({ top: 0, behavior: "smooth" });
       return;
     }
     let key: string | null;
@@ -98,14 +118,22 @@ export default function SaleEditor({
         disabled={saving || locked}
         type="button"
       >
-        <ArrowLeft size={16} /> Fichas de venda
+        <ArrowLeft size={16} /> Pedidos
       </button>
       <div className="cf-page-heading">
         <div>
-          <span className="cf-eyebrow">NEGOCIAÇÃO FECHADA</span>
-          <h1>Nova ficha de venda</h1>
+          <span className="cf-eyebrow">REGISTRE O COMBINADO</span>
+          <h1>
+            {reviewing
+              ? "Confira antes de gerar o link"
+              : isEditing
+                ? "Editar pedido"
+                : "Novo pedido"}
+          </h1>
           <p>
-            Registre o combinado. O cliente só completa os dados cadastrais.
+            {isEditing
+              ? "Corrija a negociação. Ao salvar, o link anterior deixará de funcionar."
+              : "Preencha a negociação. O cliente completa o cadastro pelo link."}
           </p>
         </div>
       </div>
@@ -114,11 +142,12 @@ export default function SaleEditor({
           <fieldset
             disabled={saving || locked}
             className="cf-form-fieldset cf-stack"
+            style={reviewing ? { display: "none" } : undefined}
           >
             <Panel
               number="01"
               title="Atendimento e produtos"
-              subtitle="O WhatsApp mantém a referência da conversa, sem alterar o contato automaticamente. SKU é resolvido pelo servidor."
+              subtitle="Use o número da conversa no WhatsApp e selecione o que o cliente comprou."
             >
               <div className="cf-fields">
                 <Field
@@ -146,8 +175,8 @@ export default function SaleEditor({
             </Panel>
             <Panel
               number="02"
-              title="Condição financeira"
-              subtitle="Informe os valores finais negociados, sem calcular taxas automaticamente."
+              title="Pagamento"
+              subtitle="Informe o combinado. Inclua no cartão a taxa que você já acertou com o cliente."
             >
               <div className="cf-note">
                 <Info size={17} />
@@ -160,8 +189,8 @@ export default function SaleEditor({
                 <Field
                   label={
                     sale.hasTrade
-                      ? "Volta base negociada (R$)"
-                      : "Valor base negociado (R$)"
+                      ? "Volta negociada antes da taxa do cartão (R$)"
+                      : "Valor negociado antes da taxa do cartão (R$)"
                   }
                   type="number"
                   step="0.01"
@@ -230,8 +259,7 @@ export default function SaleEditor({
                   </>
                 )}
                 <span>
-                  Total financeiro contratado{" "}
-                  <strong>{money(total(sale))}</strong>
+                  Total negociado <strong>{money(total(sale))}</strong>
                 </span>
               </div>
             </Panel>
@@ -341,15 +369,47 @@ export default function SaleEditor({
                 />
               </div>
               <p className="cf-help">
-                O padrão começa após a confirmação do pagamento. Uma data máxima
-                manual substitui esse prazo no contrato.
+                O prazo padrão é de 1 a 15 dias úteis após o pagamento total. Se
+                escolher uma data máxima, ela será usada no contrato.
               </p>
             </Panel>
           </fieldset>
+          {reviewing && (
+            <section
+              className="cf-review-before-link"
+              aria-label="Revisão da negociação"
+            >
+              <Panel
+                title="Esta é a negociação que o cliente verá"
+                subtitle="Confira produtos, total, pagamento, troca e entrega antes de confirmar."
+              >
+                <dl className="cf-review">
+                  <div>
+                    <dt>WhatsApp do atendimento</dt>
+                    <dd>{sale.whatsapp}</dd>
+                  </div>
+                </dl>
+                <Summary sale={sale} showImages={false} />
+                {sale.notes && (
+                  <p className="cf-help">Observações: {sale.notes}</p>
+                )}
+                {sale.tradeNotes && (
+                  <p className="cf-help">
+                    Aparelho da troca: {sale.tradeNotes}
+                  </p>
+                )}
+                <p className="cf-note">
+                  {isEditing
+                    ? "Salvar gera um novo link. Envie o novo link ao cliente; o anterior será bloqueado."
+                    : "Gerar o link não cobra o cliente nem envia o cadastro ao CRM."}
+                </p>
+              </Panel>
+            </section>
+          )}
           {locked && (
             <p className="cf-note">
               Resultado ainda não confirmado. Os dados foram bloqueados; tente o
-              mesmo envio. Não crie outra ficha antes de conferir a lista com a
+              mesmo envio. Não crie outro pedido antes de conferir a lista com a
               equipe.
             </p>
           )}
@@ -359,12 +419,24 @@ export default function SaleEditor({
             </p>
           )}
           <div className="cf-form-actions">
-            <Button secondary onClick={onCancel} disabled={saving || locked}>
-              Cancelar
+            <Button
+              secondary
+              onClick={reviewing ? () => setReviewing(false) : onCancel}
+              disabled={saving || locked}
+            >
+              {reviewing ? "Voltar e corrigir" : "Voltar"}
             </Button>
             <Button type="submit" disabled={saving}>
               <Link2 size={17} />{" "}
-              {saving ? "Criando ficha…" : "Gerar link seguro"}{" "}
+              {saving
+                ? isEditing
+                  ? "Salvando alterações…"
+                  : "Criando pedido…"
+                : !reviewing
+                  ? "Conferir pedido"
+                  : isEditing
+                    ? "Salvar e gerar novo link"
+                    : "Confirmar e gerar link"}{" "}
               <ArrowRight size={16} />
             </Button>
           </div>

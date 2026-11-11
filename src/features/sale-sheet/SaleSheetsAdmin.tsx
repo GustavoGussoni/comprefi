@@ -4,6 +4,14 @@ import { useAdminAuth } from "@/contexts/AdminAuthContext";
 import { saleSheetApi, safeError, type HealthState } from "./api";
 import type { CatalogItem, SheetSnapshot } from "./model";
 import { itemTitle, money, total } from "./model";
+import {
+  bucketLabels,
+  canEditSheet,
+  ownsSheet,
+  sheetBucket,
+  sheetStateLabel,
+  type SheetBucket,
+} from "./lifecycle";
 import { Badge, Button } from "./ui";
 import SaleEditor from "./SaleEditor";
 import SheetDrawer from "./SheetDrawer";
@@ -19,10 +27,13 @@ export default function SaleSheetsAdmin() {
   const [catalogError, setCatalogError] = useState("");
   const [error, setError] = useState("");
   const [editing, setEditing] = useState(false);
+  const [editSheet, setEditSheet] = useState<SheetSnapshot | null>(null);
   const [selected, setSelected] = useState<SheetSnapshot | null>(null);
   const [rawToken, setRawToken] = useState("");
   const [opening, setOpening] = useState(false);
   const [query, setQuery] = useState("");
+  const [bucket, setBucket] = useState<SheetBucket>("active");
+  const [notice, setNotice] = useState("");
   const openLock = useRef(false);
   const reloadLock = useRef(false);
   const load = useCallback(async (signal?: AbortSignal) => {
@@ -63,14 +74,18 @@ export default function SaleSheetsAdmin() {
   useEffect(() => {
     void load();
   }, [load]);
-  const visible = sheets.filter(
+  const authorized = sheets.filter((sheet) => ownsSheet(user, sheet));
+  const visible = authorized.filter(
     (sheet) =>
-      (user.role === "ADMIN" || sheet.createdBy.id === user.id) &&
+      sheetBucket(sheet) === bucket &&
       `${sheet.reference} ${itemTitle(sheet)}`
         .toLocaleLowerCase("pt-BR")
         .includes(query.trim().toLocaleLowerCase("pt-BR")),
   );
   const update = (sheet: SheetSnapshot, token?: string) => {
+    if (selected?.id === sheet.id && selected.archivedAt && !sheet.archivedAt) {
+      setBucket(sheetBucket(sheet));
+    }
     setSelected(sheet);
     setSheets((current) =>
       current.some((row) => row.id === sheet.id)
@@ -85,9 +100,8 @@ export default function SaleSheetsAdmin() {
     setOpening(true);
     setError("");
     try {
-      const sheet = await saleSheetApi.sheet(id);
+      setSelected(await saleSheetApi.sheet(id));
       setRawToken("");
-      setSelected(sheet);
     } catch (caught) {
       setError(safeError(caught));
     } finally {
@@ -95,58 +109,94 @@ export default function SaleSheetsAdmin() {
       setOpening(false);
     }
   };
+  const beginEdit = (sheet: SheetSnapshot) => {
+    if (!ownsSheet(user, sheet) || !canEditSheet(sheet)) return;
+    setEditSheet(sheet);
+    setSelected(null);
+    setRawToken("");
+    setNotice("");
+    setEditing(true);
+  };
   return (
     <div className="sale-sheet sale-sheet-admin">
       {health.state !== "ready" ? (
         <section className="cf-health-blocker">
-          <span className="cf-eyebrow">FICHA DE VENDA</span>
+          <span className="cf-eyebrow">PEDIDOS</span>
           <h1>
-            {loading ? "Verificando disponibilidade…" : "Área em preparação"}
+            {loading
+              ? "Carregando pedidos…"
+              : "Não foi possível abrir os pedidos"}
           </h1>
-          <p>
-            Fichas só ficam disponíveis quando a funcionalidade está habilitada
-            no backend. A navegação existente continua funcionando.
-          </p>
+          <p>Tente novamente. Se o problema continuar, avise a equipe.</p>
           {error && (
             <p className="cf-error" role="alert">
               {error}
             </p>
           )}
           <Button secondary disabled={loading} onClick={() => void load()}>
-            Verificar novamente
+            Tentar novamente
           </Button>
         </section>
       ) : (
         <>
-          <div className="cf-note" role="note">
-            {health.crmMode === "disabled"
-              ? "Preparação isolada · CRM desativado. Nenhum cadastro nesta área confirma assinatura ou pagamento."
-              : "CRM habilitado pelo backend. O recebimento HTTP não garante negócio criado; a equipe deve conferir o destino."}
-          </div>
+          {notice && (
+            <p className="cf-note" role="status">
+              {notice}
+            </p>
+          )}
+          {health.crmMode === "disabled" && (
+            <p className="cf-note">
+              Envio ao CRM desligado. O cadastro e o contrato continuam
+              separados do pagamento e da assinatura.
+            </p>
+          )}
           {editing ? (
             <SaleEditor
+              key={editSheet?.id || "new"}
               actor={user}
               catalog={catalog}
               catalogLoading={loading}
               catalogError={catalogError}
-              onCancel={() => setEditing(false)}
-              onSave={async (sale, key) => {
-                const result = await saleSheetApi.create(sale, key);
+              initialSale={editSheet || undefined}
+              mode={editSheet ? "edit" : "create"}
+              onCancel={() => {
                 setEditing(false);
-                update(result.sheet, result.token);
+                setEditSheet(null);
+              }}
+              onSave={async (sale, key) => {
+                const result = editSheet
+                  ? await saleSheetApi.edit(
+                      editSheet.id,
+                      editSheet.revision,
+                      sale,
+                      key,
+                    )
+                  : await saleSheetApi.create(sale, key);
+                const wasEdit = Boolean(editSheet);
+                setEditing(false);
+                setEditSheet(null);
+                setBucket("active");
+                update(result.sheet, result.token || "");
+                setNotice(
+                  result.token
+                    ? wasEdit
+                      ? "Pedido corrigido. O link anterior não funciona mais. Copie e envie o novo link."
+                      : "Pedido criado. Copie o link e envie ao cliente."
+                    : "O pedido foi salvo. Gere um novo link nos detalhes para compartilhar com o cliente.",
+                );
               }}
             />
           ) : (
             <>
               <div className="cf-page-heading">
                 <div>
-                  <span className="cf-eyebrow">NEGOCIAÇÃO E CADASTRO</span>
-                  <h1>Fichas de venda</h1>
+                  <span className="cf-eyebrow">DO COMBINADO AO CADASTRO</span>
+                  <h1>Pedidos</h1>
                   <p>
                     {user.role === "ADMIN"
-                      ? "Todas as fichas da equipe."
-                      : "Somente suas fichas de venda."}{" "}
-                    Catálogo central, valores finais negociados manualmente.
+                      ? "Acompanhe os pedidos da equipe."
+                      : "Acompanhe seus pedidos."}{" "}
+                    Crie o link depois de fechar a negociação.
                   </p>
                 </div>
                 <div className="cf-button-row">
@@ -159,9 +209,13 @@ export default function SaleSheetsAdmin() {
                   </Button>
                   <Button
                     disabled={loading || opening}
-                    onClick={() => setEditing(true)}
+                    onClick={() => {
+                      setEditSheet(null);
+                      setNotice("");
+                      setEditing(true);
+                    }}
                   >
-                    <Plus size={16} /> Nova ficha
+                    <Plus size={16} /> Novo pedido
                   </Button>
                 </div>
               </div>
@@ -170,29 +224,63 @@ export default function SaleSheetsAdmin() {
                   {error}
                 </p>
               )}
+              <div
+                className="cf-record-tabs"
+                role="group"
+                aria-label="Mostrar pedidos"
+              >
+                {(Object.keys(bucketLabels) as SheetBucket[]).map((key) => (
+                  <button
+                    key={key}
+                    type="button"
+                    aria-pressed={bucket === key}
+                    className={bucket === key ? "is-active" : ""}
+                    onClick={() => {
+                      setBucket(key);
+                      setSelected(null);
+                      setRawToken("");
+                    }}
+                  >
+                    {bucketLabels[key]}{" "}
+                    <span>
+                      {
+                        authorized.filter((sheet) => sheetBucket(sheet) === key)
+                          .length
+                      }
+                    </span>
+                  </button>
+                ))}
+              </div>
+              {bucket !== "active" && (
+                <p className="cf-help cf-bucket-help">
+                  {bucket === "cancelled"
+                    ? "Links cancelados não recebem novos cadastros. O histórico fica preservado."
+                    : "Arquivar só organiza esta lista. Use Desarquivar nos detalhes para trazer o pedido de volta. Isso não cancela contratos nem negócios no CRM."}
+                </p>
+              )}
               <section className="cf-list-panel">
                 <div className="cf-list-toolbar">
                   <label className="cf-search">
                     <input
-                      aria-label="Buscar fichas por referência ou produto"
-                      placeholder="Buscar referência ou produto"
+                      aria-label="Buscar pedidos por referência ou produto"
+                      placeholder="Buscar pedido ou produto"
                       value={query}
                       onChange={(event) => setQuery(event.target.value)}
                     />
                   </label>
-                  <span className="cf-muted">{visible.length} ficha(s)</span>
+                  <span className="cf-muted">{visible.length} pedido(s)</span>
                 </div>
                 <div className="cf-table-wrap">
                   <table className="cf-table">
                     <caption className="cf-sr-only">
-                      Fichas de venda autorizadas para sua conta
+                      Pedidos disponíveis para sua conta
                     </caption>
                     <thead>
                       <tr>
-                        <th scope="col">FICHA / PRODUTOS</th>
-                        <th scope="col">VALOR FINAL</th>
-                        <th scope="col">CADASTRO</th>
-                        <th scope="col">PDF / CRM</th>
+                        <th scope="col">PEDIDO / PRODUTOS</th>
+                        <th scope="col">TOTAL NEGOCIADO</th>
+                        <th scope="col">SITUAÇÃO</th>
+                        <th scope="col">CONTRATO / CRM</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -217,23 +305,27 @@ export default function SaleSheetsAdmin() {
                           <td>
                             <Badge
                               tone={
-                                sheet.submittedAt
-                                  ? "green"
+                                sheet.archivedAt
+                                  ? "neutral"
                                   : sheet.revoked
                                     ? "red"
-                                    : "orange"
+                                    : sheet.submittedAt
+                                      ? "green"
+                                      : "orange"
                               }
                             >
-                              {sheet.submittedAt
-                                ? "Recebido"
-                                : sheet.revoked
-                                  ? "Encerrada"
-                                  : "Aguardando"}
+                              {sheetStateLabel(sheet)}
                             </Badge>
                           </td>
                           <td>
-                            PDF: {taskLabel(sheet.pdf)}
-                            <small>CRM: {taskLabel(sheet.crm)}</small>
+                            {sheet.submittedAt ? (
+                              <>
+                                Contrato: {taskLabel(sheet.pdf)}
+                                <small>CRM: {taskLabel(sheet.crm)}</small>
+                              </>
+                            ) : (
+                              <span className="cf-muted">Após o cadastro</span>
+                            )}
                           </td>
                         </tr>
                       ))}
@@ -244,12 +336,13 @@ export default function SaleSheetsAdmin() {
                   <div className="cf-empty">
                     <h3>
                       {loading
-                        ? "Carregando fichas…"
-                        : "Nenhuma ficha encontrada"}
+                        ? "Carregando pedidos…"
+                        : "Nenhum pedido encontrado"}
                     </h3>
                     <p>
-                      Crie uma ficha com a negociação já definida. Não há
-                      preenchimento por exemplos.
+                      {bucket === "active"
+                        ? "Crie um pedido para registrar o combinado e enviar o link ao cliente."
+                        : "Os pedidos desta situação aparecerão aqui."}
                     </p>
                   </div>
                 )}
@@ -264,6 +357,7 @@ export default function SaleSheetsAdmin() {
               isAdmin={user.role === "ADMIN"}
               crmMode={health.crmMode}
               onUpdate={update}
+              onEdit={() => beginEdit(selected)}
               onClose={() => {
                 setSelected(null);
                 setRawToken("");

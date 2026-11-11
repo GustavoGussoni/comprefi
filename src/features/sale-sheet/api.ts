@@ -37,11 +37,11 @@ export function safeError(error: unknown): string {
   if (status === 401) return "Sua sessão expirou. Entre novamente.";
   if (status === 403) return "Sua conta não tem permissão para esta ação.";
   if (status === 404 || status === 503)
-    return "Ficha de venda indisponível. Solicite orientação à equipe.";
+    return "Não foi possível abrir o cadastro ou pedido. Peça orientação à equipe.";
   if (status === 410)
     return "Este link expirou ou foi encerrado. Peça um novo link ao vendedor.";
   if (status === 409)
-    return "Conflito: não altere nem repita com outra chave. Atualize a ficha e confira o resultado com a equipe para evitar duplicidade.";
+    return "O pedido mudou ou já recebeu o cadastro. Atualize e confira o resultado com a equipe. Não crie outro pedido nem repita com dados diferentes.";
   if (
     status === 400 &&
     error instanceof ApiError &&
@@ -74,7 +74,7 @@ async function publicRequest<T>(
     }
     throw new ApiError(
       publicSubmissionValidationMessage(response.status, body) ||
-        "Falha na ficha de venda.",
+        "Não foi possível abrir ou enviar o cadastro.",
       response.status,
     );
   }
@@ -120,6 +120,51 @@ export const saleSheetApi = {
       cache: "no-store",
       referrerPolicy: "no-referrer",
     });
+  },
+  edit(id: string, revision: number, terms: SheetTerms, key: string) {
+    return apiService.request<CreatedSheet>(
+      `${PREFIX}/admin/${encodeURIComponent(id)}`,
+      {
+        method: "PATCH",
+        headers: { "Idempotency-Key": key },
+        body: { revision, terms: createPayload(terms) },
+        cache: "no-store",
+        referrerPolicy: "no-referrer",
+      },
+    );
+  },
+  cancel(id: string, revision: number) {
+    return apiService.request<SheetSnapshot>(
+      `${PREFIX}/admin/${encodeURIComponent(id)}/cancel`,
+      {
+        method: "POST",
+        body: { revision },
+        cache: "no-store",
+        referrerPolicy: "no-referrer",
+      },
+    );
+  },
+  archive(id: string, revision: number) {
+    return apiService.request<SheetSnapshot>(
+      `${PREFIX}/admin/${encodeURIComponent(id)}/archive`,
+      {
+        method: "POST",
+        body: { revision },
+        cache: "no-store",
+        referrerPolicy: "no-referrer",
+      },
+    );
+  },
+  unarchive(id: string, revision: number, archivedAt: string) {
+    return apiService.request<SheetSnapshot>(
+      `${PREFIX}/admin/${encodeURIComponent(id)}/unarchive`,
+      {
+        method: "POST",
+        body: { revision, archivedAt },
+        cache: "no-store",
+        referrerPolicy: "no-referrer",
+      },
+    );
   },
   rotate(id: string) {
     return apiService.request<CreatedSheet>(

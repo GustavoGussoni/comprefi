@@ -263,3 +263,157 @@ test("ViaCEP invalid/missing/malformed/timeout/aborted results support manual fa
     "aborted",
   );
 });
+
+import {
+  bucketLabels,
+  canArchiveSheet,
+  canEditSheet,
+  canUnarchiveSheet,
+  editableTerms,
+  ownsSheet,
+  sheetBucket,
+  sheetStateLabel,
+} from "../lifecycle";
+import type { SheetSnapshot } from "../model";
+import { taskLabel } from "../taskLabel";
+
+function snapshot(overrides: Partial<SheetSnapshot> = {}): SheetSnapshot {
+  return {
+    ...newSale(),
+    id: "test-sheet",
+    reference: "CF-TEST",
+    createdAt: "2026-11-10T00:00:00Z",
+    createdBy: {
+      id: "sales-1",
+      name: "Operador Teste",
+      email: "test@example.com",
+      role: "SALES",
+    },
+    revision: 1,
+    linkExpiresAt: "2099-01-01T00:00:00Z",
+    revoked: false,
+    pdf: { status: "waiting", attempts: 0 },
+    crm: { status: "waiting", attempts: 0 },
+    crmAttachment: { status: "disabled", attempts: 0 },
+    ...overrides,
+  };
+}
+test("Pending sheets may be edited, while submitted, cancelled and archived ones cannot", () => {
+  assert.equal(canEditSheet(snapshot()), true);
+  for (const sheet of [
+    snapshot({ submittedAt: "2026-11-10" }),
+    snapshot({ revoked: true }),
+    snapshot({ archivedAt: "2026-11-10" }),
+  ])
+    assert.equal(canEditSheet(sheet), false);
+});
+test("Archive is reserved for received/cancelled records and does not reopen them", () => {
+  assert.equal(canArchiveSheet(snapshot()), false);
+  assert.equal(canArchiveSheet(snapshot({ submittedAt: "2026-11-10" })), true);
+  assert.equal(canArchiveSheet(snapshot({ revoked: true })), true);
+  assert.equal(
+    canArchiveSheet(
+      snapshot({ submittedAt: "2026-11-10", archivedAt: "2026-11-11" }),
+    ),
+    false,
+  );
+});
+test("Buckets separate current, cancelled and archived records, including legacy revoked snapshots", () => {
+  assert.equal(sheetBucket(snapshot()), "active");
+  assert.equal(sheetBucket(snapshot({ submittedAt: "2026-11-10" })), "active");
+  assert.equal(sheetBucket(snapshot({ revoked: true })), "cancelled");
+  assert.equal(
+    sheetBucket(snapshot({ revoked: true, archivedAt: "2026-11-10" })),
+    "archived",
+  );
+  assert.equal(bucketLabels.active, "Em andamento");
+  assert.equal(sheetStateLabel(snapshot({ revoked: true })), "Cancelado");
+});
+test("ADMIN sees team sheets; SALES sees only its own records", () => {
+  const sheet = snapshot();
+  assert.equal(
+    ownsSheet({ ...sheet.createdBy, id: "admin", role: "ADMIN" }, sheet),
+    true,
+  );
+  assert.equal(ownsSheet(sheet.createdBy, sheet), true);
+  assert.equal(
+    ownsSheet({ ...sheet.createdBy, id: "other-sales" }, sheet),
+    false,
+  );
+});
+test("Editor copies only terms without carrying customer, document or archive fields", () => {
+  const sheet = snapshot({
+    customer: { ...emptyClient, name: "Cliente Teste" },
+    archivedAt: "2026-11-10",
+  });
+  const terms = editableTerms(sheet);
+  assert.ok(
+    !("customer" in terms) && !("archivedAt" in terms) && !("pdf" in terms),
+  );
+  terms.items[0].product = "Outro";
+  assert.notEqual(sheet.items[0].product, terms.items[0].product);
+  assert.ok(!("crmSku" in createPayload(terms).items[0]));
+});
+test("Editing has its own retry key and locks an uncertain response without affecting creation", () => {
+  const create = new SubmissionAttempt(() => "key-create");
+  const edit = new SubmissionAttempt(() => "key-edit");
+  assert.notEqual(create.begin("same-terms"), edit.begin("same-terms"));
+  edit.fail(500);
+  assert.equal(edit.begin("same-terms"), "key-edit");
+  edit.fail();
+  assert.throws(() => edit.begin("changed-terms"));
+});
+test("Task labels distinguish availability, HTTP send and uncertain result without guaranteeing a business", () => {
+  assert.equal(taskLabel({ status: "ready", attempts: 1 }), "Disponível");
+  assert.equal(taskLabel({ status: "sent", attempts: 1 }), "Enviado");
+  assert.equal(
+    taskLabel({ status: "uncertain", attempts: 1 }),
+    "Resultado não confirmado",
+  );
+});
+
+test("Unarchive action appears only on archived orders and buckets use Pedidos terminology", () => {
+  assert.equal(canUnarchiveSheet(snapshot()), false);
+  assert.equal(
+    canUnarchiveSheet(snapshot({ submittedAt: "2026-11-10" })),
+    false,
+  );
+  assert.equal(canUnarchiveSheet(snapshot({ revoked: true })), false);
+  assert.equal(
+    canUnarchiveSheet(snapshot({ archivedAt: "2026-11-11T10:00:00.000Z" })),
+    true,
+  );
+  assert.equal(bucketLabels.cancelled, "Cancelados");
+  assert.equal(bucketLabels.archived, "Arquivados");
+  assert.equal(
+    sheetStateLabel(snapshot({ archivedAt: "2026-11-11" })),
+    "Arquivado",
+  );
+});
+test("Unarchived received orders return to current list but stay uneditable with their document and customer", () => {
+  const original = snapshot({
+    submittedAt: "2026-11-10",
+    customer: { ...emptyClient, name: "Cliente Teste" },
+    pdf: { status: "ready", attempts: 1 },
+    archivedAt: "2026-11-11",
+    archivedBy: "admin",
+  });
+  const restored = {
+    ...original,
+    archivedAt: undefined,
+    archivedBy: undefined,
+  };
+  assert.equal(sheetBucket(restored), "active");
+  assert.equal(canEditSheet(restored), false);
+  assert.equal(canArchiveSheet(restored), true);
+  assert.deepEqual(restored.customer, original.customer);
+  assert.deepEqual(restored.pdf, original.pdf);
+  assert.equal(restored.revision, original.revision);
+});
+test("Unarchived cancelled orders return to cancelled list and do not reactivate editing", () => {
+  const restored = snapshot({ revoked: true });
+  assert.equal(sheetBucket(restored), "cancelled");
+  assert.equal(canEditSheet(restored), false);
+  assert.equal(canArchiveSheet(restored), true);
+  assert.equal(sheetStateLabel(restored), "Cancelado");
+});

@@ -90,6 +90,8 @@ export type SheetSnapshot = SheetTerms & {
   contractTemplateVersion?: string;
   linkExpiresAt: string;
   revoked: boolean;
+  archivedAt?: string;
+  archivedBy?: string;
   crm: SheetTask;
   pdf: SheetTask;
   crmAttachment: SheetTask;
@@ -152,7 +154,7 @@ export const total = (sale: SheetTerms) => sale.pix + sale.card;
 export const deliveryText = (sale: SheetTerms) =>
   sale.delivery === "date" && sale.deadline
     ? `Até ${sale.deadline.split("-").reverse().join("/")} — data máxima combinada`
-    : "De 1 a 15 dias úteis após a confirmação do pagamento";
+    : "De 1 a 15 dias úteis após a confirmação do pagamento total";
 
 export const emptyClient: Client = {
   name: "",
@@ -194,7 +196,7 @@ export function validateSale(
   catalog: CatalogItem[],
 ): string | null {
   if (!sale.items.length || sale.items.length > 20)
-    return "Inclua entre 1 e 20 itens na ficha.";
+    return "Inclua entre 1 e 20 itens no pedido.";
   for (let index = 0; index < sale.items.length; index += 1) {
     const item = sale.items[index];
     if (

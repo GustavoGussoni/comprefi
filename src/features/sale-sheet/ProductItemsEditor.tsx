@@ -70,15 +70,14 @@ export default function ProductItemsEditor({
       <div className="cf-catalog-info">
         <PackageCheck size={17} />
         <span>
-          Modelos e variantes do catálogo central. O valor final é seu
-          combinado.
+          Selecione o produto vendido. O preço continua sendo o combinado.
         </span>
         <small>
           {loading
             ? "Carregando catálogo…"
             : error
               ? "Catálogo indisponível"
-              : `${catalog.length} variantes`}
+              : `${catalog.length} opções`}
         </small>
       </div>
       {error && (
@@ -112,9 +111,14 @@ export default function ProductItemsEditor({
           ),
         );
         const manual = item.groupSlug === "manual";
-        const selectedVariant = catalog.find((entry) => entry.id === item.variantId);
-        const declareCondition = Boolean(selectedVariant && !selectedVariant.condition);
-        const declaredSeminovo = declareCondition && item.condition === "Seminovo";
+        const selectedVariant = catalog.find(
+          (entry) => entry.id === item.variantId,
+        );
+        const declareCondition = Boolean(
+          selectedVariant && !selectedVariant.condition,
+        );
+        const declaredSeminovo =
+          declareCondition && item.condition === "Seminovo";
         const selectedGroup = groups.find(
           (group) => group.slug === item.groupSlug,
         );
@@ -128,7 +132,9 @@ export default function ProductItemsEditor({
           !catalog.some((entry) => entry.id === item.variantId);
         const crmPending =
           Boolean(item.variantId) &&
-          (declaredSeminovo || !item.crmSku || item.crmMappingStatus === "pending");
+          (declaredSeminovo ||
+            !item.crmSku ||
+            item.crmMappingStatus === "pending");
         return (
           <section
             className="cf-item-editor"
@@ -193,7 +199,11 @@ export default function ProductItemsEditor({
                 {!manual && item.variantId && (
                   <Field
                     label={`SKU do item ${index + 1}`}
-                    value={declaredSeminovo ? "SKU pendente para seminovo" : item.crmSku || "SKU pendente"}
+                    value={
+                      declaredSeminovo
+                        ? "SKU pendente para seminovo"
+                        : item.crmSku || "SKU pendente"
+                    }
                     readOnly
                   />
                 )}
@@ -309,7 +319,7 @@ export default function ProductItemsEditor({
                 : crmPending
                   ? "SKU pendente: PDF e cadastro continuam; só o CRM fica bloqueado."
                   : catalogItemMissing
-                    ? "A variante desta ficha não está no catálogo central atual. Selecione outra variante ou marque o item como manual."
+                    ? "A variante deste pedido não está no catálogo central atual. Selecione outra variante ou marque o item como manual."
                     : item.variantId
                       ? declareCondition
                         ? "Modelo, cor e capacidade vinculados ao Catálogo. Confirme a condição, pois ela não foi informada no cadastro central."
@@ -327,8 +337,8 @@ export default function ProductItemsEditor({
         <Plus size={17} /> Adicionar outro produto
       </Button>
       <p className="cf-help">
-        Adicionar, remover ou trocar itens não altera o valor da ficha. Informe
-        o total negociado na condição financeira.
+        Adicionar, remover ou trocar itens não altera o valor do pedido. Informe
+        o total negociado na etapa Pagamento.
       </p>
     </div>
   );
