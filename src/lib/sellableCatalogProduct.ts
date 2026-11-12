@@ -1,5 +1,6 @@
 import { hasValidVariantPricing, pricingKey } from "../types/product";
 import type { GroupedProduct, PricingMap } from "../types/product";
+import { launchColorAliases, normalizeLaunchColor, normalizeLaunchModel } from "../data/products/launch-names";
 
 export interface ActiveCatalogProduct {
   isActive: boolean;
@@ -21,7 +22,13 @@ export function sellableCatalogProduct(
   const available = new Set(
     (remote.activeVariants || [])
       .filter((variant) => variant.isActive)
-      .map(({ storage, color }) => pricingKey(storage, color)),
+      .map(({ storage, color }) => pricingKey(storage, normalizeLaunchColor(local.slug, color))),
+  );
+  // Se ambos os aliases vierem com estados conflitantes, não reativar a combinação.
+  const inactive = new Set(
+    (remote.activeVariants || [])
+      .filter((variant) => !variant.isActive && launchColorAliases(local.slug, variant.color).length > 1)
+      .map(({ storage, color }) => pricingKey(storage, normalizeLaunchColor(local.slug, color))),
   );
   const pricing: PricingMap = {};
   const colorsByStorage: Record<string, string[]> = {};
@@ -29,8 +36,13 @@ export function sellableCatalogProduct(
   for (const storage of local.storages) {
     for (const color of local.colors) {
       const key = pricingKey(storage, color.name);
-      const price = remote.pricing?.[key];
-      if (available.has(key) && hasValidVariantPricing(price)) {
+      const availableKey = pricingKey(storage, normalizeLaunchColor(local.slug, color.name));
+      const sourceKey = launchColorAliases(local.slug, color.name)
+        .map((alias) => pricingKey(storage, alias))
+        .find((aliasKey) => Object.prototype.hasOwnProperty.call(remote.pricing || {}, aliasKey));
+      // Usar só uma chave exata remota: PT tem precedência; preço inválido não ganha fallback.
+      const price = sourceKey ? remote.pricing[sourceKey] : undefined;
+      if (available.has(availableKey) && !inactive.has(availableKey) && hasValidVariantPricing(price)) {
         pricing[key] = price;
         (colorsByStorage[storage] ||= []).push(color.name);
       }
@@ -43,7 +55,7 @@ export function sellableCatalogProduct(
   return {
     ...local,
     ...(local.requiresCatalogAvailability ? {
-      model: remote.model || local.model,
+      model: normalizeLaunchModel(local.slug, remote.model || local.model),
       specs: remote.specs ?? local.specs,
       details: remote.details ?? local.details,
       battery: remote.battery ?? local.battery,

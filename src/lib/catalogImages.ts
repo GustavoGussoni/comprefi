@@ -1,12 +1,14 @@
 import type { GroupedProduct } from "../types/product";
+import { normalizeLaunchColor } from "../data/products/launch-names";
 
-/** Resolve pelo nome exato da variante; não mistura acabamentos nem pulseiras. */
+/** Resolve a variante exata (aliases EN/PT somente no lote); não mistura acabamentos/pulseiras. */
 export function resolveCatalogImages(
   product: GroupedProduct,
   storage: string,
   color: string,
 ): { image: string; gallery: string[] } {
-  const variant = product.colors.find((entry) => entry.name === color);
+  const canonical = normalizeLaunchColor(product.slug, color);
+  const variant = product.colors.find((entry) => normalizeLaunchColor(product.slug, entry.name) === canonical);
   if (!variant) return { image: "", gallery: [] };
   return {
     image: product.imageByStorage?.[storage] ?? variant.image,

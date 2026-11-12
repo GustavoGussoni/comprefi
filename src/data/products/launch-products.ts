@@ -18,7 +18,7 @@ export const iphoneDuo: GroupedProduct = {
 
 export const appleWatchUltra4: GroupedProduct = {
   slug: "apple-watch-ultra-4-ocean",
-  model: "Apple Watch Ultra 4 Ocean",
+  model: "Apple Watch Ultra 4 — Pulseira Oceano",
   category: "apple-watch",
   specs: "Caixa de titânio de 49 mm, chip S11, tela Retina Sempre Ativa de até 3.000 nits com cristal de safira, GPS de dupla frequência, GPS + Cellular e Botão de Ação. A conectividade celular exige plano e operadora compatíveis.",
   details: "Produto novo e lacrado. Garantia de 1 ano do fabricante, conforme os termos aplicáveis.",
@@ -31,7 +31,7 @@ export const appleWatchUltra4: GroupedProduct = {
 
 export const appleWatchSeries12: GroupedProduct = {
   slug: "apple-watch-series-12-sport-band",
-  model: "Apple Watch Series 12 Sport Band",
+  model: "Apple Watch Series 12 — Pulseira Esportiva",
   category: "apple-watch",
   specs: "Caixa de alumínio de 42 mm ou 46 mm, chip S11, tela Retina Sempre Ativa de até 2.000 nits, GPS, Wi-Fi e Bluetooth. Pulseira Sport Band na combinação selecionada.",
   details: "Produto novo e lacrado. Garantia de 1 ano do fabricante, conforme os termos aplicáveis.",
