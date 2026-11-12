@@ -12,6 +12,7 @@ try {
     platform: "node",
     format: "cjs",
     outfile: file,
+    define: { "import.meta.env": "{}" },
   });
   const result = spawnSync(process.execPath, ["--test", file], {
     stdio: "inherit",

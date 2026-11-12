@@ -166,6 +166,28 @@ export const saleSheetApi = {
       },
     );
   },
+  finalize(id: string, expectedVersion: number) {
+    return apiService.request<SheetSnapshot>(
+      `${PREFIX}/admin/${encodeURIComponent(id)}/finalize`,
+      {
+        method: "POST",
+        body: { expectedVersion },
+        cache: "no-store",
+        referrerPolicy: "no-referrer",
+      },
+    );
+  },
+  reopen(id: string, expectedVersion: number, expectedFinalizedAt: string) {
+    return apiService.request<SheetSnapshot>(
+      `${PREFIX}/admin/${encodeURIComponent(id)}/reopen`,
+      {
+        method: "POST",
+        body: { expectedVersion, expectedFinalizedAt },
+        cache: "no-store",
+        referrerPolicy: "no-referrer",
+      },
+    );
+  },
   rotate(id: string) {
     return apiService.request<CreatedSheet>(
       `${PREFIX}/admin/${encodeURIComponent(id)}/link`,

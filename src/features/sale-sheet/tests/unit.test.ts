@@ -268,6 +268,8 @@ import {
   bucketLabels,
   canArchiveSheet,
   canEditSheet,
+  canFinalizeSheet,
+  canReopenSheet,
   canUnarchiveSheet,
   editableTerms,
   ownsSheet,
@@ -416,4 +418,175 @@ test("Unarchived cancelled orders return to cancelled list and do not reactivate
   assert.equal(canEditSheet(restored), false);
   assert.equal(canArchiveSheet(restored), true);
   assert.equal(sheetStateLabel(restored), "Cancelado");
+});
+
+test("Finalization requires received, non-cancelled and non-archived orders, never PDF/CRM success", () => {
+  assert.equal(canFinalizeSheet(snapshot()), false);
+  assert.equal(canFinalizeSheet(snapshot({ submittedAt: "2026-11-12" })), true);
+  for (const overrides of [
+    { revoked: true },
+    { archivedAt: "2026-11-12" },
+    { finalizedAt: "2026-11-12T15:00:00.000Z" },
+  ])
+    assert.equal(
+      canFinalizeSheet(snapshot({ submittedAt: "2026-11-12", ...overrides })),
+      false,
+    );
+  assert.equal(
+    canFinalizeSheet(
+      snapshot({
+        submittedAt: "2026-11-12",
+        pdf: { status: "failed", attempts: 1 },
+        crm: { status: "uncertain", attempts: 1 },
+      }),
+    ),
+    true,
+  );
+});
+
+test("Old snapshots with missing/null conclusion metadata keep original behavior", () => {
+  for (const finalizedAt of [undefined, null]) {
+    const old = snapshot({ finalizedAt });
+    assert.equal(sheetBucket(old), "active");
+    assert.equal(canEditSheet(old), true);
+    assert.equal(canReopenSheet(old), false);
+    assert.equal(sheetStateLabel(old), "Aguardando cliente");
+  }
+  assert.equal(bucketLabels.finalized, "Finalizados");
+});
+
+test("Archive outranks cancellation and conclusion, cancellation never appears as finalized", () => {
+  const finalizedAt = "2026-11-12T15:00:00.000Z";
+  assert.equal(sheetBucket(snapshot({ finalizedAt })), "finalized");
+  assert.equal(sheetStateLabel(snapshot({ finalizedAt })), "Finalizado");
+  assert.equal(canEditSheet(snapshot({ finalizedAt })), false);
+  assert.equal(
+    sheetBucket(snapshot({ finalizedAt, revoked: true })),
+    "cancelled",
+  );
+  assert.equal(
+    sheetStateLabel(snapshot({ finalizedAt, revoked: true })),
+    "Cancelado",
+  );
+  assert.equal(
+    sheetBucket(
+      snapshot({ finalizedAt, revoked: true, archivedAt: finalizedAt }),
+    ),
+    "archived",
+  );
+});
+
+test("Received → finalized → archive → unarchive → finalized → reopen preserves customer, PDF and CRM", () => {
+  const received = snapshot({
+    submittedAt: "2026-11-12",
+    customer: { ...emptyClient, name: "Cliente Fictício" },
+    pdf: { status: "ready", attempts: 1 },
+    crm: { status: "sent", attempts: 1 },
+  });
+  const finalized = {
+    ...received,
+    finalizedAt: "2026-11-12T15:00:00.000Z",
+    finalizedById: "sales-1",
+    finalizedByName: "Operador Teste",
+  };
+  const archived = { ...finalized, archivedAt: "2026-11-12T16:00:00.000Z" };
+  const restored = { ...archived, archivedAt: undefined };
+  const reopened = {
+    ...restored,
+    finalizedAt: null,
+    finalizedById: null,
+    finalizedByName: null,
+  };
+  assert.deepEqual(
+    [received, finalized, archived, restored, reopened].map(sheetBucket),
+    ["active", "finalized", "archived", "finalized", "active"],
+  );
+  for (const state of [received, finalized, archived, restored, reopened]) {
+    assert.equal(canEditSheet(state), false);
+    assert.deepEqual(state.customer, received.customer);
+    assert.deepEqual(state.pdf, received.pdf);
+    assert.deepEqual(state.crm, received.crm);
+    assert.deepEqual(editableTerms(state), editableTerms(received));
+  }
+});
+
+test("Reopening removes only conclusion, never unarchives or reactivates cancelled legacy orders", () => {
+  const legacy = snapshot({
+    finalizedAt: "2026-11-12T15:00:00.000Z",
+    archivedAt: "2026-11-12",
+    revoked: true,
+  });
+  assert.equal(canReopenSheet(legacy), true);
+  const reopened = { ...legacy, finalizedAt: null };
+  assert.equal(sheetBucket(reopened), "archived");
+  assert.equal(
+    sheetBucket({ ...reopened, archivedAt: undefined }),
+    "cancelled",
+  );
+  assert.equal(canEditSheet(reopened), false);
+});
+
+test("Finalized sheets remain ADMIN all / SALES own and never send metadata in commercial terms", () => {
+  const finalized = snapshot({
+    finalizedAt: "2026-11-12T15:00:00.000Z",
+    finalizedById: "admin-test",
+    finalizedByName: "Operador Teste",
+  });
+  assert.equal(ownsSheet(finalized.createdBy, finalized), true);
+  assert.equal(
+    ownsSheet({ ...finalized.createdBy, id: "other" }, finalized),
+    false,
+  );
+  assert.equal(
+    ownsSheet(
+      { ...finalized.createdBy, id: "admin", role: "ADMIN" },
+      finalized,
+    ),
+    true,
+  );
+  for (const field of ["finalizedAt", "finalizedById", "finalizedByName"]) {
+    assert.equal(field in editableTerms(finalized), false);
+    assert.equal(field in createPayload(finalized), false);
+  }
+});
+
+import { saleSheetApi } from "../api";
+import { apiService } from "@/services/api";
+test("Finalize/reopen HTTP wrapper uses existing private routes, exact expected version/date and direct snapshot", async () => {
+  const original = apiService.request;
+  const result = snapshot({ finalizedAt: "2026-11-12T15:00:00.000Z" });
+  const calls: { endpoint: string; options: unknown }[] = [];
+  apiService.request = async <T>(endpoint: string, options = {}) => {
+    calls.push({ endpoint, options });
+    return result as T;
+  };
+  try {
+    assert.equal(await saleSheetApi.finalize("id/encoded", 7), result);
+    assert.equal(
+      await saleSheetApi.reopen("id/encoded", 8, result.finalizedAt!),
+      result,
+    );
+    assert.deepEqual(calls, [
+      {
+        endpoint: "/ficha-venda/admin/id%2Fencoded/finalize",
+        options: {
+          method: "POST",
+          body: { expectedVersion: 7 },
+          cache: "no-store",
+          referrerPolicy: "no-referrer",
+        },
+      },
+      {
+        endpoint: "/ficha-venda/admin/id%2Fencoded/reopen",
+        options: {
+          method: "POST",
+          body: { expectedVersion: 8, expectedFinalizedAt: result.finalizedAt },
+          cache: "no-store",
+          referrerPolicy: "no-referrer",
+        },
+      },
+    ]);
+  } finally {
+    apiService.request = original;
+  }
 });

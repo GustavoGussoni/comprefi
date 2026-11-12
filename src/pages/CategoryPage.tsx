@@ -14,7 +14,7 @@ import ZoomableLightbox from "../components/ZoomableLightbox";
 import CompreFiClubBanner from "../components/CompreFiClubBanner";
 import UsedStockCatalog from "../components/used-stock/UsedStockCatalog";
 import { useCatalogPrices, mergePricing } from "../hooks/useCatalogPrices";
-import { sellableMacbook } from "../lib/sellableMacbook";
+import { sellableCatalogProduct } from "../lib/sellableCatalogProduct";
 
 // ============================================
 // Carrossel de fotos reais por produto (seminovos)
@@ -208,25 +208,18 @@ const CatalogCategoryPage: React.FC<{ categorySlug: string }> = ({
   const visibleGroupedProducts = (
     products: GroupedProduct[],
   ): GroupedProduct[] =>
-    categorySlug === "macbooks"
-      ? products
-          .map((product) =>
-            sellableMacbook(product, activeProductsBySlug[product.slug]),
-          )
-          .filter((product): product is GroupedProduct => product !== null)
-      : products
-          .filter((product) => !inactiveSlugs.has(product.slug))
-          .map((product) =>
-            pricingBySlug[product.slug]
-              ? {
-                  ...product,
-                  pricing: mergePricing(
-                    product.pricing,
-                    pricingBySlug[product.slug],
-                  ),
-                }
-              : product,
-          );
+    products
+      .map((product) => {
+        if (categorySlug === "macbooks" || product.requiresCatalogAvailability) {
+          if (loading || error) return null;
+          return sellableCatalogProduct(product, activeProductsBySlug[product.slug]);
+        }
+        if (inactiveSlugs.has(product.slug)) return null;
+        return pricingBySlug[product.slug]
+          ? { ...product, pricing: mergePricing(product.pricing, pricingBySlug[product.slug]) }
+          : product;
+      })
+      .filter((product): product is GroupedProduct => product !== null);
 
   const renderGroupedGrid = (products: GroupedProduct[]) => (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">

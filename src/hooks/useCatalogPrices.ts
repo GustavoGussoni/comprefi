@@ -8,8 +8,7 @@
  */
 import { useEffect, useState } from "react";
 import type { PricingMap, VariantPricing } from "../types/product";
-
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+import { apiService } from "../services/api";
 
 interface BackendProduct {
   slug: string;
@@ -17,6 +16,9 @@ interface BackendProduct {
   category: string;
   section: string | null;
   isActive: boolean;
+  specs?: string | null;
+  details?: string | null;
+  battery?: string | null;
   storages: string[];
   pricing: Record<string, VariantPricing>;
   activeVariants: { storage: string; color: string; isActive: boolean }[];
@@ -61,14 +63,12 @@ export function useCatalogPrices(
     }
 
     async function fetchPrices() {
+      setLoading(true);
+      setError(false);
       try {
-        const response = await fetch(`${API_URL}/catalog/products/${category}`);
-
-        if (!response.ok) {
-          throw new Error(`HTTP ${response.status}`);
-        }
-
-        const products: BackendProduct[] = await response.json();
+        const products = await apiService.request<BackendProduct[]>(
+          `/catalog/products/${encodeURIComponent(category)}`,
+        );
 
         if (cancelled) return;
 
@@ -100,6 +100,9 @@ export function useCatalogPrices(
           err,
         );
         if (!cancelled) {
+          setPricingBySlug({});
+          setActiveProductsBySlug({});
+          setInactiveSlugs(new Set());
           setError(true);
         }
       } finally {

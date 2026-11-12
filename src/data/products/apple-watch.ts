@@ -1,4 +1,5 @@
 import { GroupedProduct } from "../../types/product";
+import { appleWatchUltra4, appleWatchSeries12 } from "./launch-products";
 
 // Apple Watch Ultra 3 Black Ocean
 import ultra3BlackOcean from "../../assets/new-images/watch/ultra-3-black/black-ocean-band/ultra-3-black-ocean.webp";
@@ -124,8 +125,10 @@ const se3SportBand: GroupedProduct = {
 
 export const appleWatchProducts: GroupedProduct[] = [
   // Ultra
+  appleWatchUltra4,
   ultraWatch3Ocean,
   // Series
+  appleWatchSeries12,
   series11SportBand,
   // SE
   se3SportBand,

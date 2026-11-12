@@ -1,6 +1,14 @@
 import * as Dialog from "@radix-ui/react-dialog";
 import { useRef, useState } from "react";
-import { Archive, ArchiveRestore, Download, Pencil, X } from "lucide-react";
+import {
+  Archive,
+  ArchiveRestore,
+  CheckCircle2,
+  Download,
+  Pencil,
+  RotateCcw,
+  X,
+} from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -16,6 +24,8 @@ import type { CrmDeliveryMode, SheetSnapshot } from "./model";
 import {
   canArchiveSheet,
   canEditSheet,
+  canFinalizeSheet,
+  canReopenSheet,
   canUnarchiveSheet,
   sheetStateLabel,
 } from "./lifecycle";
@@ -234,6 +244,93 @@ export default function SheetDrawer({
                         : "O cadastro já foi recebido. Não é possível alterar esta negociação ou substituir o contrato por aqui."}
                   </p>
                 )}
+                {sheet.finalizedAt && (
+                  <p>
+                    Finalizado em{" "}
+                    {new Date(sheet.finalizedAt).toLocaleString("pt-BR")}
+                    {sheet.finalizedByName
+                      ? ` por ${sheet.finalizedByName}`
+                      : ""}
+                    .
+                    {sheet.archivedAt &&
+                      " A conclusão foi preservada no arquivamento."}
+                  </p>
+                )}
+                {(canFinalizeSheet(sheet) || sheet.finalizedAt) && (
+                  <p>
+                    Finalizar é uma marcação operacional manual. Não comprova
+                    pagamento, entrega ou assinatura e não altera o contrato, o
+                    CRM ou o estoque.
+                  </p>
+                )}
+                <div className="cf-button-row">
+                  {canFinalizeSheet(sheet) && (
+                    <Button
+                      disabled={busy}
+                      onClick={(event) =>
+                        requestConfirmation(event.currentTarget, {
+                          title: "Finalizar pedido?",
+                          description:
+                            "O pedido vai para Finalizados por confirmação operacional da equipe. Isso não comprova pagamento, entrega ou assinatura. Cadastro, PDF e CRM ficam preservados; nenhum dado será reenviado nem estoque movimentado.",
+                          label: "Finalizar pedido",
+                          run: async () => {
+                            onUpdate(
+                              await saleSheetApi.finalize(
+                                sheet.id,
+                                sheet.revision,
+                              ),
+                              "",
+                            );
+                            setNotice(
+                              "Pedido marcado como finalizado. Ele está na área Finalizados.",
+                            );
+                          },
+                        })
+                      }
+                    >
+                      <CheckCircle2 size={15} /> Finalizar pedido
+                    </Button>
+                  )}
+                  {canReopenSheet(sheet) && (
+                    <Button
+                      secondary
+                      disabled={busy}
+                      onClick={(event) =>
+                        requestConfirmation(event.currentTarget, {
+                          title: "Reabrir pedido?",
+                          description:
+                            (sheet.archivedAt
+                              ? "A conclusão será removida, mas o pedido continua em Arquivados até ser desarquivado. "
+                              : sheet.revoked
+                                ? "A conclusão será removida, mas o pedido continua em Cancelados e o link permanece bloqueado. "
+                                : "O pedido volta para Em andamento. ") +
+                            "O cadastro recebido continua bloqueado para edição, e o PDF e o CRM ficam preservados. Isso não reativa links cancelados, não reenvia dados e não movimenta estoque.",
+                          label: "Reabrir pedido",
+                          run: async () => {
+                            onUpdate(
+                              await saleSheetApi.reopen(
+                                sheet.id,
+                                sheet.revision,
+                                sheet.finalizedAt!,
+                              ),
+                              "",
+                            );
+                            setNotice(
+                              (sheet.archivedAt
+                                ? "Conclusão removida. O pedido continua em Arquivados. "
+                                : sheet.revoked
+                                  ? "Conclusão removida. O pedido continua em Cancelados; o link permanece bloqueado. "
+                                  : "Pedido reaberto em Em andamento. ") +
+                                "A negociação respondida continua bloqueada para edição; cadastro, PDF e CRM preservados.",
+                            );
+                          },
+                        })
+                      }
+                    >
+                      <RotateCcw size={15} /> Reabrir pedido
+                    </Button>
+                  )}
+                </div>
                 {canArchiveSheet(sheet) && (
                   <Button
                     secondary
@@ -242,7 +339,7 @@ export default function SheetDrawer({
                       requestConfirmation(event.currentTarget, {
                         title: "Arquivar pedido?",
                         description:
-                          "O pedido vai para Arquivados. Cadastro, contrato e negócio no CRM ficam preservados. Você pode desarquivar depois.",
+                          "O pedido vai para Arquivados. Sua situação, inclusive a conclusão, cadastro, contrato e negócio no CRM ficam preservados. Você pode desarquivar depois.",
                         label: "Arquivar",
                         run: async () => {
                           onUpdate(
@@ -283,7 +380,9 @@ export default function SheetDrawer({
                           setNotice(
                             restored.revoked
                               ? "Pedido desarquivado. Ele voltou para Cancelados; o link continua bloqueado."
-                              : "Pedido desarquivado. Ele voltou para Em andamento; cadastro e contrato foram preservados.",
+                              : restored.finalizedAt
+                                ? "Pedido desarquivado. Ele voltou para Finalizados; conclusão, cadastro e contrato foram preservados."
+                                : "Pedido desarquivado. Ele voltou para Em andamento; cadastro e contrato foram preservados.",
                           );
                         })
                       }

@@ -36,6 +36,8 @@ export interface GroupedProduct {
   /** Cores disponíveis por storage (se alguma cor não está disponível em algum storage) */
   colorsByStorage?: Record<string, string[]>;
   imageByStorage?: Record<string, string>;
+  /** Sem fallback local: só mostrar variantes ativas e precificadas no catálogo central. */
+  requiresCatalogAvailability?: boolean;
 }
 
 // ---------- Produtos Flat (Seminovos, iPads, etc.) ----------
@@ -116,6 +118,23 @@ export function pricingKey(storage: string, color: string): string {
   return `${storage}-${color}`;
 }
 
+/** Valor BRL positivo; rejeita vazio, zero, negativo, NaN e texto não monetário. */
+export function isPositivePrice(value: string | undefined): boolean {
+  if (!value) return false;
+  const normalized = value.replace(/R\$/g, "").replace(/\s/g, "");
+  if (!/^(?:\d{1,3}(?:\.\d{3})+|\d+)(?:,\d{1,2})?$/.test(normalized)) {
+    return false;
+  }
+  const amount = Number(normalized.replace(/\./g, "").replace(",", "."));
+  return Number.isFinite(amount) && amount > 0;
+}
+
+/** Uma oferta agrupada exige os três valores calculados pelo administrador. */
+export function hasValidVariantPricing(price: VariantPricing | undefined | null): price is VariantPricing {
+  return !!price && isPositivePrice(price.pixPrice) &&
+    isPositivePrice(price.installmentPrice) && isPositivePrice(price.originalPrice);
+}
+
 /** Busca o preço de uma variante. Se não encontrar a combinação exata,
  *  tenta buscar só pelo storage (para modelos onde cor não muda preço) */
 export function getVariantPrice(
@@ -125,11 +144,11 @@ export function getVariantPrice(
 ): VariantPricing | null {
   // Tenta combinação exata
   const exact = pricing[pricingKey(storage, color)];
-  if (exact) return exact;
+  if (exact) return hasValidVariantPricing(exact) ? exact : null;
 
   // Tenta só pelo storage (fallback para quando cor não muda preço)
   const storageOnly = pricing[storage];
-  if (storageOnly) return storageOnly;
+  if (hasValidVariantPricing(storageOnly)) return storageOnly;
 
   return null;
 }
@@ -140,6 +159,7 @@ export function getLowestPrice(pricing: PricingMap): string {
   let lowestStr = "";
   for (const key of Object.keys(pricing)) {
     const val = pricing[key];
+    if (!hasValidVariantPricing(val)) continue;
     const num = parseFloat(
       val.pixPrice
         .replace("R$", "")

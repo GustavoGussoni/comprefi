@@ -21,6 +21,8 @@ import {
 import { useNavigate } from "react-router-dom";
 import CrmSkuEditor from "@/components/admin/CrmSkuEditor";
 import { apiService, type CatalogVariantCrmSku } from "@/services/api";
+import { hasValidVariantPricing } from "@/types/product";
+import { canSaveCatalogPricing, hasPositiveCost } from "@/lib/catalogPricingGate";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
@@ -611,7 +613,7 @@ const CatalogTable: React.FC<CatalogTableProps> = ({ readOnly = false }) => {
   // Recalcular 12x quando PIX muda manualmente
   const recalcInstallment = (pixStr: string): string => {
     const pix = parseBRL(pixStr);
-    if (pix <= 0) return "R$ 0,00";
+    if (pix <= 0) return "";
     return formatBRL(pix / 0.877 / 12);
   };
 
@@ -756,6 +758,12 @@ const CatalogTable: React.FC<CatalogTableProps> = ({ readOnly = false }) => {
   };
 
   const toggleVariantActive = async (slug: string, variant: Variant) => {
+    const product = products.find((item) => item.slug === slug);
+    if (!variant.isActive && product?.category !== "iphones-seminovos" &&
+      !hasValidVariantPricing(variant)) {
+      alert("Informe o custo e salve os preços antes de ativar esta variante.");
+      return;
+    }
     try {
       const res = await fetch(
         `${API_URL}/catalog/admin/products/${slug}/variants`,
@@ -798,8 +806,8 @@ const CatalogTable: React.FC<CatalogTableProps> = ({ readOnly = false }) => {
   // Quando custo muda → recalcular tudo
   const handleCostChange = (cost: string, category: string) => {
     if (!editingVariant) return;
-    const costNum = parseFloat(cost) || 0;
-    if (costNum > 0) {
+    const costNum = Number(cost);
+    if (hasPositiveCost(cost)) {
       const prices = calculatePrices(costNum, category);
       setEditingVariant({
         ...editingVariant,
@@ -831,6 +839,12 @@ const CatalogTable: React.FC<CatalogTableProps> = ({ readOnly = false }) => {
   // Salvar variante (mantém posição)
   const saveVariant = async () => {
     if (!editingVariant) return;
+    const previous = products.flatMap((product) => product.variants)
+      .find((variant) => variant.id === editingVariant.variantId);
+    if (!canSaveCatalogPricing(previous, editingVariant, editingVariant.cost, editingVariant.costEdited)) {
+      alert("Informe um custo positivo para a primeira precificação e mantenha todos os preços válidos.");
+      return;
+    }
     try {
       const res = await fetch(
         `${API_URL}/catalog/admin/products/${editingVariant.slug}/variants`,
@@ -889,11 +903,11 @@ const CatalogTable: React.FC<CatalogTableProps> = ({ readOnly = false }) => {
       alert("Preencha storage e cor");
       return;
     }
-    const costNum = parseFloat(newVariant.cost) || 0;
+    const costNum = hasPositiveCost(newVariant.cost) ? Number(newVariant.cost) : 0;
     let prices = {
-      originalPrice: "R$ 0,00",
-      installmentPrice: "R$ 0,00",
-      pixPrice: "R$ 0,00",
+      originalPrice: "",
+      installmentPrice: "",
+      pixPrice: "",
     };
     if (costNum > 0) {
       prices = calculatePrices(costNum, category);
@@ -909,6 +923,7 @@ const CatalogTable: React.FC<CatalogTableProps> = ({ readOnly = false }) => {
             storage: newVariant.storage,
             color: newVariant.color,
             ...prices,
+            isActive: hasValidVariantPricing(prices),
           };
 
     try {
@@ -1450,13 +1465,13 @@ const CatalogTable: React.FC<CatalogTableProps> = ({ readOnly = false }) => {
                                       </span>
                                     </td>
                                     <td className="px-4 py-2 text-gray-400">
-                                      {variant.originalPrice}
+                                      {hasValidVariantPricing(variant) ? variant.originalPrice : "Preço ainda não definido"}
                                     </td>
                                     <td className="px-4 py-2 text-green-400 font-medium">
-                                      {variant.pixPrice}
+                                      {hasValidVariantPricing(variant) ? variant.pixPrice : "—"}
                                     </td>
                                     <td className="px-4 py-2 text-blue-400">
-                                      {variant.installmentPrice}
+                                      {hasValidVariantPricing(variant) ? variant.installmentPrice : "—"}
                                     </td>
                                   </>
                                 ))}
@@ -1468,6 +1483,9 @@ const CatalogTable: React.FC<CatalogTableProps> = ({ readOnly = false }) => {
                                     </span>
                                   ) : (
                                     <button
+                                      disabled={!variant.isActive && category !== "iphones-seminovos" && !hasValidVariantPricing(variant)}
+                                      title={!variant.isActive && category !== "iphones-seminovos" && !hasValidVariantPricing(variant)
+                                        ? "Informe o custo e salve os preços antes de ativar" : "Alterar disponibilidade"}
                                       onClick={() => toggleVariantActive(product.slug, variant)}
                                       className={`text-xs px-2 py-0.5 rounded ${variant.isActive ? "bg-green-900/50 text-green-400 hover:bg-green-800/50" : "bg-red-900/50 text-red-400 hover:bg-red-800/50"}`}
                                     >
