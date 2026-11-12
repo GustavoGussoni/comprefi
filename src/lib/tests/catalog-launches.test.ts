@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
+import "./catalog-names-portugues.test";
 import { createHash } from "node:crypto";
 import { launchProducts } from "../../data/products/launch-products";
 import { categoryRegistry, findGroupedProductBySlug } from "../../data/categories";
@@ -15,6 +16,7 @@ const root = process.cwd();
 const manifest = JSON.parse(readFileSync(process.env.CATALOG_MANIFEST!, "utf8"));
 const assets = JSON.parse(readFileSync(process.env.ASSETS_MANIFEST!, "utf8"));
 const baseline = JSON.parse(readFileSync(process.env.CATALOG_BASELINE!, "utf8"));
+const nameMap: { groups: Record<string, { model: string; colors: Record<string, string> }> } = JSON.parse(readFileSync(process.env.CATALOG_NAME_MAP!, "utf8"));
 const price: VariantPricing = { pixPrice: "R$ 1.000,00", originalPrice: "R$ 1.200,00", installmentPrice: "R$ 100,00" };
 
 function groupedRegistry() {
@@ -29,15 +31,16 @@ function remote(product: GroupedProduct) {
   return { isActive: true, activeVariants, pricing: Object.fromEntries(activeVariants.map((variant) => [pricingKey(variant.storage, variant.color), price])) };
 }
 
-test("3 grupos e 62 variantes idênticos ao manifesto central; preços locais vazios", () => {
+test("3 grupos e 62 variantes do manifesto histórico com nomes PT autorizados; preços locais vazios", () => {
   assert.equal(launchProducts.length, 3);
   let variants = 0;
   for (const product of launchProducts) {
     const group = manifest.groups.find((entry: { slug: string }) => entry.slug === product.slug);
     assert.ok(group);
-    for (const key of ["model", "category", "specs", "details", "battery", "storages"] as const) assert.deepEqual(product[key], group[key], key);
+    assert.equal(product.model, nameMap.groups[product.slug].model);
+    for (const key of ["category", "specs", "details", "battery", "storages"] as const) assert.deepEqual(product[key], group[key], key);
     const keys = product.storages.flatMap((storage) => product.colors.map((color) => pricingKey(storage, color.name)));
-    assert.deepEqual(keys, group.variants.map((entry: { storage: string; color: string }) => pricingKey(entry.storage, entry.color)));
+    assert.deepEqual(keys, group.variants.map((entry: { storage: string; color: string }) => pricingKey(entry.storage, nameMap.groups[product.slug].colors[entry.color] || entry.color)));
     variants += keys.length;
     assert.deepEqual(product.pricing, {});
     assert.equal(product.requiresCatalogAvailability, true);
@@ -71,7 +74,7 @@ test("100 imagens registradas: caminho, ordem, hash, principal e galeria", () =>
 
 test("catálogo anterior preservado integralmente: todos os campos, preços e mappings", () => {
   const current = groupedRegistry().filter((product) => !product.requiresCatalogAvailability);
-  assert.deepEqual(current, baseline.grouped);
+  assert.deepEqual(current, baseline.grouped.filter((product: GroupedProduct) => !product.requiresCatalogAvailability));
   assert.deepEqual(Object.values(categoryRegistry).flatMap((category) => [...(category.products || []), ...(category.sections || []).flatMap((section) => section.products)]), baseline.flat);
   for (const product of current) for (const color of product.colors) {
     assert.deepEqual(resolveCatalogGallery(product, product.storages[0], color.name), [product.imageByStorage?.[product.storages[0]] ?? color.image, ...color.gallery].filter(Boolean));

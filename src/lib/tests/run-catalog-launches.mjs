@@ -41,6 +41,7 @@ try {
       CATALOG_MANIFEST: process.env.CATALOG_MANIFEST || "/home/ubuntu/comprefi-work/backend-catalogo-lancamentos-20261112/scripts/catalog-lancamentos-20261112/products.json",
       ASSETS_MANIFEST: process.env.ASSETS_MANIFEST || "/home/ubuntu/comprefi-audit/catalogo-lancamentos-20261112/ASSETS-VERIFIED.json",
       CATALOG_BASELINE: baselineFile,
+      CATALOG_NAME_MAP: process.env.CATALOG_NAME_MAP || "/home/ubuntu/comprefi-audit/nomes-portugues-20261112/NAME-MAP.json",
     },
   });
   process.exitCode = result.status ?? 1;

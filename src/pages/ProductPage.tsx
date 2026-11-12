@@ -1,4 +1,4 @@
-import { Navigate, useParams, useNavigate } from "react-router-dom";
+import { Navigate, useParams, useNavigate, useLocation } from "react-router-dom";
 import ProductDetail from "../components/ProductDetail";
 import {
   findFlatProductById,
@@ -6,10 +6,12 @@ import {
 } from "../data/categories";
 import { useCatalogPrices, mergePricing } from "../hooks/useCatalogPrices";
 import { sellableCatalogProduct } from "../lib/sellableCatalogProduct";
+import { normalizeCatalogLaunchSearch } from "../lib/catalogLaunchUrl";
 
 const ProductPage: React.FC = () => {
   const { category, id } = useParams<{ category: string; id: string }>();
   const navigate = useNavigate();
+  const location = useLocation();
   const { pricingBySlug, activeProductsBySlug, loading, error } =
     useCatalogPrices(category || "", {
       enabled: category !== "iphones-seminovos",
@@ -61,6 +63,10 @@ const ProductPage: React.FC = () => {
   // Tentar buscar como slug (GroupedProduct)
   const groupedResult = findGroupedProductBySlug(id);
   if (groupedResult && groupedResult.category.slug === category) {
+    const search = normalizeCatalogLaunchSearch(id, location.search);
+    if (search !== location.search) {
+      return <Navigate to={{ pathname: location.pathname, search, hash: location.hash }} replace />;
+    }
     if (category === "macbooks" || groupedResult.product.requiresCatalogAvailability) {
       if (loading || error) {
         return (
