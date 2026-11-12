@@ -83,7 +83,10 @@ export default function SaleSheetsAdmin() {
         .includes(query.trim().toLocaleLowerCase("pt-BR")),
   );
   const update = (sheet: SheetSnapshot, token?: string) => {
-    if (selected?.id === sheet.id && selected.archivedAt && !sheet.archivedAt) {
+    if (
+      selected?.id === sheet.id &&
+      sheetBucket(selected) !== sheetBucket(sheet)
+    ) {
       setBucket(sheetBucket(sheet));
     }
     setSelected(sheet);
@@ -255,7 +258,9 @@ export default function SaleSheetsAdmin() {
                 <p className="cf-help cf-bucket-help">
                   {bucket === "cancelled"
                     ? "Links cancelados não recebem novos cadastros. O histórico fica preservado."
-                    : "Arquivar só organiza esta lista. Use Desarquivar nos detalhes para trazer o pedido de volta. Isso não cancela contratos nem negócios no CRM."}
+                    : bucket === "finalized"
+                      ? "Conclusão marcada manualmente pela equipe. Não comprova pagamento, entrega ou assinatura. Reabrir devolve o pedido a Em andamento, sem liberar a edição do cadastro recebido."
+                      : "Arquivar só organiza esta lista. Use Desarquivar nos detalhes para trazer o pedido de volta à sua situação anterior, inclusive Finalizados. Isso não cancela contratos nem negócios no CRM."}
                 </p>
               )}
               <section className="cf-list-panel">
@@ -349,7 +354,7 @@ export default function SaleSheetsAdmin() {
               </section>
             </>
           )}
-          {selected && (
+          {selected && ownsSheet(user, selected) && (
             <SheetDrawer
               key={selected.id}
               sheet={selected}

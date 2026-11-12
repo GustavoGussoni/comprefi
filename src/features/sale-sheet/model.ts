@@ -92,6 +92,9 @@ export type SheetSnapshot = SheetTerms & {
   revoked: boolean;
   archivedAt?: string;
   archivedBy?: string;
+  finalizedAt?: string | null;
+  finalizedById?: string | null;
+  finalizedByName?: string | null;
   crm: SheetTask;
   pdf: SheetTask;
   crmAttachment: SheetTask;

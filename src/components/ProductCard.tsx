@@ -2,11 +2,13 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Phone, Bell } from "lucide-react";
 import ImageLoader from "./ImageLoader";
+import { resolveCatalogImages } from "../lib/catalogImages";
 import {
   FlatProduct,
   GroupedProduct,
   isGroupedProduct,
   getVariantPrice,
+  isPositivePrice,
 } from "../types/product";
 import {
   buildWhatsAppMessageFlat,
@@ -39,8 +41,10 @@ const FlatProductCard: React.FC<{
   onBuyNow?: (product: FlatProduct) => void;
 }> = ({ product, selectedPaymentMethod, onSelectPaymentMethod, onBuyNow }) => {
   const categorySlug = product.category.toLowerCase().replace(/\s+/g, "-");
+  const hasPrice = isPositivePrice(product.pixPrice);
 
   const handleBuy = () => {
+    if (!hasPrice) return;
     if (onBuyNow) {
       onBuyNow(product);
     } else {
@@ -109,7 +113,7 @@ const FlatProductCard: React.FC<{
         )}
 
         {/* Preços */}
-        <div className="flex flex-col mb-2">
+        {hasPrice ? <div className="flex flex-col mb-2">
           {product.originalPrice && (
             <div className="text-gray-400 line-through text-xs">
               De {product.originalPrice}
@@ -127,7 +131,7 @@ const FlatProductCard: React.FC<{
               {product.pixPrice} <span className="text-xs">no PIX</span>
             </div>
           </div>
-        </div>
+        </div> : <div className="text-gray-400 text-sm mb-2">Indisponível no momento</div>}
 
         {/* Detalhes */}
         {product.details && (
@@ -149,7 +153,7 @@ const FlatProductCard: React.FC<{
         </div>
 
         {/* Pagamento */}
-        <div className="flex space-x-1 mb-2">
+        {hasPrice && <div className="flex space-x-1 mb-2">
           <button
             className={`flex-1 py-1 rounded-md text-xs transition-colors ${
               selectedPaymentMethod === "pix"
@@ -170,11 +174,12 @@ const FlatProductCard: React.FC<{
           >
             Cartão
           </button>
-        </div>
+        </div>}
 
         {/* Botão comprar */}
         <button
           className="w-full bg-[#ff6100] hover:bg-[#e55a00] text-white py-1.5 text-sm rounded-md transition-colors flex items-center justify-center"
+          disabled={!hasPrice}
           onClick={handleBuy}
         >
           <Phone size={16} className="mr-1" />
@@ -214,7 +219,7 @@ const GroupedProductCard: React.FC<{ product: GroupedProduct }> = ({
 
   // Determinar a imagem: imageByStorage tem prioridade sobre a cor
   const displayImage =
-    product.imageByStorage?.[currentStorage] ?? currentColor?.image;
+    resolveCatalogImages(product, currentStorage, currentColor?.name || "").image;
 
   // Buscar preço da variante selecionada
   const variantPrice = currentColor
@@ -306,13 +311,15 @@ const GroupedProductCard: React.FC<{ product: GroupedProduct }> = ({
 
         {/* Seletor de cor */}
         {availableColors.length > 0 && (
-          <div className="flex items-center gap-2 mb-3">
+          <div className="flex flex-wrap items-center gap-2 mb-3">
             <span className="text-gray-400 text-xs">Cor:</span>
-            <div className="flex gap-1.5">
+            <div className="flex flex-wrap gap-1.5">
               {availableColors.map((color, idx) => (
                 <button
                   key={color.name}
                   title={color.name}
+                  aria-label={`Selecionar ${color.name}`}
+                  aria-pressed={idx === safeColorIndex}
                   className={`w-6 h-6 rounded-full border-2 transition-all ${
                     idx === safeColorIndex
                       ? "border-[#ff6100] scale-110"
@@ -324,7 +331,7 @@ const GroupedProductCard: React.FC<{ product: GroupedProduct }> = ({
               ))}
             </div>
             {currentColor && (
-              <span className="text-gray-300 text-xs ml-1">
+              <span className="text-gray-300 text-xs ml-1 break-words">
                 {currentColor.name}
               </span>
             )}

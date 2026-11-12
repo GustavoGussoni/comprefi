@@ -6,12 +6,14 @@ import ImageLoader from "./ImageLoader";
 import FAQ from "./FAQ";
 import WhyChooseSection from "./WhyChooseCompreFi";
 import ZoomableLightbox from "./ZoomableLightbox";
+import { resolveCatalogGallery } from "../lib/catalogImages";
 import {
   FlatProduct,
   GroupedProduct,
   Product,
   isGroupedProduct,
   getVariantPrice,
+  isPositivePrice,
 } from "../types/product";
 import {
   openWhatsApp,
@@ -207,6 +209,7 @@ const TestimonialsSection: React.FC = () => (
 const FlatProductView: React.FC<{ product: FlatProduct }> = ({ product }) => {
   const navigate = useNavigate();
   const [paymentMethod, setPaymentMethod] = useState<"pix" | "card">("pix");
+  const hasPrice = isPositivePrice(product.pixPrice);
 
   const allImages = [product.image, ...(product.realImages || [])].filter(
     Boolean,
@@ -219,6 +222,7 @@ const FlatProductView: React.FC<{ product: FlatProduct }> = ({ product }) => {
     : "1 ano de garantia Apple";
 
   const handleBuy = () => {
+    if (!hasPrice) return;
     const msg = buildWhatsAppMessageFlat(
       product.model,
       product.storage,
@@ -280,7 +284,7 @@ const FlatProductView: React.FC<{ product: FlatProduct }> = ({ product }) => {
             )}
 
             {/* Preços */}
-            <div className="pricing mb-6">
+            {hasPrice ? <div className="pricing mb-6">
               {product.originalPrice && (
                 <div className="text-gray-400 line-through text-sm mb-1">
                   De {product.originalPrice}
@@ -297,7 +301,7 @@ const FlatProductView: React.FC<{ product: FlatProduct }> = ({ product }) => {
               <div className="text-2xl text-[#ff6100] font-medium">
                 ou {product.pixPrice} no PIX
               </div>
-            </div>
+            </div> : <div className="pricing mb-6 text-xl text-gray-400">Indisponível no momento</div>}
 
             {/* Detalhes (seminovos) */}
             {product.details && isSeminovo && (
@@ -326,7 +330,7 @@ const FlatProductView: React.FC<{ product: FlatProduct }> = ({ product }) => {
             </div>
 
             {/* Pagamento */}
-            <div className="payment-selection mb-6">
+            {hasPrice && <div className="payment-selection mb-6">
               <h3 className="text-lg font-medium mb-3 text-white">
                 Forma de Pagamento
               </h3>
@@ -352,11 +356,12 @@ const FlatProductView: React.FC<{ product: FlatProduct }> = ({ product }) => {
                   Cartão
                 </button>
               </div>
-            </div>
+            </div>}
 
             {/* Botão Comprar */}
             <button
               className="w-full bg-[#ff6100] hover:bg-[#e55a00] text-white py-4 rounded-md transition-colors flex items-center justify-center text-lg font-medium"
+              disabled={!hasPrice}
               onClick={handleBuy}
             >
               <Phone size={24} className="mr-2" />
@@ -421,7 +426,7 @@ const GroupedProductView: React.FC<{ product: GroupedProduct }> = ({
     effectiveColor,
   );
 
-  const galleryImages = [colorData.image, ...colorData.gallery];
+  const galleryImages = resolveCatalogGallery(product, effectiveStorage, colorData.name);
   const productName = `${product.model} ${effectiveColor}`;
 
   // Atualizar query params
@@ -461,9 +466,10 @@ const GroupedProductView: React.FC<{ product: GroupedProduct }> = ({
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16">
           {/* Galeria — muda com a cor */}
           <ProductGallery
+            key={`${product.slug}-${effectiveStorage}-${effectiveColor}`}
             images={galleryImages}
             productName={productName}
-            galleryKey={effectiveColor}
+            galleryKey={`${product.slug}-${effectiveStorage}-${effectiveColor}`}
           />
 
           {/* Info com seletores */}
@@ -520,7 +526,7 @@ const GroupedProductView: React.FC<{ product: GroupedProduct }> = ({
             {product.storages.length > 1 && (
               <div className="mb-6">
                 <h3 className="text-sm font-medium text-gray-400 mb-2">
-                  Capacidade
+                  {product.category === "apple-watch" ? "Tamanho da caixa" : "Capacidade"}
                 </h3>
                 <div className="flex gap-3 flex-wrap">
                   {product.storages.map((storage) => (
@@ -570,7 +576,7 @@ const GroupedProductView: React.FC<{ product: GroupedProduct }> = ({
                 </>
               ) : (
                 <div className="text-xl text-gray-400">
-                  Selecione uma variante para ver o preço
+                  Indisponível no momento
                 </div>
               )}
             </div>
@@ -592,7 +598,7 @@ const GroupedProductView: React.FC<{ product: GroupedProduct }> = ({
             </div>
 
             {/* Pagamento */}
-            <div className="payment-selection mb-6">
+            {price && <div className="payment-selection mb-6">
               <h3 className="text-lg font-medium mb-3 text-white">
                 Forma de Pagamento
               </h3>
@@ -618,7 +624,7 @@ const GroupedProductView: React.FC<{ product: GroupedProduct }> = ({
                   Cartão
                 </button>
               </div>
-            </div>
+            </div>}
 
             {/* Botão Comprar */}
             <button

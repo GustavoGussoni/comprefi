@@ -5,7 +5,7 @@ import {
   findGroupedProductBySlug,
 } from "../data/categories";
 import { useCatalogPrices, mergePricing } from "../hooks/useCatalogPrices";
-import { sellableMacbook } from "../lib/sellableMacbook";
+import { sellableCatalogProduct } from "../lib/sellableCatalogProduct";
 
 const ProductPage: React.FC = () => {
   const { category, id } = useParams<{ category: string; id: string }>();
@@ -60,9 +60,19 @@ const ProductPage: React.FC = () => {
 
   // Tentar buscar como slug (GroupedProduct)
   const groupedResult = findGroupedProductBySlug(id);
-  if (groupedResult) {
-    if (category === "macbooks") {
-      const product = sellableMacbook(
+  if (groupedResult && groupedResult.category.slug === category) {
+    if (category === "macbooks" || groupedResult.product.requiresCatalogAvailability) {
+      if (loading || error) {
+        return (
+          <div className="min-h-screen bg-black flex items-center justify-center px-4">
+            <p role="status" className="text-center text-gray-300">
+              {loading ? "Consultando a disponibilidade do produto..." :
+                "Não foi possível consultar este produto agora. Tente novamente em instantes."}
+            </p>
+          </div>
+        );
+      }
+      const product = sellableCatalogProduct(
         groupedResult.product,
         activeProductsBySlug[groupedResult.product.slug],
       );

@@ -1,4 +1,5 @@
 import { GroupedProduct } from "../../types/product";
+import { iphoneDuo } from "./launch-products";
 
 // Fotos fornecidas do 18 Pro Max, reutilizadas no 18 Pro conforme solicitado.
 import iphone18BordoTraseira from "../../assets/new-images/iphones-novos/18-pro-max/18-pro-max-bordo-traseira.webp";
@@ -142,6 +143,7 @@ const iphone18Pricing: GroupedProduct["pricing"] = Object.fromEntries(
 );
 
 export const iphonesNovosProducts: GroupedProduct[] = [
+  iphoneDuo,
   {
     slug: "iphone-18-pro-max",
     model: "iPhone 18 Pro Max",
